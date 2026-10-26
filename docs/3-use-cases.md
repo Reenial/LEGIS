@@ -1,89 +1,168 @@
 # 3. Use Cases
-
-**Objective:** Show the principal interactions between the application's actors and the system. Describe how an actor achieves a goal and what happens when an important step fails. Base the interactions on the approved requirements and revise them as the application develops.
-
 ## 3.1 Use Case Diagram
 
-**Objective:** Show the system boundary, its relevant actors, and their main goals in **one readable UML use case diagram**. Add a focused second diagram only if the complete view cannot remain clear; a third requires a distinct project-specific reason.
+![Dijagram slučajeva uporabe Lost & Found](./assets/diagrams/lostAndFound.svg)
 
-**Rendered use case diagram:** ![Use case diagram](./assets/diagrams/3-1-crisis-guard-system-UC.svg)  
-**Versioned PlantUML source:** [`Source puml`](./puml/3-1-crisis-guard-system-UC.puml)
-
-**Consistency check:** Show the identified roles that **interact with the application**, not stakeholders who have no interaction. Each main user goal must have an associated actor; an included use case can be reached through another use case without its own direct actor association. Use `<<include>>` and `<<extend>>` only when the relationship expresses actual behavior.
-
-<details>
-<summary><strong>Actors and goals in one diagram</strong></summary>
-
-The diagram below illustrates a **course scenario** with a citizen, a visitor, and an organization that checks available resources. Only include the organization as an actor if the team's approved project actually lets it interact with the application. OAuth is outside this example because it is an implementation-specific sign-in choice and belongs in the requirements only if approved.
-
-[PlantUML source](./puml/3-1-crisis-guard-system-UC.puml) · [Rendered SVG](./assets/diagrams/3-1-crisis-guard-system-UC.svg)
-
-**Actor and goal selection:** The boundary identifies what the application offers, the actors have distinct goals, and no actor or use case claims that this student application dispatches emergency services. Compare the diagram with your approved functional requirements and actors. This PlantUML block is a teaching example, not the versioned source and rendered image of the team's own diagram.
-
-**Five questions for choosing the diagram's content** (not five diagrams to submit):
-
-| Focus | What to ask |
-| --- | --- |
-| Whole system | Which user goals best explain what this application is for? |
-| Key features | Which goals need detail in a description or, if necessary, a separate focused diagram? |
-| User roles | Which actors may participate in each goal, and how do their permissions differ? |
-| Core processes | Which goal has meaningful alternatives that need a use case description? |
-| External integrations | Does another system participate in a use case as a **secondary actor**, such as an approved identity provider during sign-in? |
-
-An external system may appear as a secondary use-case actor when it participates in a user's goal; the architecture describes technical connections. Do not create another required use case diagram solely to inventory integrations. Split a crowded diagram by related actors or goals only when it improves readability.
-
-</details>
-
----
+**PlantUML izvor:** [Izvorni kod dijagrama](./puml/lost-and-found-UC.puml)
 
 ## 3.2 Use Case Descriptions
 
-**Objective:** For each use case in the diagram, explain the actor's goal, the normal interaction with the application, and meaningful alternatives. Describe straightforward use cases briefly; expand those whose alternatives, external dependencies, or consequences require more explanation.
+### UC-001: Pregledati, pretražiti i filtrirati objave
 
-**Use one vertical table per use case.** Write only as much detail as the interaction needs; omit an inapplicable alternative instead of filling it for form's sake.
-
-### UC-[ID]: [Goal-oriented name]
-
-| Field | Description |
+| Polje | Opis |
 | --- | --- |
-| Primary actor | [Actor identified in the requirements.] |
-| Requirement ID(s) | [Existing functional requirement IDs.] |
-| Preconditions, if any | [What must already be true.] |
-| Main flow | [Actor's actions and the application's visible responses; number steps when useful.] |
-| Alternative or failure flows, if any | [Condition and what the application does; refer to a main-flow step when useful.] |
-| Result | [What changes or is confirmed after success.] |
+| Glavni akter | Posjetitelj ili prijavljeni korisnik. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Prijava nije potrebna. |
+| Glavni tijek | Korisnik otvara popis objava. Može unijeti pojam za pretraživanje i filtrirati objave prema vrsti, kategoriji, lokaciji i vremenu. Sustav prikazuje odgovarajuće rezultate. |
+| Alternativni tijekovi | Ako nema odgovarajućih objava, sustav prikazuje obavijest, a korisnik može promijeniti kriterije. |
+| Rezultat | Prikazane su odgovarajuće objave ili obavijest da nema rezultata. |
 
-<details>
-<summary><strong>Registration and disaster reporting: two examples of the same format</strong></summary>
+### UC-002: Pregledati detalje objave
 
-**UC-001: Register account.** This short example applies to a project whose approved task includes email/password accounts.
-
-| Field | Description |
+| Polje | Opis |
 | --- | --- |
-| Primary actor | Citizen (A-02 in the example) |
-| Requirement ID(s) | F-001 |
-| Preconditions, if any | None. |
-| Main flow | The citizen submits an email address; the application sends a confirmation link; the citizen confirms the account. |
-| Alternative or failure flows, if any | Existing email address → the application explains why registration cannot continue. |
-| Result | The account is active after confirmation. |
+| Glavni akter | Posjetitelj ili prijavljeni korisnik. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Objava je javno dostupna. Prijava nije potrebna. |
+| Glavni tijek | Korisnik odabire objavu. Sustav prikazuje vrstu objave, kategoriju, naziv i opis predmeta, datum ili približno vrijeme događaja, status, lokaciju na karti te fotografiju ako je dodana. Skriveni detalj predmeta nije javno prikazan. |
+| Alternativni tijekovi | Ako je objava uklonjena, sustav obavještava korisnika da nije dostupna. Ako kartu nije moguće učitati, prikazuju se ostali podaci uz obavijest o nedostupnosti karte. |
+| Rezultat | Korisnik je pregledao javne podatke o predmetu. |
 
-If the approved task instead uses OAuth-only sign-in, replace this example with the relevant sign-in behavior; do not add local-password registration solely to match the example.
+### UC-003: Prijaviti se
 
-**UC-002: Submit disaster report.** The same fields accommodate a longer flow when location selection, validation, and storage can fail.
-
-| Field | Description |
+| Polje | Opis |
 | --- | --- |
-| Primary actor | Citizen |
-| Requirement ID(s) | F-004 |
-| Preconditions, if any | The report form is available. If the approved task requires sign-in, the citizen has signed in. |
-| Main flow | 1. The citizen opens the report form; the application shows fields for disaster type, severity, description, and location.<br>2. The citizen enters the details and selects a location on the map or by another supported method.<br>3. The citizen submits the form; the application checks the required fields and the location.<br>4. The application records the report and displays confirmation with a reference to it. |
-| Alternative or failure flows, if any | **1a — Sign-in fails:** If sign-in is required and the identity provider does not complete it, the report remains unsubmitted and the application explains how to retry.<br>**2a — Location permission denied:** If geolocation is offered but denied, the citizen selects the location manually if that option exists; the flow continues at step 3.<br>**3a — Invalid or missing location:** The application explains the problem, preserves entered information where possible, and does not record the report; the citizen corrects it and retries step 3.<br>**3b — Storage fails:** The application reports failure and does not falsely confirm submission. |
-| Result | The application records the report and confirms its submission. |
+| Glavni akter | Posjetitelj ili administrator koji nije prijavljen. |
+| Sporedni akter | Vanjski pružatelj identiteta. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik ima račun kod odabranog pružatelja identiteta. |
+| Glavni tijek | 1. Korisnik odabire prijavu.<br>2. Sustav ga preusmjerava vanjskom pružatelju identiteta radi prijave putem OAuth 2.0.<br>3. Korisnik dovršava postupak prijave kod pružatelja.<br>4. Sustav provjerava odgovor pružatelja i uspostavlja korisničku sesiju. |
+| Alternativni tijekovi | Ako korisnik odustane ili prijava ne uspije, ostaje neprijavljen i može koristiti javne funkcionalnosti. |
+| Rezultat | Korisnik je prijavljen i dostupne su mu radnje prema dodijeljenoj ulozi. |
 
-**Choosing the level of detail:** Both examples use the same fields. UC-001 is brief because its principal exception is clear; UC-002 needs numbered steps and alternatives because they change the outcome and can guide tests. Remove sign-in or geolocation branches that do not exist in the team's application. Notifying rescue teams, initiating a rescue operation, or delivering responders' updates introduces **separate capabilities with external consequences**; document them only if the approved task and implementation support them. Password recovery applies to local-password accounts, not automatically to an OAuth-only task. Use the requirement IDs and behavior of your own application when adapting these examples.
+### UC-004: Objaviti izgubljeni ili pronađeni predmet
 
-</details>
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Prijavljeni korisnik. |
+| Sporedni akter | Vanjska usluga karata. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen. |
+| Glavni tijek | 1. Korisnik otvara obrazac za novu objavu.<br>2. Unosi vrstu objave, kategoriju, naziv i opis predmeta te datum ili približno vrijeme događaja.<br>3. Određuje lokaciju GPS-om ili odabirom na karti.<br>4. Po želji dodaje fotografiju i skriveni detalj za provjeru vlasništva.<br>5. Potvrđuje objavu.<br>6. Sustav provjerava podatke, sprema objavu i prikazuje potvrdu. |
+| Alternativni tijekovi | **GPS nije dostupan ili je dopuštenje odbijeno:** Korisnik odabire lokaciju na karti.<br>**Podaci su nepotpuni ili neispravni:** Sustav traži ispravak prije spremanja.<br>**Spremanje nije uspjelo:** Sustav prikazuje pogrešku i ne potvrđuje objavu. |
+| Rezultat | Objava je dostupna za pregled, a skriveni detalj nije javno prikazan. |
 
+### UC-005: Urediti vlastitu objavu
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Autor objave. |
+| Sporedni akter | Vanjska usluga karata pri promjeni lokacije. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen i autor je postojeće objave. |
+| Glavni tijek | Korisnik odabire uređivanje svoje objave, mijenja podatke i potvrđuje spremanje. Sustav provjerava ovlasti i podatke te sprema izmjene. |
+| Alternativni tijekovi | Ako podaci nisu valjani, sustav traži ispravak. Ako korisnik nije autor objave, sustav odbija uređivanje. |
+| Rezultat | Objava je ažurirana, a skriveni detalj ostaje izvan javnog prikaza. |
+
+### UC-006: Ukloniti vlastitu objavu
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Autor objave. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen i autor je postojeće objave. |
+| Glavni tijek | Korisnik odabire uklanjanje svoje objave i potvrđuje odluku. Sustav provjerava ovlasti i uklanja objavu iz javnog prikaza. |
+| Alternativni tijekovi | Ako korisnik odustane, objava ostaje dostupna. Ako nije autor objave, sustav odbija uklanjanje. |
+| Rezultat | Objava više nije javno dostupna. |
+
+### UC-007: Zatražiti povrat predmeta
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Prijavljeni korisnik koji smatra da je vlasnik predmeta. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen, a objava pronađenog predmeta dostupna je za slanje zahtjeva. |
+| Glavni tijek | 1. Korisnik otvara objavu i odabire slanje zahtjeva za povrat.<br>2. Navodi informacije kojima obrazlaže vlasništvo, uključujući obilježja predmeta koja nisu javno prikazana.<br>3. Šalje zahtjev.<br>4. Sustav sprema zahtjev i čini ga dostupnim autoru objave.<br>5. Korisniku se prikazuje potvrda i status zahtjeva koji čeka odluku. |
+| Alternativni tijekovi | **Nedostaju obvezni podaci:** Sustav traži dopunu.<br>**Objava više nije dostupna za povrat:** Sustav ne sprema zahtjev i obavještava korisnika.<br>**Slanje nije uspjelo:** Sustav ne potvrđuje slanje i prikazuje pogrešku. |
+| Rezultat | Zahtjev je poslan autoru objave. Njegov sadržaj nije javno dostupan. |
+
+### UC-008: Prihvatiti ili odbiti zahtjev za povrat
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Autor objave. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Autor je prijavljen i postoji zahtjev za njegovu objavu koji čeka odluku. |
+| Glavni tijek | 1. Autor otvara zahtjev za povrat.<br>2. Pregledava navedene informacije i uspoređuje ih s obilježjima predmeta, uključujući skriveni detalj ako je zabilježen.<br>3. Procjenjuje zahtjev te ga prihvaća ili odbija.<br>4. Sustav sprema odluku i prikazuje ažurirani status autoru i podnositelju zahtjeva. |
+| Alternativni tijekovi | **Nema dovoljno informacija:** Autor može privatnom porukom zatražiti dodatne informacije i odluku donijeti naknadno.<br>**Neovlašten pokušaj obrade:** Sustav odbija promjenu ako korisnik nije autor objave.<br>**Spremanje nije uspjelo:** Sustav ne potvrđuje promjenu statusa i prikazuje pogrešku. |
+| Rezultat | Zahtjev je prihvaćen ili odbijen. Prihvaćanje zahtjeva ne znači da je fizička predaja predmeta već izvršena. |
+
+### UC-009: Pratiti status zahtjeva
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Podnositelj zahtjeva ili autor povezane objave. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen. |
+| Glavni tijek | Korisnik otvara pregled poslanih ili primljenih zahtjeva. Sustav prikazuje zahtjeve u kojima korisnik sudjeluje i njihove aktualne statuse. |
+| Alternativni tijekovi | Ako nema zahtjeva, sustav prikazuje odgovarajuću obavijest. Pristup tuđim zahtjevima nije dopušten. |
+| Rezultat | Korisnik je upoznat sa statusom svojih poslanih ili primljenih zahtjeva. |
+
+### UC-010: Razmjenjivati privatne poruke
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Podnositelj zahtjeva ili autor povezane objave. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen i zahtjev za povrat već je poslan. Prihvaćanje zahtjeva nije uvjet za komunikaciju. |
+| Glavni tijek | Korisnik otvara razgovor povezan sa zahtjevom, pregledava poruke i šalje novu poruku. Sustav je sprema i čini dostupnom drugom sudioniku radi provjere vlasništva ili dogovora o preuzimanju. |
+| Alternativni tijekovi | Sustav odbija pristup korisniku koji nije sudionik razgovora. Ako slanje ne uspije, poruka se ne prikazuje kao uspješno poslana. |
+| Rezultat | Sudionici mogu privatno razmjenjivati informacije bez javnog objavljivanja kontaktnih podataka. |
+
+### UC-011: Pregledati moguća podudaranja
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Prijavljeni korisnik. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen i ima objavu za koju se traže podudaranja. |
+| Glavni tijek | Korisnik otvara moguća podudaranja za svoju objavu. Sustav prikazuje prijedloge na temelju kategorije, opisa, vremena i lokacije. Korisnik može otvoriti detalje predložene objave. |
+| Alternativni tijekovi | Ako nema mogućih podudaranja, sustav prikazuje odgovarajuću obavijest. |
+| Rezultat | Korisnik je pregledao prijedloge. Podudaranje ne predstavlja potvrdu vlasništva. |
+
+### UC-012: Uključiti obavijesti i pregledati obavijesti o podudaranjima
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Prijavljeni korisnik koji je objavio izgubljeni predmet. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Korisnik je prijavljen i ima objavu izgubljenog predmeta. |
+| Glavni tijek | Korisnik uključuje obavijesti o mogućim podudaranjima. Kada nova objava odgovara njegovoj objavi prema kriterijima podudaranja, sustav prikazuje obavijest u aplikaciji. Korisnik otvara obavijest i povezanu objavu. |
+| Alternativni tijekovi | Ako obavijesti nisu uključene ili nema novih podudaranja, sustav ne stvara novu obavijest. Ako povezana objava više nije dostupna, sustav o tome obavještava korisnika. |
+| Rezultat | Korisniku koji je uključio obavijesti dostupne su obavijesti o novim mogućim podudaranjima. |
+
+### UC-013: Prijaviti problematičnu objavu
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Prijavljeni korisnik. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Objava je dostupna. Trenutačni nacrt zahtijeva prijavu korisnika; taj uvjet treba potvrditi s timom. |
+| Glavni tijek | Korisnik odabire prijavu objave, navodi razlog i šalje prijavu. Sustav je sprema i čini dostupnom administratoru. |
+| Alternativni tijekovi | Ako razlog nije naveden, sustav traži dopunu. Ako je objava u međuvremenu uklonjena, sustav obavještava korisnika. |
+| Rezultat | Prijava je dostupna administratoru. Objava se ne uklanja automatski samim slanjem prijave. |
+
+### UC-014: Pregledati prijave i ukloniti neprimjeren sadržaj
+
+| Polje | Opis |
+| --- | --- |
+| Glavni akter | Administrator. |
+| Oznake zahtjeva | Naknadno povezati. |
+| Preduvjeti | Administrator je prijavljen i ima administratorske ovlasti. |
+| Glavni tijek | Administrator otvara prijavu, pregledava razlog i povezanu objavu. Ako procijeni da je sadržaj neprimjeren, odabire i potvrđuje uklanjanje. Sustav uklanja objavu iz javnog prikaza. |
+| Alternativni tijekovi | Ako prijava nije opravdana, objava ostaje dostupna. Ako nema prijava ili je objava već uklonjena, sustav prikazuje odgovarajuću obavijest. Sustav odbija pristup korisnicima bez administratorskih ovlasti. |
+| Rezultat | Prijava je pregledana, a neprimjeren sadržaj uklonjen ako je administrator procijenio da je uklanjanje opravdano. |
 ---
 
 ## 3.3 Use Case Consistency Check

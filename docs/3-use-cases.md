@@ -148,7 +148,7 @@
 | --- | --- |
 | Glavni akter | Prijavljeni korisnik. |
 | Oznake zahtjeva | Naknadno povezati. |
-| Preduvjeti | Objava je dostupna. Trenutačni nacrt zahtijeva prijavu korisnika; taj uvjet treba potvrditi s timom. |
+| Preduvjeti | Korisnik je prijavljen. Objava je dostupna. |
 | Glavni tijek | Korisnik odabire prijavu objave, navodi razlog i šalje prijavu. Sustav je sprema i čini dostupnom administratoru. |
 | Alternativni tijekovi | Ako razlog nije naveden, sustav traži dopunu. Ako je objava u međuvremenu uklonjena, sustav obavještava korisnika. |
 | Rezultat | Prijava je dostupna administratoru. Objava se ne uklanja automatski samim slanjem prijave. |

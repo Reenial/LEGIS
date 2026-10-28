@@ -21,7 +21,7 @@ Zahtjevi aplikacije **Lost & Found** temelje se na [projektnom zadatku](./assets
 | F-011 | Autor objave i podnositelj poslanog zahtjeva mogu razmjenjivati privatne poruke radi provjere vlasništva i dogovora predaje. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Poruka je nakon spremanja dostupna drugom sudioniku; razgovor je dostupan i prije prihvaćanja zahtjeva. Treća osoba ne može čitati ni slati poruke u tom razgovoru. Nakon uklanjanja objave postojeći razgovor ostaje dostupan njegovim sudionicima. |
 | F-012 | Prijavljeni korisnik može pregledati moguće podudaranje za svoju objavu prema omjeru ključnih riječi izgubljenog i pronađenog predmeta, uz podatke o kategoriji, vremenu i lokaciji za filtriranje i pregled. | Medium | Projektni zadatak, odjeljak 2; razrada u 2.5. | Prikazuju se objave s najmanje 80 % podudaranja prema C-07. Ako ih nema, prikazuje se najviše pet najsličnijih, silazno po postotku; ako nema kandidata, prikazuje se obavijest. Prijedlozi vode na detalje i nisu potvrda vlasništva. |
 | F-013 | Korisnik može jednom uključiti ili isključiti obavijesti u aplikaciji za cijeli račun; postavka vrijedi za nova moguća podudaranja svih njegovih izgubljenih predmeta, nove privatne poruke i promjene statusa zahtjeva. | Medium | Projektni zadatak, odjeljak 2; razrada u 2.5. | Postavka se sprema uz račun. Kad je uključena, novo podudaranje, poruka ili promjena statusa stvara obavijest za odgovarajućeg korisnika s poveznicom na povezani sadržaj. Bez uključivanja ili relevantnog događaja nema nove obavijesti; uklonjen sadržaj označen je nedostupnim. |
-| F-014 | Posjetitelj bez prijave ili prijavljeni korisnik može prijaviti problematičnu objavu uz navođenje razloga. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Prijava s razlogom postaje dostupna administratoru; prazan razlog traži dopunu. Sama prijava ne uklanja objavu. Prijava u korisnički račun nije uvjet za slanje prijave sadržaja. |
+| F-014 | Prijavljeni korisnik može prijaviti problematičnu objavu uz navođenje razloga. | High | Projektni zadatak, odjeljak 2; dogovor tima 28. listopada 2026. | Prijava s razlogom postaje dostupna administratoru; prazan razlog traži dopunu. Neprijavljenom korisniku slanje prijave nije dopušteno. Sama prijava ne uklanja objavu. |
 | F-015 | Administrator može pregledati prijave i ukloniti neprimjerenu objavu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Administrator vidi razlog i povezanu objavu; potvrđeno uklanjanje čini je javno nedostupnom. Neopravdana prijava ne zahtijeva uklanjanje. Korisnik bez administratorske uloge ne može pristupiti moderiranju. |
 
 ## 2.2 Non-Functional Requirements
@@ -42,7 +42,7 @@ Numerički ciljevi odziva, broja istodobnih korisnika i dostupnosti nisu utvrđe
 
 | Role or actor ID | Relation to the system | Relevant requirements |
 | --- | --- | --- |
-| A-01 Posjetitelj | Neprijavljeni korisnik pregledava javne objave i pokreće prijavu. | F-001–F-003, F-014. |
+| A-01 Posjetitelj | Neprijavljeni korisnik pregledava javne objave i pokreće prijavu. | F-001–F-003 |
 | A-02 Prijavljeni korisnik | Student ili zaposlenik; ovisno o radnji nastupa kao autor objave, pronalazitelj ili podnositelj zahtjeva. Autor i podnositelj nisu zasebne trajne uloge računa. | F-001–F-014; NF-001–NF-005. |
 | A-03 Administrator | Prijavljuje se, pregledava prijave i uklanja neprimjeren sadržaj. Administratorska uloga sama po sebi ne daje pristup privatnim razgovorima. | F-003, F-015; NF-001, NF-002. |
 | A-04 Vanjski pružatelj identiteta | Vanjski sustav sudjeluje u prijavi korisnika. | F-003; NF-002. |
@@ -74,8 +74,8 @@ U nastavku su zabilježene značajne dopune zahtjeva tijekom njihove razrade.
 | --- | --- | --- | --- |
 | 2026-10-27 | F-001, F-004, F-012, C-07 | Dodane ključne riječi i unos „ostalo”; razrađeno podudaranje od 80 % uz najviše pet zamjenskih prijedloga. | Razrada zahtjeva; formula konkretizira predloženi omjer riječi. |
 | 2026-10-27 | F-002, F-008, F-009 | Razrađeni statusi povrata, povlačenje zahtjeva i promjena odluke; predana objava ostaje vidljiva sedam dana. | Razrada zahtjeva. |
-| 2026-10-27 | F-011, F-013, F-014 | Razgovori ostaju dostupni nakon uklanjanja objave; obavijesti vrijede za cijeli račun; prijava sadržaja dopuštena je bez prijave. | Razrada zahtjeva. |
-| 2026-10-27 | NF-003–NF-005; prioriteti | Potvrđeni mobilni kriterij 360 px, ponašanje pri pogreškama i prioriteti. | Razrada zahtjeva. |
+| 2026-10-27 | F-011, F-013, F-014 | Razgovori ostaju dostupni nakon uklanjanja objave; obavijesti vrijede za cijeli račun;| Razrada zahtjeva. |
+| 2026-10-28 | F-014, C-06 | Određeno je da samo prijavljeni korisnici mogu prijavljivati problematične objave. | Dogovor projektnog tima. |
 
 Ključne riječi i unos „ostalo” koriste se pri objavi i traženju predmeta. Tim periodično pregledava unose „ostalo” radi poboljšanja filtara; automatsko dodavanje riječi nije zahtjev. Pravila za višestruke zahtjeve i zahtjeve za vlastitu objavu još nisu definirana.
 
@@ -98,7 +98,7 @@ Slučajevi uporabe povezani su u nastavku. Sve navedene provjere su **planirane,
 | F-011 | UC-010 — [opis](./3-use-cases.md). | Razgovor prije prihvaćanja i nakon uklanjanja objave; poruke i zabrana pristupa trećoj osobi. |
 | F-012 | UC-011 — [opis](./3-use-cases.md). | Prag ispod, na i iznad 80 %; najviše pet zamjenskih prijedloga; ponavljanja, veličina slova i prazni skupovi prema C-07. |
 | F-013 | UC-012 — [opis](./3-use-cases.md). | Uključivanje i isključivanje za cijeli račun; podudaranja, poruke i statusi; nedostupna poveznica. |
-| F-014 | UC-013 — [opis](./3-use-cases.md). | Prijava s razlogom i bez njega; objava ostaje javna do odluke; provjeriti i slanje bez korisničke prijave. |
+| F-014 | UC-013 — [opis](./3-use-cases.md). | Slanje prijave kao prijavljeni korisnik; odbijanje slanja bez prijave; obvezan razlog; izostanak automatskog uklanjanja objave. |
 | F-015 | UC-014 — [opis](./3-use-cases.md). | Moderiranje kao administrator i obični korisnik; opravdana i neopravdana prijava. |
 | NF-001 | UC-002, UC-007–UC-010. | Provjeriti javne odgovore i pristup privatnim podacima s četiri vrste identiteta. |
 | NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014. | Izravni neovlašteni zahtjevi i provjera nepromijenjenih podataka. |
@@ -108,7 +108,7 @@ Slučajevi uporabe povezani su u nastavku. Sve navedene provjere su **planirane,
 
 ## 2.7 Review of Requirements
 
-Povratne informacije s formalnih kontrolnih točaka još nisu dokumentirane.
+Slučajeve uporabe potrebno je održavati usklađenima sa zahtjevima te povezati stvarne projektne testove kada budu izrađeni.
 
 | Checkpoint | Feedback or finding | Resulting requirement or scope decision |
 | --- | --- | --- |

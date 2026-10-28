@@ -1,204 +1,118 @@
 # 2. Requirement Analysis
 
-**Objective:** Derive identifiable, prioritized, and verifiable requirements from the approved project scope. The requirements may evolve; by the final submission, they must reflect the agreed application. Sources, decisions and links in course examples are teaching scenarios, not project records.
+Zahtjevi aplikacije **Lost & Found** temelje se na [projektnom zadatku](./assets/Lost_and_Found_Projektni_zadatak_261012_155026.pdf) (odjeljci 1–3), [opsegu projekta](./1-Project-Scope.md) i [slučajevima uporabe](./3-use-cases.md). Svaki ima oznaku, prioritet i kriterij prihvaćanja. Značajne promjene bilježe se u odjeljku 2.5.
 
-<details>
-<summary><strong>Keeping requirements current</strong></summary>
-
-The examples use the Crisis Guard project topic. Some have useful imperfections for discussion. Sources, decisions, and verification links in these examples are **teaching scenarios**, not records of that student team's work. Replace them with the requirements and evidence of your approved project. Record significant changes in §2.5.
-
-</details>
-
----
+**High** označava osnovne funkcionalnosti i zaštitu podataka, a **Medium** podudaranja i obavijesti. Svi zahtjevi ostaju u opsegu, neovisno o prioritetu.
 
 ## 2.1 Functional Requirements
 
-**Objective:** State what the application must do for its users, where each capability comes from, and what observable result counts as acceptance.
-
 | ID | Description | Priority | Source | Acceptance criteria |
 | --- | --- | --- | --- | --- |
-| F-001 | [Observable capability] | [High/Medium/Low] | [Approved task / stakeholder request / feedback] | [Observable result] |
-|  |  |  |  |  |
-
-<details>
-<summary><strong>Requirement sources and acceptance criteria</strong></summary>
-
-Each requirement needs a stable ID. **Source means where this requirement came from**, such as the approved project task, a stakeholder request, or feedback that changed the requirement. Describe observable behavior instead of naming a screen or framework. Use the same priority scale throughout. Explain a complex user interaction in its use case rather than copying its full flow into this table.
-
-**Example — functional requirements for a disaster information application:**
-
-The source categories show different ways a requirement might arise. These rows are teaching material; they do not establish that the published project received those requests or delivered these features.
-
-| ID | Description | Priority | Source | Acceptance criteria |
-| --- | --- | --- | --- | --- |
-| F-001 | The system allows users to register an account using an email address. | High | Stakeholder requirement | The user can register via email, receive a confirmation email, and activate the account by following the link. |
-| F-002 | The system allows password recovery via email. | Medium | Stakeholder requirement | The user can request a password reset, receive a reset link, and reset the password successfully. |
-| F-003 | The system provides a list of available resources for disasters. | High | Existing system | The user can view an updated list of resources relevant to the disaster type, location, and availability. |
-| F-004 | The system allows users to submit disaster reports with location details. | High | Requirement document | The user can submit a report detailing the disaster type, severity, and location and receive confirmation. |
-| F-005 | The system sends notifications to users about updates in their vicinity. | High | User feedback | Users receive notifications within one minute of a relevant update for their location. |
-| F-006 | Display disaster resources based on location. | High | Document analysis | Updated resource lists tailored to disaster type, location, and availability are shown. |
-
-**Acceptance criteria and provenance:** It shows registration, recovery, disaster resources, reporting, and notifications, with several kinds of sources and observable criteria. It also offers useful questions: Do F-003 and F-006 describe the same resource feature? Is the one-minute promise in F-005 agreed and testable? Does a real OAuth-only application need F-001 and F-002? Keep the original rows as material to examine, **not six features every team must implement**. A real team's source column records where *its* requirements actually came from.
-
-**Example adaptation when the approved task uses OAuth and a map:** Instead of copying email account creation and password recovery, formulate the relevant sign-in requirement, for example: “F-001: Users sign in through the approved OAuth provider; successful sign-in allows access to the actions reserved for signed-in users, while cancelling leaves those actions unavailable.” A separate map requirement could say: “F-007: Reports with locations appear as map markers; selecting a marker opens the corresponding report.” Their source would be the actual approved task or agreed stakeholder request. This adaptation is an alternative to mismatched rows, not another table every team must fill in.
-
-For a complex interaction, a short *Given / When / Then* scenario may clarify a criterion. For example: *Given* a report without a location, *when* the citizen submits it, *then* the system explains the missing location and stores no report. Do not repeat a simple criterion in both prose and Gherkin or write Gherkin for every requirement.
-
-</details>
-
----
+| F-001 | Sustav omogućuje pregled i pretraživanje objava bez prijave te filtriranje prema vrsti, kategoriji, lokaciji i vremenu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Korisnik odabire ponuđene ključne riječi za predmet koji traži; ako odgovarajuće nema, unosi vlastiti tekst pod „ostalo”. Kombinirani kriteriji vraćaju samo odgovarajuće objave; ako ih nema, prikazuje se obavijest i omogućuje promjena kriterija. |
+| F-002 | Sustav prikazuje javne podatke objave i lokaciju na karti. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Dostupni su vrsta, kategorija, naziv, opis, datum ili približno vrijeme, status povrata, lokacija i fotografija ako postoji. Vrsta objave je „izgubljeno” ili „pronađeno”; status „na čekanju” znači da je predmet pronađen, ali nije uručen, a „predano” da ga je pronalazitelj označio predanim. Predana objava ostaje javno vidljiva sedam dana od označavanja statusom „predano”, radi mogućeg javljanja drugog vlasnika; nakon tog roka više se ne prikazuje javno. Skriveni detalj nije dostupan javnosti; uklonjena objava prikazuje se kao nedostupna. |
+| F-003 | Sustav omogućuje prijavu preko vanjskog pružatelja identiteta putem OAuth 2.0. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Uspješna provjera odgovora pružatelja uspostavlja sesiju i dopušta radnje prema ulozi. Odustajanje ili neuspjeh ne daje pristup zaštićenim radnjama; javni pregled ostaje dostupan. |
+| F-004 | Prijavljeni korisnik može objaviti izgubljeni ili pronađeni predmet. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Spremaju se vrsta, kategorija, naziv, opis, datum ili približno vrijeme te lokacija; fotografija i skriveni detalj su neobvezni. Pri opisu predmeta korisnik odabire ponuđene ključne riječi, a ako odgovarajuće nema, upisuje vlastiti tekst pod „ostalo”; odabir i unos spremaju se uz objavu. Nepotpuni ili neispravni obvezni podaci traže ispravak i ne stvaraju objavu. |
+| F-005 | Korisnik može odrediti lokaciju GPS-om ili ručnim odabirom na karti. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Odabrana lokacija sprema se uz objavu i prikazuje u detaljima; odbijeno dopuštenje ili nedostupan GPS ne sprječava ručni odabir. |
+| F-006 | Autor može urediti vlastitu objavu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Valjane izmjene autora vidljive su nakon ponovnog otvaranja; nevaljane izmjene i pokušaji drugog korisnika odbijaju se bez promjene podataka. Skriveni detalj ostaje nejavan. |
+| F-007 | Autor može ukloniti vlastitu objavu iz javnog prikaza. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Potvrđeno uklanjanje čini objavu javno nedostupnom; odustajanje je ne mijenja. Drugi korisnik ne može ukloniti objavu ovom radnjom. |
+| F-008 | Prijavljeni korisnik može poslati zahtjev za povrat dostupnog pronađenog predmeta uz obrazloženje vlasništva. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Valjan zahtjev dostupan je autoru i podnositelju sa statusom čekanja odluke; nije javan. Nedostatak obveznih informacija ili nedostupna objava sprječava spremanje. Podnositelj može povući svoj zahtjev; povlačenje se prikazuje obama sudionicima. |
+| F-009 | Autor povezane objave može pregledati informacije iz zahtjeva, usporediti obilježja sa skrivenim detaljem ako postoji te prihvatiti ili odbiti zahtjev. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Samo autor donosi i može promijeniti odluku; aktualni status vide oba sudionika. Prihvaćanje ne označava automatski izvršenu fizičku predaju; pronalazitelj zasebno označava predmet predanim. |
+| F-010 | Sudionici mogu pregledati svoje poslane i primljene zahtjeve te njihove statuse. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Pregled sadrži samo zahtjeve u kojima korisnik sudjeluje i aktualne statuse; prazan pregled ima odgovarajuću obavijest. Izravan pristup tuđem zahtjevu odbija se. |
+| F-011 | Autor objave i podnositelj poslanog zahtjeva mogu razmjenjivati privatne poruke radi provjere vlasništva i dogovora predaje. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Poruka je nakon spremanja dostupna drugom sudioniku; razgovor je dostupan i prije prihvaćanja zahtjeva. Treća osoba ne može čitati ni slati poruke u tom razgovoru. Nakon uklanjanja objave postojeći razgovor ostaje dostupan njegovim sudionicima. |
+| F-012 | Prijavljeni korisnik može pregledati moguće podudaranje za svoju objavu prema omjeru ključnih riječi izgubljenog i pronađenog predmeta, uz podatke o kategoriji, vremenu i lokaciji za filtriranje i pregled. | Medium | Projektni zadatak, odjeljak 2; razrada u 2.5. | Prikazuju se objave s najmanje 80 % podudaranja prema C-07. Ako ih nema, prikazuje se najviše pet najsličnijih, silazno po postotku; ako nema kandidata, prikazuje se obavijest. Prijedlozi vode na detalje i nisu potvrda vlasništva. |
+| F-013 | Korisnik može jednom uključiti ili isključiti obavijesti u aplikaciji za cijeli račun; postavka vrijedi za nova moguća podudaranja svih njegovih izgubljenih predmeta, nove privatne poruke i promjene statusa zahtjeva. | Medium | Projektni zadatak, odjeljak 2; razrada u 2.5. | Postavka se sprema uz račun. Kad je uključena, novo podudaranje, poruka ili promjena statusa stvara obavijest za odgovarajućeg korisnika s poveznicom na povezani sadržaj. Bez uključivanja ili relevantnog događaja nema nove obavijesti; uklonjen sadržaj označen je nedostupnim. |
+| F-014 | Posjetitelj bez prijave ili prijavljeni korisnik može prijaviti problematičnu objavu uz navođenje razloga. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Prijava s razlogom postaje dostupna administratoru; prazan razlog traži dopunu. Sama prijava ne uklanja objavu. Prijava u korisnički račun nije uvjet za slanje prijave sadržaja. |
+| F-015 | Administrator može pregledati prijave i ukloniti neprimjerenu objavu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Administrator vidi razlog i povezanu objavu; potvrđeno uklanjanje čini je javno nedostupnom. Neopravdana prijava ne zahtijeva uklanjanje. Korisnik bez administratorske uloge ne može pristupiti moderiranju. |
 
 ## 2.2 Non-Functional Requirements
 
-**Objective:** Specify the important quality properties and operating conditions of the approved application in a way the team can reasonably check.
+Navedene provjere predstavljaju očekivane kriterije kvalitete. Rezultati provjera bilježe se u poglavlju o testiranju.
 
 | ID | Description | Priority | Source |
 | --- | --- | --- | --- |
-|  |  |  |  |
+| NF-001 | Skriveni detalji predmeta, sadržaj zahtjeva i privatne poruke ne smiju biti dostupni neovlaštenim korisnicima ni kroz sučelje ni izravnim zahtjevom poslužitelju. Provjera: usporediti pristup autora, sudionika, trećeg korisnika i neprijavljenog posjetitelja. | High | Projektni zadatak odjeljci 1–2; Opseg, odjeljak 1.1 i odjeljak 1.3; UC-002, UC-007–UC-010. |
+| NF-002 | Poslužitelj mora provjeriti identitet i ovlasti pri svakoj zaštićenoj radnji. Provjera: bez sesije, s nevaljanom sesijom i kao drugi korisnik pokušati uređivanje, uklanjanje, obradu zahtjeva i moderiranje; pristup se odbija bez promjene podataka. | High | UC-003, UC-005, UC-006, UC-008, UC-014; razrada ograničenja pristupa. |
+| NF-003 | Osnovni pregled, pretraživanje, objava i slanje zahtjeva moraju biti uporabivi u mobilnom pregledniku. Provjera: na širini prikaza 360 px svi potrebni unosi i radnje dostupni su bez vodoravnog pomicanja stranice. | High | Projektni zadatak, odjeljak 3; Opseg, odjeljak 1.3. |
+| NF-004 | Odbijanje dopuštenja za GPS ne smije onemogućiti objavu: korisnik može ručno odabrati lokaciju. Ako se karta u detaljima ne učita, ostali javni podaci ostaju vidljivi uz obavijest o nedostupnoj karti. | High | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-002, UC-004. |
+| NF-005 | Neuspjelo spremanje objave, zahtjeva, odluke ili poruke mora dati vidljivu pogrešku bez lažne potvrde uspjeha. Provjera: izazvati neuspjeh spremanja u testnom okruženju za svaku navedenu radnju i provjeriti poruku te pohranjeno stanje. | High | Alternativni tijekovi UC-004, UC-007, UC-008, UC-010. |
 
-<details>
-<summary><strong>Choosing verifiable non-functional requirements</strong></summary>
-
-Relevant properties may concern usability, accessibility, security, performance, or reliability. Choose project-specific properties and describe how they can be checked. The requirement says what is expected; actual observations and evidence belong with the tests, not in a second result column here.
-
-**Example — non-functional requirements for the disaster information application:**
-
-| ID | Description | Priority | Source |
-| --- | --- | --- | --- |
-| NF-1.1 | The system must support 1,000 concurrent users with a response time under 1 s. | High | SLA |
-| NF-1.2 | All sensitive data must be encrypted using AES-256. | High | Security policy |
-| NF-1.3 | The system's UI must support both English and Spanish. | Medium | Stakeholder feedback |
-| NF-1.4 | System uptime must be at least 99.5% per month. | High | SLA |
-| NF-3.1.7 | The system should have adequate documentation. | High | Documentation policy |
-| NF-3.1.7.1 | The system code should be documented according to “Code Conventions for the Java Programming Language.” | High | Documentation policy |
-| NF-3.1.7.2 | The system should be described via a design document/SRS. | High | Documentation policy |
-| NF-3.1.7.3 | The system should be accompanied by an “Operational Manual” describing its proper use. | High | Documentation policy |
-| NF-3.1.7.4 | The system should have an “Implementation Plan” for proper deployment. | High | Deployment guidelines |
-
-**Verifiability and scope:** It introduces performance, security, localization, availability, and documentation, including a hierarchical requirement ID. Its sources are examples of provenance, not evidence that a real SLA or security policy exists for the student project. Values such as 1,000 users, 99.5% monthly uptime, and AES-256 must have an approved source and a feasible way to verify them before they can become the team's requirements. The documentation group illustrates decomposition, but requirements to produce *this course documentation* normally belong in assignment instructions rather than in the web application's quality requirements.
-
-**Example adaptation:** If the approved map task requires a fallback when browser geolocation is denied, a project-specific non-functional requirement might be: “NF-01: A citizen can still choose a report location manually after denying geolocation access.” Verification: deny browser permission, choose a map point, and try to submit a report. This is a concrete check, not a measured result or an additional universal obligation.
-
-</details>
+Numerički ciljevi odziva, broja istodobnih korisnika i dostupnosti nisu utvrđeni u postojećim izvorima; ne preuzimaju se vrijednosti iz nastavnih primjera.
 
 ## 2.3 Stakeholders and Actors
 
-**Objective:** Identify roles that affect requirements and distinguish stakeholders from actors who interact with the application.
-
 | Role or actor ID | Relation to the system | Relevant requirements |
 | --- | --- | --- |
-|  |  |  |
+| A-01 Posjetitelj | Neprijavljeni korisnik pregledava javne objave i pokreće prijavu. | F-001–F-003, F-014. |
+| A-02 Prijavljeni korisnik | Student ili zaposlenik; ovisno o radnji nastupa kao autor objave, pronalazitelj ili podnositelj zahtjeva. Autor i podnositelj nisu zasebne trajne uloge računa. | F-001–F-014; NF-001–NF-005. |
+| A-03 Administrator | Prijavljuje se, pregledava prijave i uklanja neprimjeren sadržaj. Administratorska uloga sama po sebi ne daje pristup privatnim razgovorima. | F-003, F-015; NF-001, NF-002. |
+| A-04 Vanjski pružatelj identiteta | Vanjski sustav sudjeluje u prijavi korisnika. | F-003; NF-002. |
+| A-05 Usluga karata | Vanjski sustav omogućuje prikaz i odabir lokacije. GPS ovisi i o pregledniku odnosno uređaju. | F-002, F-005; NF-004. |
+| S-01 Projektni tim | Dionik odgovoran za razvoj i usklađivanje zahtjeva; nema posebnu aplikacijsku ulogu. | Svi zahtjevi. |
+| S-02 Nastavno osoblje kolegija | Dionik koji prati i vrednuje projekt; nema posebnu aplikacijsku ulogu. | Opseg projekta i provjerljivost zahtjeva. |
 
-<details>
-<summary><strong>Connecting actors to requirements</strong></summary>
-
-**Example — actors for the disaster information application:**
-
-| Actor ID | Role | Functional requirements covered |
-| --- | --- | --- |
-| A-01 | Disaster Manager | F-003: View resources; F-004: Submit disaster reports. |
-| A-02 | Citizen | F-001: Create account; F-005: Receive notifications. |
-| A-03 | System Administrator | NF-1.2: Enforce security standards; manage users. |
-| A-04 | Visitor | F-007: View reports on map.|
-**Actor responsibilities:** An actor's role should connect to an interaction, not merely to a label. Check whether the Disaster Manager actually submits reports in the approved task. The administrator's link to NF-1.2 names a security concern, but does not by itself describe a use case; specify the administrator's real action or omit the role if it has none. Course staff interested in the result may be stakeholders without being actors in the application. The table is a starting point for reasoning, not a verified account of Crisis Guard's permissions.
-
-</details>
-
----
+Izvori: Opseg, odjeljak 1.2 i dijagram te opisi slučajeva uporabe.
 
 ## 2.4 Constraints and Assumptions
 
-**Objective:** Record project-specific boundaries and assumptions that affect requirements or design, including their source and practical consequence. This is their authoritative location.
-
 | ID | Constraint or assumption | Source | Consequence or way to verify |
 | --- | --- | --- | --- |
-|  |  |  |  |
-
-<details>
-<summary><strong>Constraints versus assumptions</strong></summary>
-
-A constraint is a restriction the team must respect; an assumption is a condition it relies on and should revisit.
-
-**Example — Crisis Guard design context:**
-
-| ID | Constraint or assumption | Source | Consequence or way to verify |
-| --- | --- | --- | --- |
-| C-01 | Approved task requires OAuth sign-in for editing a user's own reports. | Approved task **in this example scenario** | Design protected editing around the chosen provider; verify both authorized and unauthorized requests. |
-| AS-01 | Reports used for the map have usable coordinates. | Data assumption **in this example scenario** | Inspect sample and imported reports; plan how to display reports without valid coordinates. |
-
-**Constraint versus assumption:** C-01 identifies a binding decision and its architectural effect; AS-01 is testable and may prove false. Do not copy C-01 if OAuth is absent from the actual approved task. Explain the design response in the architecture without copying this table.
-
-</details>
-
----
+| C-01 | Prijava se ostvaruje preko vanjskog pružatelja identiteta putem OAuth 2.0. | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-003. | Tim odabire pružatelja tijekom projektiranja; provjeriti uspješnu, otkazanu i neuspjelu prijavu. |
+| C-02 | Lokacija ovisi o vanjskoj usluzi karata; GPS ovisi o uređaju i dopuštenju korisnika. | Projektni zadatak odjeljci 2–3; Opseg, odjeljak 1.3. | Osigurati ručni odabir lokacije i provjeriti uskraćeno GPS dopuštenje te nedostupnost karte prema NF-004. |
+| C-03 | Predaja, dostava i fizičko čuvanje predmeta izvan su sustava. | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-008, UC-010. | Sustav omogućuje dogovor; prihvaćen zahtjev nije dokaz izvršene predaje. |
+| C-04 | Sustav pomaže u procjeni vlasništva, ali ga ne jamči. | Opseg odjeljak 1.1 i odjeljak 1.3; UC-011. | Odluku o zahtjevu donosi autor objave; prijedlog podudaranja nije potvrda vlasništva. |
+| C-05 | Razvija se web-aplikacija prilagođena mobilnim uređajima, bez zasebne mobilne aplikacije. | Projektni zadatak, odjeljak 3; Opseg, odjeljak 1.3. | Provjeriti mobilni prikaz prema NF-003. |
+| C-06 | Prijavljivanje problematičnih objava dostupno je i bez korisničke prijave. | Potvrda pri razradi zahtjeva, 27. listopada 2026. | Provjeriti slanje prijave kao posjetitelj; UC-013 treba uskladiti s ovom odlukom. |
+| C-07 | Podudaranje ključnih riječi računa se kao broj zajedničkih različitih ključnih riječi podijeljen brojem svih različitih ključnih riječi iz obaju skupova, pomnožen sa 100. | Razrada omjera ključnih riječi dogovorenog u razgovoru, 27. listopada 2026. | Četiri zajedničke od pet različitih riječi daju 80 %. Zanemaruju se ponavljanja, veličina slova i rubni razmaci; prazan skup daje 0 %. Unos „ostalo” uspoređuje se kao oznaka bez prepoznavanja sinonima. Kategorija, vrijeme i lokacija služe filtriranju, ne izračunu postotka. |
+| AS-02 | Odabir najsličnijih predmeta slijedi F-012 i formulu C-07. | Razrada zahtjeva, odjeljak 2.5. | Provjeriti prag 80 % i ograničenje na pet zamjenskih prijedloga. |
+| AS-03 | Odabrane vanjske usluge bit će dostupne u razvojnom i demonstracijskom okruženju. | Vanjske ovisnosti iz opsega odjeljak 1.3. | Provjeriti konfiguraciju, uvjete korištenja i dostupnost pri integraciji; trenutačni izvori ne određuju pružatelje ni jamstva dostupnosti. |
 
 ## 2.5 Significant Requirement Changes
 
-**Objective:** Preserve the reason for changes that alter agreed scope, priority, or acceptance criteria, while keeping the current requirements above up to date.
+U nastavku su zabilježene značajne dopune zahtjeva tijekom njihove razrade.
 
 | Date | Requirement ID | Change and reason | Agreed with / evidence |
 | --- | --- | --- | --- |
-|  |  |  |  |
+| 2026-10-27 | F-001, F-004, F-012, C-07 | Dodane ključne riječi i unos „ostalo”; razrađeno podudaranje od 80 % uz najviše pet zamjenskih prijedloga. | Razrada zahtjeva; formula konkretizira predloženi omjer riječi. |
+| 2026-10-27 | F-002, F-008, F-009 | Razrađeni statusi povrata, povlačenje zahtjeva i promjena odluke; predana objava ostaje vidljiva sedam dana. | Razrada zahtjeva. |
+| 2026-10-27 | F-011, F-013, F-014 | Razgovori ostaju dostupni nakon uklanjanja objave; obavijesti vrijede za cijeli račun; prijava sadržaja dopuštena je bez prijave. | Razrada zahtjeva. |
+| 2026-10-27 | NF-003–NF-005; prioriteti | Potvrđeni mobilni kriterij 360 px, ponašanje pri pogreškama i prioriteti. | Razrada zahtjeva. |
 
-<details>
-<summary><strong>Recording a significant change</strong></summary>
-
-**Example scenario — a decision during a Crisis Guard review:**
-
-| Date | Requirement ID | Change and reason | Agreed with / evidence |
-| --- | --- | --- | --- |
-| [Date of review] | F-004, NF-01 | Add manual location selection when browser geolocation is denied; without it, a citizen cannot submit a located report. | [Link to the team's actual review note or issue] |
-
-**Reason for the change:** It names the affected records and explains the user-facing reason, then points to the decision's evidence. The review and change are **constructed examples**, not events attributed to the published project. Update the current requirements after a real decision; a wording fix needs no log entry. Keep the current task queue in the issue tracker.
-
-</details>
-
----
+Ključne riječi i unos „ostalo” koriste se pri objavi i traženju predmeta. Tim periodično pregledava unose „ostalo” radi poboljšanja filtara; automatsko dodavanje riječi nije zahtjev. Pravila za višestruke zahtjeve i zahtjeve za vlastitu objavu još nisu definirana.
 
 ## 2.6 Requirement Traceability
 
-**Objective:** Show where important requirements are described in use cases, where relevant, and where they are checked.
+Slučajevi uporabe povezani su u nastavku. Sve navedene provjere su **planirane, nisu izvršene**. Projektne testove i ručne postupke treba dokumentirati u [odjeljku 5.2](./5-Testing.md#52-test-cases), a rezultate u odjeljku 5.3. Nastavni primjeri u tom poglavlju nisu projektni testovi.
 
 | Requirement ID | Use case or design location | Test or verification location |
 | --- | --- | --- |
-| F-001 | [UC-001] | [ST-001, CT-001] | [Passed / Failed / Pending – reason] |
-|  |  |  |
-
-<details>
-<summary><strong>Linking requirements, use cases, and tests</strong></summary>
-
-**Example — Crisis Guard requirement links:**
-
-| Requirement ID | Use case or design location | Test or verification location |
-| --- | --- | --- |
-| F-001 | UC-001 Register account | T-04 Valid registration; T-05 Existing email |
-| F-004 | UC-002 Submit disaster report | T-01 Valid report; T-02 Missing location |
-| NF-01 | Report location fallback | T-03 Denied geolocation permission |
-
-**Coverage and evidence:** F-004 leads to a user interaction and two concrete checks. NF-01 refers to the **adapted example requirement above**, not to the nine original NF rows; it leads to a check without inventing a separate use case. UC-002 and T-01–T-03 are example identifiers, not existing Crisis Guard documents or executed tests. In your project, link the actual use cases and checks here, and mark a missing link *pending* with a reason. Record observed test results with the tests; this table identifies where to find them.
-
-</details>
-
----
+| F-001 | UC-001 — [opis](./3-use-cases.md). | Pretraga s kombiniranim filtrima, ponuđenim ključnim riječima i unosom „ostalo”; prazan rezultat. |
+| F-002 | UC-002 — [opis](./3-use-cases.md). | Javni detalji, neobvezna fotografija i skriveni detalj; vidljivost predane objave prije i nakon isteka sedam dana; uklonjena objava. |
+| F-003 | UC-003 — [opis](./3-use-cases.md). | Uspješna, otkazana i neuspjela OAuth prijava. |
+| F-004 | UC-004 — [opis](./3-use-cases.md). | Valjana objava obiju vrsta s odabranim ključnim riječima i unosom „ostalo”; nedostatak obveznih podataka. |
+| F-005 | UC-004, UC-005 — [opis](./3-use-cases.md). | GPS i ručni odabir; provjera spremljene lokacije. |
+| F-006 | UC-005 — [opis](./3-use-cases.md). | Uređivanje kao autor i kao drugi korisnik; nevaljani podaci. |
+| F-007 | UC-006 — [opis](./3-use-cases.md). | Potvrđeno i otkazano uklanjanje te pokušaj drugog korisnika. |
+| F-008 | UC-007 — [opis](./3-use-cases.md). | Valjan, nepotpun i povučen zahtjev; nedostupna objava; privatnost. |
+| F-009 | UC-008 — [opis](./3-use-cases.md). | Prihvaćanje, odbijanje i promjena odluke; neovlašten pokušaj. |
+| F-010 | UC-009 — [opis](./3-use-cases.md). | Poslani i primljeni zahtjevi, prazan popis i pristup tuđem zahtjevu. |
+| F-011 | UC-010 — [opis](./3-use-cases.md). | Razgovor prije prihvaćanja i nakon uklanjanja objave; poruke i zabrana pristupa trećoj osobi. |
+| F-012 | UC-011 — [opis](./3-use-cases.md). | Prag ispod, na i iznad 80 %; najviše pet zamjenskih prijedloga; ponavljanja, veličina slova i prazni skupovi prema C-07. |
+| F-013 | UC-012 — [opis](./3-use-cases.md). | Uključivanje i isključivanje za cijeli račun; podudaranja, poruke i statusi; nedostupna poveznica. |
+| F-014 | UC-013 — [opis](./3-use-cases.md). | Prijava s razlogom i bez njega; objava ostaje javna do odluke; provjeriti i slanje bez korisničke prijave. |
+| F-015 | UC-014 — [opis](./3-use-cases.md). | Moderiranje kao administrator i obični korisnik; opravdana i neopravdana prijava. |
+| NF-001 | UC-002, UC-007–UC-010. | Provjeriti javne odgovore i pristup privatnim podacima s četiri vrste identiteta. |
+| NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014. | Izravni neovlašteni zahtjevi i provjera nepromijenjenih podataka. |
+| NF-003 | Projektni zadatak, odjeljak 3; Opseg, odjeljak 1.3; UC-001, UC-004, UC-007. | Proći osnovne radnje na širini 360 px; potvrđeni kriterij mobilnog prikaza. |
+| NF-004 | UC-002, UC-004. | Uskratiti GPS dopuštenje i ručno odabrati lokaciju; zasebno onemogućiti učitavanje karte u detaljima. |
+| NF-005 | UC-004, UC-007, UC-008, UC-010. | Simulirati neuspjeh spremanja za svaku radnju i provjeriti izostanak lažne potvrde. |
 
 ## 2.7 Review of Requirements
 
-**Objective:** Record meaningful feedback on requirements and the resulting decisions at the two formal project checkpoints, in weeks 7 and 14.
+Povratne informacije s formalnih kontrolnih točaka još nisu dokumentirane.
 
 | Checkpoint | Feedback or finding | Resulting requirement or scope decision |
 | --- | --- | --- |
-| Checkpoint 1 (week 7) | [Feedback] | [Decision; see 2.5] |
-| Demo 2 (week 11) | [Feedback] | [Decision; see 2.5] |  |  |  |
+| Prva formalna kontrolna točka | Povratne informacije još nisu dokumentirane. | nakon pregleda povezati stvarne zaključke i eventualne promjene u odjeljku 2.5. |
+| Završna formalna kontrolna točka | Povratne informacije još nisu dokumentirane. | uskladiti zahtjeve s dogovorenim opsegom i dokazima provjere. |
 
-<details>
-<summary><strong>Recording decisions from a review</strong></summary>
-
-**Example scenario — review of a Crisis Guard requirement:**
-
-| Checkpoint | Feedback or finding | Resulting requirement or scope decision |
-| --- | --- | --- |
-| Week 7 (example) | The demonstration reveals that denying browser location access prevents report submission. | Agree on a manual location fallback; update F-004 and the example NF-01 and record the reason in §2.5. |
-
-**Decision linked to feedback:** It connects observed behavior to a specific requirement change and avoids minutes of the entire meeting. The entry is **not a historical Crisis Guard milestone**. Write only actual feedback and decisions for this team's two formal checkpoints, weeks 8 and 14. Consultation in another week does not create an additional required submission.
-
-</details>
+Termine kontrolnih točaka treba provjeriti prema uputama kolegija. Slučajeve uporabe treba uskladiti s razradom u 2.5, posebno UC-013 koji još zahtijeva prijavu, te povezati stvarne projektne testove.

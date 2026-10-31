@@ -1,181 +1,183 @@
 # 3. Use Cases
+
 ## 3.1 Use Case Diagram
 
-![Dijagram slučajeva uporabe Lost & Found](./assets/diagrams/lostAndFound.svg)
+![Lost & Found use case diagram](./assets/diagrams/lostAndFound.svg)
 
-**PlantUML izvor:** [Izvorni kod dijagrama](./puml/lost-and-found-UC.puml)
+**PlantUML source:** [Diagram source code](./puml/lost-and-found-UC.puml)
 
 ## 3.2 Use Case Descriptions
 
-### UC-001: Pregledati, pretražiti i filtrirati objave
+### UC-001: Browse, search, and filter posts
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Posjetitelj ili prijavljeni korisnik. |
-| Oznake zahtjeva | F-001 |
-| Preduvjeti | Prijava nije potrebna. |
-| Glavni tijek | Korisnik otvara popis objava. Može unijeti pojam za pretraživanje i filtrirati objave prema vrsti, kategoriji, lokaciji i vremenu. Sustav prikazuje odgovarajuće rezultate. |
-| Alternativni tijekovi | Ako nema odgovarajućih objava, sustav prikazuje obavijest, a korisnik može promijeniti kriterije. |
-| Rezultat | Prikazane su odgovarajuće objave ili obavijest da nema rezultata. |
+| Primary actor | Visitor or signed-in user. |
+| Requirement IDs | F-001 |
+| Preconditions | Sign-in is not required. |
+| Main flow | The user opens the list of posts. They can enter a search term and filter posts by type, category, location, and time. The system displays matching results. |
+| Alternative flows | If there are no matching posts, the system displays a message, and the user can change the criteria. |
+| Result | Matching posts or a message indicating that there are no results are displayed. |
 
-### UC-002: Pregledati detalje objave
+### UC-002: View post details
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Posjetitelj ili prijavljeni korisnik. |
-| Oznake zahtjeva | F-002 |
-| Preduvjeti | Objava je javno dostupna. Prijava nije potrebna. |
-| Glavni tijek | Korisnik odabire objavu. Sustav prikazuje vrstu objave, kategoriju, naziv i opis predmeta, datum ili približno vrijeme događaja, status, lokaciju na karti te fotografiju ako je dodana. Skriveni detalj predmeta nije javno prikazan. |
-| Alternativni tijekovi | Ako je objava uklonjena, sustav obavještava korisnika da nije dostupna. Ako kartu nije moguće učitati, prikazuju se ostali podaci uz obavijest o nedostupnosti karte. |
-| Rezultat | Korisnik je pregledao javne podatke o predmetu. |
+| Primary actor | Visitor or signed-in user. |
+| Requirement IDs | F-002 |
+| Preconditions | The post is publicly available. Sign-in is not required. |
+| Main flow | The user selects a post. The system displays the post type, category, item title and description, date or approximate time of the event, status, location on a map, and a photograph if one has been added. The hidden item detail is not publicly displayed. |
+| Alternative flows | If the post has been removed, the system informs the user that it is unavailable. If the map cannot be loaded, the remaining information is displayed with a message stating that the map is unavailable. |
+| Result | The user has viewed the public information about the item. |
 
-### UC-003: Prijaviti se
+### UC-003: Sign in
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Posjetitelj ili administrator koji nije prijavljen. |
-| Sporedni akter | Vanjski pružatelj identiteta. |
-| Oznake zahtjeva | F-003 |
-| Preduvjeti | Korisnik ima račun kod odabranog pružatelja identiteta. |
-| Glavni tijek | 1. Korisnik odabire prijavu.<br>2. Sustav ga preusmjerava vanjskom pružatelju identiteta radi prijave putem OAuth 2.0.<br>3. Korisnik dovršava postupak prijave kod pružatelja.<br>4. Sustav provjerava odgovor pružatelja i uspostavlja korisničku sesiju. |
-| Alternativni tijekovi | Ako korisnik odustane ili prijava ne uspije, ostaje neprijavljen i može koristiti javne funkcionalnosti. |
-| Rezultat | Korisnik je prijavljen i dostupne su mu radnje prema dodijeljenoj ulozi. |
+| Primary actor | Visitor or administrator who is not signed in. |
+| Secondary actor | External identity provider. |
+| Requirement IDs | F-003 |
+| Preconditions | The user has an account with the selected identity provider. |
+| Main flow | 1. The user selects the sign-in option.<br>2. The system redirects them to an external identity provider to sign in using OAuth 2.0.<br>3. The user completes the sign-in process with the provider.<br>4. The system validates the provider's response and establishes a user session. |
+| Alternative flows | If the user cancels or sign-in fails, they remain signed out and can use public functionality. |
+| Result | The user is signed in and can access actions according to their assigned role. |
 
-### UC-004: Objaviti izgubljeni ili pronađeni predmet
+### UC-004: Publish a lost or found item post
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Prijavljeni korisnik. |
-| Sporedni akter | Vanjska usluga karata. |
-| Oznake zahtjeva | F-004, F-005 |
-| Preduvjeti | Korisnik je prijavljen. |
-| Glavni tijek | 1. Korisnik otvara obrazac za novu objavu.<br>2. Unosi vrstu objave, kategoriju, naziv i opis predmeta te datum ili približno vrijeme događaja.<br>3. Određuje lokaciju GPS-om ili odabirom na karti.<br>4. Po želji dodaje fotografiju i skriveni detalj za provjeru vlasništva.<br>5. Potvrđuje objavu.<br>6. Sustav provjerava podatke, sprema objavu i prikazuje potvrdu. |
-| Alternativni tijekovi | **GPS nije dostupan ili je dopuštenje odbijeno:** Korisnik odabire lokaciju na karti.<br>**Podaci su nepotpuni ili neispravni:** Sustav traži ispravak prije spremanja.<br>**Spremanje nije uspjelo:** Sustav prikazuje pogrešku i ne potvrđuje objavu. |
-| Rezultat | Objava je dostupna za pregled, a skriveni detalj nije javno prikazan. |
+| Primary actor | Signed-in user. |
+| Secondary actor | External map service. |
+| Requirement IDs | F-004, F-005 |
+| Preconditions | The user is signed in. |
+| Main flow | 1. The user opens the form for a new post.<br>2. They enter the post type, category, item title and description, and the date or approximate time of the event.<br>3. They specify the location using GPS or by selecting it on a map.<br>4. They optionally add a photograph and a hidden detail for ownership verification.<br>5. They confirm publication.<br>6. The system validates the information, saves the post, and displays confirmation. |
+| Alternative flows | **GPS is unavailable or permission is denied:** The user selects the location on a map.<br>**Information is incomplete or invalid:** The system requests corrections before saving.<br>**Saving fails:** The system displays an error and does not confirm publication. |
+| Result | The post is available for browsing, and the hidden detail is not publicly displayed. |
 
-### UC-005: Urediti vlastitu objavu
+### UC-005: Edit own post
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Autor objave. |
-| Sporedni akter | Vanjska usluga karata pri promjeni lokacije. |
-| Oznake zahtjeva | F-005, F-006 |
-| Preduvjeti | Korisnik je prijavljen i autor je postojeće objave. |
-| Glavni tijek | Korisnik odabire uređivanje svoje objave, mijenja podatke i potvrđuje spremanje. Sustav provjerava ovlasti i podatke te sprema izmjene. |
-| Alternativni tijekovi | Ako podaci nisu valjani, sustav traži ispravak. Ako korisnik nije autor objave, sustav odbija uređivanje. |
-| Rezultat | Objava je ažurirana, a skriveni detalj ostaje izvan javnog prikaza. |
+| Primary actor | Post author. |
+| Secondary actor | External map service when changing the location. |
+| Requirement IDs | F-005, F-006 |
+| Preconditions | The user is signed in and is the author of an existing post. |
+| Main flow | The user selects the option to edit their post, changes the information, and confirms saving. The system checks permissions and validates the information, then saves the changes. |
+| Alternative flows | If the information is invalid, the system requests corrections. If the user is not the post author, the system rejects the edit. |
+| Result | The post is updated, and the hidden detail remains excluded from public view. |
 
-### UC-006: Ukloniti vlastitu objavu
+### UC-006: Remove own post
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Autor objave. |
-| Oznake zahtjeva | F-007 |
-| Preduvjeti | Korisnik je prijavljen i autor je postojeće objave. |
-| Glavni tijek | Korisnik odabire uklanjanje svoje objave i potvrđuje odluku. Sustav provjerava ovlasti i uklanja objavu iz javnog prikaza. |
-| Alternativni tijekovi | Ako korisnik odustane, objava ostaje dostupna. Ako nije autor objave, sustav odbija uklanjanje. |
-| Rezultat | Objava više nije javno dostupna. |
+| Primary actor | Post author. |
+| Requirement IDs | F-007 |
+| Preconditions | The user is signed in and is the author of an existing post. |
+| Main flow | The user selects the option to remove their post and confirms the decision. The system checks permissions and removes the post from public view. |
+| Alternative flows | If the user cancels, the post remains available. If they are not the post author, the system rejects the removal. |
+| Result | The post is no longer publicly available. |
 
-### UC-007: Zatražiti povrat predmeta
+### UC-007: Request the return of an item
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Prijavljeni korisnik koji smatra da je vlasnik predmeta. |
-| Oznake zahtjeva | F-008 |
-| Preduvjeti | Korisnik je prijavljen, a objava pronađenog predmeta dostupna je za slanje zahtjeva. |
-| Glavni tijek | 1. Korisnik otvara objavu i odabire slanje zahtjeva za povrat.<br>2. Navodi informacije kojima obrazlaže vlasništvo, uključujući obilježja predmeta koja nisu javno prikazana.<br>3. Šalje zahtjev.<br>4. Sustav sprema zahtjev i čini ga dostupnim autoru objave.<br>5. Korisniku se prikazuje potvrda i status zahtjeva koji čeka odluku. |
-| Alternativni tijekovi | **Nedostaju obvezni podaci:** Sustav traži dopunu.<br>**Objava više nije dostupna za povrat:** Sustav ne sprema zahtjev i obavještava korisnika.<br>**Slanje nije uspjelo:** Sustav ne potvrđuje slanje i prikazuje pogrešku. |
-| Rezultat | Zahtjev je poslan autoru objave. Njegov sadržaj nije javno dostupan. |
+| Primary actor | Signed-in user who believes they own the item. |
+| Requirement IDs | F-008 |
+| Preconditions | The user is signed in, and the found item post is available for submitting a request. |
+| Main flow | 1. The user opens the post and selects the option to submit a return request.<br>2. They provide information supporting their ownership claim, including item characteristics that are not publicly displayed.<br>3. They submit the request.<br>4. The system saves the request and makes it available to the post author.<br>5. The user is shown confirmation and a request status indicating that a decision is pending. |
+| Alternative flows | **Required information is missing:** The system requests the missing information.<br>**The post is no longer available for a return request:** The system does not save the request and informs the user.<br>**Submission fails:** The system does not confirm submission and displays an error. |
+| Result | The request has been sent to the post author. Its contents are not publicly available. |
 
-### UC-008: Prihvatiti ili odbiti zahtjev za povrat
+### UC-008: Accept or reject a return request
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Autor objave. |
-| Oznake zahtjeva | F-009 |
-| Preduvjeti | Autor je prijavljen i postoji zahtjev za njegovu objavu koji čeka odluku. |
-| Glavni tijek | 1. Autor otvara zahtjev za povrat.<br>2. Pregledava navedene informacije i uspoređuje ih s obilježjima predmeta, uključujući skriveni detalj ako je zabilježen.<br>3. Procjenjuje zahtjev te ga prihvaća ili odbija.<br>4. Sustav sprema odluku i prikazuje ažurirani status autoru i podnositelju zahtjeva. |
-| Alternativni tijekovi | **Nema dovoljno informacija:** Autor može privatnom porukom zatražiti dodatne informacije i odluku donijeti naknadno.<br>**Neovlašten pokušaj obrade:** Sustav odbija promjenu ako korisnik nije autor objave.<br>**Spremanje nije uspjelo:** Sustav ne potvrđuje promjenu statusa i prikazuje pogrešku. |
-| Rezultat | Zahtjev je prihvaćen ili odbijen. Prihvaćanje zahtjeva ne znači da je fizička predaja predmeta već izvršena. |
+| Primary actor | Post author. |
+| Requirement IDs | F-009 |
+| Preconditions | The author is signed in, and a request for their post is awaiting a decision. |
+| Main flow | 1. The author opens the return request.<br>2. They review the provided information and compare it with the item's characteristics, including the hidden detail if one has been recorded.<br>3. They assess the request and accept or reject it.<br>4. The system saves the decision and displays the updated status to the author and the requester. |
+| Alternative flows | **Insufficient information:** The author can request additional information through a private message and make a decision later.<br>**Unauthorized processing attempt:** The system rejects the change if the user is not the post author.<br>**Saving fails:** The system does not confirm the status change and displays an error. |
+| Result | The request is accepted or rejected. Acceptance does not mean that the physical handover of the item has already been completed. |
 
-### UC-009: Pratiti status zahtjeva
+### UC-009: Track request status
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Podnositelj zahtjeva ili autor povezane objave. |
-| Oznake zahtjeva | F-010 |
-| Preduvjeti | Korisnik je prijavljen. |
-| Glavni tijek | Korisnik otvara pregled poslanih ili primljenih zahtjeva. Sustav prikazuje zahtjeve u kojima korisnik sudjeluje i njihove aktualne statuse. |
-| Alternativni tijekovi | Ako nema zahtjeva, sustav prikazuje odgovarajuću obavijest. Pristup tuđim zahtjevima nije dopušten. |
-| Rezultat | Korisnik je upoznat sa statusom svojih poslanih ili primljenih zahtjeva. |
+| Primary actor | Requester or author of the associated post. |
+| Requirement IDs | F-010 |
+| Preconditions | The user is signed in. |
+| Main flow | The user opens the overview of sent or received requests. The system displays requests in which the user participates and their current statuses. |
+| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. |
+| Result | The user is informed about the status of their sent or received requests. |
 
-### UC-010: Razmjenjivati privatne poruke
+### UC-010: Exchange private messages
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Podnositelj zahtjeva ili autor povezane objave. |
-| Oznake zahtjeva | F-011 |
-| Preduvjeti | Korisnik je prijavljen i zahtjev za povrat već je poslan. Prihvaćanje zahtjeva nije uvjet za komunikaciju. |
-| Glavni tijek | Korisnik otvara razgovor povezan sa zahtjevom, pregledava poruke i šalje novu poruku. Sustav je sprema i čini dostupnom drugom sudioniku radi provjere vlasništva ili dogovora o preuzimanju. |
-| Alternativni tijekovi | Sustav odbija pristup korisniku koji nije sudionik razgovora. Ako slanje ne uspije, poruka se ne prikazuje kao uspješno poslana. |
-| Rezultat | Sudionici mogu privatno razmjenjivati informacije bez javnog objavljivanja kontaktnih podataka. |
+| Primary actor | Requester or author of the associated post. |
+| Requirement IDs | F-011 |
+| Preconditions | The user is signed in, and a return request has already been submitted. Acceptance of the request is not required for communication. |
+| Main flow | The user opens the conversation associated with the request, reviews messages, and sends a new message. The system saves it and makes it available to the other participant to help verify ownership or arrange collection. |
+| Alternative flows | The system denies access to a user who is not a participant in the conversation. If sending fails, the message is not shown as successfully sent. |
+| Result | Participants can exchange information privately without publicly sharing contact details. |
 
-### UC-011: Pregledati moguća podudaranja
+### UC-011: View possible matches
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Prijavljeni korisnik. |
-| Oznake zahtjeva | F-012 |
-| Preduvjeti | Korisnik je prijavljen i ima objavu za koju se traže podudaranja. |
-| Glavni tijek | Korisnik otvara moguća podudaranja za svoju objavu. Sustav prikazuje prijedloge na temelju kategorije, opisa, vremena i lokacije. Korisnik može otvoriti detalje predložene objave. |
-| Alternativni tijekovi | Ako nema mogućih podudaranja, sustav prikazuje odgovarajuću obavijest. |
-| Rezultat | Korisnik je pregledao prijedloge. Podudaranje ne predstavlja potvrdu vlasništva. |
+| Primary actor | Signed-in user. |
+| Requirement IDs | F-012 |
+| Preconditions | The user is signed in and has a post for which matches are being sought. |
+| Main flow | The user opens the possible matches for their post. The system displays suggestions based on category, description, time, and location. The user can open the details of a suggested post. |
+| Alternative flows | If there are no possible matches, the system displays an appropriate message. |
+| Result | The user has reviewed the suggestions. A match does not confirm ownership. |
 
-### UC-012: Uključiti obavijesti i pregledati obavijesti o podudaranjima
+### UC-012: Enable notifications and view match notifications
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Prijavljeni korisnik koji je objavio izgubljeni predmet. |
-| Oznake zahtjeva | F-013 |
-| Preduvjeti | Korisnik je prijavljen i ima objavu izgubljenog predmeta. |
-| Glavni tijek | Korisnik uključuje obavijesti o mogućim podudaranjima. Kada nova objava odgovara njegovoj objavi prema kriterijima podudaranja, sustav prikazuje obavijest u aplikaciji. Korisnik otvara obavijest i povezanu objavu. |
-| Alternativni tijekovi | Ako obavijesti nisu uključene ili nema novih podudaranja, sustav ne stvara novu obavijest. Ako povezana objava više nije dostupna, sustav o tome obavještava korisnika. |
-| Rezultat | Korisniku koji je uključio obavijesti dostupne su obavijesti o novim mogućim podudaranjima. |
+| Primary actor | Signed-in user who has published a lost item post. |
+| Requirement IDs | F-013 |
+| Preconditions | The user is signed in and has a lost item post. |
+| Main flow | The user enables notifications about possible matches. When a new post matches their post according to the matching criteria, the system displays an in-app notification. The user opens the notification and the associated post. |
+| Alternative flows | If notifications are not enabled or there are no new matches, the system does not create a new notification. If the associated post is no longer available, the system informs the user. |
+| Result | Notifications about new possible matches are available to the user who has enabled them. |
 
-### UC-013: Prijaviti problematičnu objavu
+### UC-013: Report a problematic post
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Prijavljeni korisnik. |
-| Oznake zahtjeva | F-014 |
-| Preduvjeti | Korisnik je prijavljen. Objava je dostupna. |
-| Glavni tijek | Korisnik odabire prijavu objave, navodi razlog i šalje prijavu. Sustav je sprema i čini dostupnom administratoru. |
-| Alternativni tijekovi | Ako razlog nije naveden, sustav traži dopunu. Ako je objava u međuvremenu uklonjena, sustav obavještava korisnika. |
-| Rezultat | Prijava je dostupna administratoru. Objava se ne uklanja automatski samim slanjem prijave. |
+| Primary actor | Signed-in user. |
+| Requirement IDs | F-014 |
+| Preconditions | The user is signed in. The post is available. |
+| Main flow | The user selects the option to report a post, provides a reason, and submits the report. The system saves it and makes it available to the administrator. |
+| Alternative flows | If no reason is provided, the system requests one. If the post has been removed in the meantime, the system informs the user. |
+| Result | The report is available to the administrator. Submitting the report does not automatically remove the post. |
 
-### UC-014: Pregledati prijave i ukloniti neprimjeren sadržaj
+### UC-014: Review reports and remove inappropriate content
 
-| Polje | Opis |
+| Field | Description |
 | --- | --- |
-| Glavni akter | Administrator. |
-| Oznake zahtjeva | F-015 |
-| Preduvjeti | Administrator je prijavljen i ima administratorske ovlasti. |
-| Glavni tijek | Administrator otvara prijavu, pregledava razlog i povezanu objavu. Ako procijeni da je sadržaj neprimjeren, odabire i potvrđuje uklanjanje. Sustav uklanja objavu iz javnog prikaza. |
-| Alternativni tijekovi | Ako prijava nije opravdana, objava ostaje dostupna. Ako nema prijava ili je objava već uklonjena, sustav prikazuje odgovarajuću obavijest. Sustav odbija pristup korisnicima bez administratorskih ovlasti. |
-| Rezultat | Prijava je pregledana, a neprimjeren sadržaj uklonjen ako je administrator procijenio da je uklanjanje opravdano. |
+| Primary actor | Administrator. |
+| Requirement IDs | F-015 |
+| Preconditions | The administrator is signed in and has administrator privileges. |
+| Main flow | The administrator opens a report and reviews the reason and the associated post. If they determine that the content is inappropriate, they select and confirm removal. The system removes the post from public view. |
+| Alternative flows | If the report is unjustified, the post remains available. If there are no reports or the post has already been removed, the system displays an appropriate message. The system denies access to users without administrator privileges. |
+| Result | The report has been reviewed, and inappropriate content has been removed if the administrator determined that removal was justified. |
+
 ---
 
 ## 3.3 Use Case Consistency Check
 
-Sljedeća pitanja služe timu za provjeru usklađenosti slučajeva uporabe, zahtjeva i aplikacije.
+The following questions help the team check consistency between the use cases, requirements, and application.
 
-| Provjera | Pitanje za tim |
+| Check | Question for the team |
 | --- | --- |
-| Povezanost sa zahtjevima | Ima li svaki slučaj uporabe od UC-001 do UC-014 navedene odgovarajuće oznake zahtjeva iz drugog dokumenta? |
-| Javni pristup | Mogu li posjetitelji bez prijave pregledavati, pretraživati i filtrirati objave te pregledavati njihove detalje, kako opisuju UC-001 i UC-002? |
-| Ovlasti korisnika | Dopuštaju li UC-005 i UC-006 uređivanje i uklanjanje objave samo njezinu autoru, a UC-008 obradu zahtjeva samo autoru povezane objave? |
-| Provjera vlasništva | Ostaje li skriveni detalj nejavan u UC-002 i koristi li se za procjenu vlasništva u postupku opisanom u UC-007 i UC-008? |
-| Privatna komunikacija | Je li razgovor u UC-010 dostupan samo sudionicima nakon slanja zahtjeva, bez obveznog prethodnog prihvaćanja? |
-| Prijavljivanje i moderiranje | Je li prijavljivanje objava u UC-013 dostupno samo prijavljenim korisnicima, a moderiranje u UC-014 samo administratoru? |
-| Alternativni tijekovi | Omogućuje li UC-004 ručni odabir lokacije kada GPS nije dostupan i sprječava li spremanje nepotpunih podataka? |
-| Provjera u aplikaciji | Može li tim demonstrirati opisane glavne i alternativne tijekove ili su oni još označeni kao planirano ponašanje? |
+| Requirement links | Does each use case from UC-001 to UC-014 reference the appropriate requirement IDs from the second document? |
+| Public access | Can visitors browse, search, and filter posts and view their details without signing in, as described in UC-001 and UC-002? |
+| User permissions | Do UC-005 and UC-006 allow only the post author to edit and remove the post, and does UC-008 allow only the author of the associated post to process a request? |
+| Ownership verification | Does the hidden detail remain private in UC-002, and is it used to assess ownership in the process described in UC-007 and UC-008? |
+| Private communication | Is the conversation in UC-010 available only to the participants after a request has been submitted, without requiring prior acceptance? |
+| Reporting and moderation | Is reporting posts in UC-013 available only to signed-in users, and is moderation in UC-014 available only to the administrator? |
+| Alternative flows | Does UC-004 allow manual location selection when GPS is unavailable and prevent incomplete information from being saved? |
+| Application verification | Can the team demonstrate the described main and alternative flows, or are they still marked as planned behavior? |

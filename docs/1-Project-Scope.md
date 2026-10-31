@@ -1,83 +1,48 @@
 # 1. Project Scope
 
-**Objective:** Explain the approved project task in the team's own words. A reader should understand the problem, intended users, project objective, and boundaries without first reading the detailed requirements.
-
 ## 1.1 Problem and Project Objective
 
-**Objective:** State the problem, what the approved application aims to enable, and the expected benefit for its intended users.
+**Lost And Found:** Students and university staff lose and find personal belongings every day, such as student ID cards, keys, wallets, headphones, and clothing. Information about lost and found items is posted in various student groups and on social media, making it difficult to review all relevant posts and connect a found item with its owner.
 
-[Problem, objective, and expected benefit in the team's own words; link to the approved task if available.]
+An additional problem is *ownership verification*. Publicly disclosing all identifying characteristics of an item may allow someone who does not own it to request its return. It is therefore necessary to support the verification of certain details without displaying them in the public post.
 
-<details>
-<summary><strong>Expected benefits and supporting evidence</strong></summary>
+***The objective of the Lost & Found project*** is to develop a web application that brings together lost and found item posts in one place. The application should enable users to browse and search posts, view the location where an item was found on a map, submit and process return requests, and privately arrange collection.
 
-**Example — Crisis Guard:** “During severe weather, a citizen may need to find reports relevant to their location. Crisis Guard aims to present location-specific disaster reports on a map so that the citizen can find them in one place.” This names the problem, intended user, proposed capability, and expected benefit. It does **not** claim a measured reduction in response time or integration with an emergency dispatch service. A team still needs to describe the scope approved for its own project.
-
- “The application reduces disaster response time by 30% based on simulations.” The number makes the proposed benefit vivid, but it also calls for a check: **where is the simulation and how was the percentage calculated?** If there is no such evidence, state the expected benefit without a numeric result.
-
-</details>
+*The expected benefit* is easier discovery of relevant posts and coordination of item returns, with less need to publicly share personal contact information. The application helps assess return requests but does not guarantee that the requester is the actual owner.
 
 ## 1.2 Intended Users and Stakeholders
 
-**Objective:** Identify the people or organizations whose needs define the task.
-
 | User or stakeholder group | Need or interest relevant to this project |
 | --- | --- |
-|  |  |
-
-<details>
-<summary><strong>Users, stakeholders, and an optional persona</strong></summary>
-
-**Example — Crisis Guard:**
-
-| User or stakeholder group | Need or interest relevant to this project |
-| --- | --- |
-| Citizen | Find nearby disaster information and submit a report with a location. |
-| Organization coordinating assistance | See reports relevant to the area and available resources, if coordination is within the approved scope. |
-
-These are distinct needs, not two fictional biographies. An actor interacts with the application; a course demonstrator interested in the result need not be an application actor. Use the roles and permissions from your approved task. A persona is optional when it helps resolve a specific design question.
-
-**Optional persona example:** Jane, a disaster management officer, needs current resource information to allocate assistance. This can help when the team must decide what a manager needs to see first. Write a persona only if it explains a design choice; a list of fictional biographies is not a course deliverable.
-
-</details>
+| Students / staff who have lost an item | Find the lost item, contact the finder, and arrange collection. |
+| Students / staff who have found an item | Find the item's owner, verify their ownership, and arrange the handover. |
+| Visitors who are not signed in | Access information about lost and found items without having to sign in. |
+| Administrator | Keep content reliable and appropriate and prevent misuse of the system. |
 
 ## 1.3 Project Boundaries
 
-**Objective:** State the principal capabilities within the approved task, important exclusions, and indispensable external dependencies.
+**Included:**
 
-**Included:** [Principal capabilities.]  
-**Excluded or deferred:** [Important excluded capabilities and a brief reason.]  
-**External dependencies:** [Essential services or information sources, if any.]
+- Creating, browsing, and searching lost and found item posts, with locations displayed on a map
+- The return process → return requests, verification of hidden item details, and private arrangements for collection
+- Suggestions of possible matches
+- In-app notifications
+- Reporting and moderating inappropriate posts
 
-<details>
-<summary><strong>Defining the first project boundary</strong></summary>
+**Excluded or deferred:**
 
-**Example — Crisis Guard:**  
-**Included:** Submitting a located disaster report and viewing reports on a map.  
-**Excluded:** Dispatching emergency services automatically; showing a report does not authorize or initiate an official dispatch.  
-**External dependency:** A map provider supplies the map view; the application retains responsibility for its own report data.
+- Physical storage, delivery, and collection of items (users arrange the handover themselves)
+- The application helps assess ownership but does not guarantee it
+- A separate mobile application is not planned; the project provides a web application adapted for mobile devices
 
-This is a concrete boundary because it separates presenting information from official emergency response and identifies which system supplies the map. The exclusion and dependency are part of the **teaching scenario**, not a claim about what the published application implements; the team's approved scope and application determine those facts.
+**External dependencies:**
 
-**Another example of useful boundary:** Start with flood response coordination for the first implementation. Name the types of incidents or users covered by the approved project rather than promising every emergency workflow. Mention speculative AI prediction or VR training as future work only when they are meaningful next steps, not as presumed first-release features.
-
-An assertion such as “modular architecture enables rapid deployment in new regions” needs an actual design basis. Do not promise adaptability here solely because it sounds like a project benefit.
-
-Keep this overview at the level of scope: identify the main capability and its boundary without listing every requirement or design detail. Report what was actually completed and what remains unfinished in the final results, not in this initial description.
-
-</details>
+- An external identity provider enables sign-in through OAuth 2.0
+- An external mapping or geocoding service enables location selection and display
+- GPS location detection depends on the device's capabilities and the user's permission, with manual selection on the map available as an alternative
 
 ## 1.4 Existing Approaches and Project Rationale
 
-**Objective:** Explain how users currently address the problem and which remaining need motivates the approved project.
+According to the project assignment, information about found items is currently shared in student groups and on social media. This approach enables users to inform others but requires browsing different channels to find a relevant post. Lost & Found aims to bring this information together in one place and enable searches based on item characteristics, location, and time.
 
-[In two to four sentences, describe one current process or relevant solution, what it already provides, and the specific need motivating this project. Cite factual claims about external products or practices.]
-
-<details>
-<summary><strong>Existing approaches and project rationale</strong></summary>
-
-**Example — Crisis Guard project rationale:** “A citizen following a severe-weather event may need to consult a weather-warning source and a separate source of local reports. Crisis Guard's proposed map view brings disaster reports relevant to a selected location together. It does not replace official warnings or emergency services.” This explains the need and the project's intended boundary without claiming that all existing channels are ineffective. The first sentence is an **example user scenario**, not a measured finding about real users. If a team names a particular warning service or competing product, it should link a source. A competitor survey and screenshots are not required.
-
-If an existing solution truly influenced the project, compare only the relevant feature, such as map clarity or a needed integration. Avoid a fixed number of products or a table of criteria unrelated to the approved task.
-
-</details>
+Source: “Lost & Found” project assignment, Sections 1 and 2.

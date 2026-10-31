@@ -1,0 +1,88 @@
+@startuml
+left to right direction
+
+title Lost & Found – Dijagram slučajeva uporabe
+
+skinparam backgroundColor White
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam nodesep 30
+skinparam ranksep 55
+skinparam ArrowColor #505850
+
+skinparam usecase {
+  BackgroundColor #24476B
+  BorderColor #18324D
+  FontColor White
+}
+
+skinparam actor {
+  BackgroundColor #F5F5F5
+  BorderColor #666666
+  FontColor #333333
+  BackgroundColor<<external>> #ECEFF1
+  BorderColor<<external>> #78909C
+}
+
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor #24476B
+  FontStyle bold
+}
+
+actor "Posjetitelj" as Visitor
+actor "Prijavljeni\nkorisnik" as User
+actor "Administrator" as Admin
+
+rectangle "Lost & Found" {
+  usecase "Pregledati, pretražiti\ni filtrirati objave" as Browse
+  usecase "Pregledati detalje objave" as Details
+  usecase "Prijaviti se" as Login
+
+  usecase "Objaviti izgubljeni ili\npronađeni predmet" as Publish
+  usecase "Urediti vlastitu objavu" as Edit
+  usecase "Ukloniti vlastitu objavu" as Remove
+
+  usecase "Zatražiti povrat predmeta" as Request
+  usecase "Prihvatiti ili odbiti\nzahtjev za povrat" as Review
+  usecase "Pratiti status zahtjeva" as Status
+  usecase "Razmjenjivati\nprivatne poruke" as Messages
+
+  usecase "Pregledati moguća\npodudaranja" as Matches
+  usecase "Uključiti obavijesti i pregledati\nobavijesti o podudaranjima" as Notifications
+
+  usecase "Prijaviti\nproblematičnu objavu" as Report
+  usecase "Pregledati prijave i ukloniti\nneprimjeren sadržaj" as Moderate
+}
+
+actor "OAuth pružatelj\nidentiteta" as Identity <<external>>
+actor "Usluga karata" as Maps <<external>>
+
+User --|> Visitor
+
+Visitor -- Browse
+Visitor -- Details
+Visitor -- Login
+
+User -- Publish
+User -- Edit
+User -- Remove
+User -- Request
+User -- Review
+User -- Status
+User -- Messages
+User -- Matches
+User -- Notifications
+User -- Report
+
+Admin -- Login
+Admin -- Moderate
+
+Login -- Identity
+Details -- Maps
+Publish -- Maps
+Edit -- Maps
+
+@enduml

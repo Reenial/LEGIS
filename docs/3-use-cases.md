@@ -1,125 +1,183 @@
 # 3. Use Cases
 
-**Objective:** Show the principal interactions between the application's actors and the system. Describe how an actor achieves a goal and what happens when an important step fails. Base the interactions on the approved requirements and revise them as the application develops.
-
 ## 3.1 Use Case Diagram
 
-**Objective:** Show the system boundary, its relevant actors, and their main goals in **one readable UML use case diagram**. Add a focused second diagram only if the complete view cannot remain clear; a third requires a distinct project-specific reason.
+![Lost & Found use case diagram](./assets/diagrams/lostAndFound.svg)
 
-**Rendered use case diagram:** ![Use case diagram](./assets/diagrams/3-1-crisis-guard-system-UC.svg)  
-**Versioned PlantUML source:** [`Source puml`](./puml/3-1-crisis-guard-system-UC.puml)
-
-**Consistency check:** Show the identified roles that **interact with the application**, not stakeholders who have no interaction. Each main user goal must have an associated actor; an included use case can be reached through another use case without its own direct actor association. Use `<<include>>` and `<<extend>>` only when the relationship expresses actual behavior.
-
-<details>
-<summary><strong>Actors and goals in one diagram</strong></summary>
-
-The diagram below illustrates a **course scenario** with a citizen, a visitor, and an organization that checks available resources. Only include the organization as an actor if the team's approved project actually lets it interact with the application. OAuth is outside this example because it is an implementation-specific sign-in choice and belongs in the requirements only if approved.
-
-[PlantUML source](./puml/3-1-crisis-guard-system-UC.puml) · [Rendered SVG](./assets/diagrams/3-1-crisis-guard-system-UC.svg)
-
-**Actor and goal selection:** The boundary identifies what the application offers, the actors have distinct goals, and no actor or use case claims that this student application dispatches emergency services. Compare the diagram with your approved functional requirements and actors. This PlantUML block is a teaching example, not the versioned source and rendered image of the team's own diagram.
-
-**Five questions for choosing the diagram's content** (not five diagrams to submit):
-
-| Focus | What to ask |
-| --- | --- |
-| Whole system | Which user goals best explain what this application is for? |
-| Key features | Which goals need detail in a description or, if necessary, a separate focused diagram? |
-| User roles | Which actors may participate in each goal, and how do their permissions differ? |
-| Core processes | Which goal has meaningful alternatives that need a use case description? |
-| External integrations | Does another system participate in a use case as a **secondary actor**, such as an approved identity provider during sign-in? |
-
-An external system may appear as a secondary use-case actor when it participates in a user's goal; the architecture describes technical connections. Do not create another required use case diagram solely to inventory integrations. Split a crowded diagram by related actors or goals only when it improves readability.
-
-</details>
-
----
+**PlantUML source:** [Diagram source code](./puml/lost-and-found-UC.puml)
 
 ## 3.2 Use Case Descriptions
 
-**Objective:** For each use case in the diagram, explain the actor's goal, the normal interaction with the application, and meaningful alternatives. Describe straightforward use cases briefly; expand those whose alternatives, external dependencies, or consequences require more explanation.
-
-**Use one vertical table per use case.** Write only as much detail as the interaction needs; omit an inapplicable alternative instead of filling it for form's sake.
-
-### UC-[ID]: [Goal-oriented name]
+### UC-001: Browse, search, and filter posts
 
 | Field | Description |
 | --- | --- |
-| Primary actor | [Actor identified in the requirements.] |
-| Requirement ID(s) | [Existing functional requirement IDs.] |
-| Preconditions, if any | [What must already be true.] |
-| Main flow | [Actor's actions and the application's visible responses; number steps when useful.] |
-| Alternative or failure flows, if any | [Condition and what the application does; refer to a main-flow step when useful.] |
-| Result | [What changes or is confirmed after success.] |
+| Primary actor | Visitor or signed-in user. |
+| Requirement IDs | F-001 |
+| Preconditions | Sign-in is not required. |
+| Main flow | The user opens the list of posts. They can enter a search term and filter posts by type, category, location, and time. The system displays matching results. |
+| Alternative flows | If there are no matching posts, the system displays a message, and the user can change the criteria. |
+| Result | Matching posts or a message indicating that there are no results are displayed. |
 
-<details>
-<summary><strong>Registration and disaster reporting: two examples of the same format</strong></summary>
-
-**UC-001: Register account.** This short example applies to a project whose approved task includes email/password accounts.
+### UC-002: View post details
 
 | Field | Description |
 | --- | --- |
-| Primary actor | Citizen (A-02 in the example) |
-| Requirement ID(s) | F-001 |
-| Preconditions, if any | None. |
-| Main flow | The citizen submits an email address; the application sends a confirmation link; the citizen confirms the account. |
-| Alternative or failure flows, if any | Existing email address → the application explains why registration cannot continue. |
-| Result | The account is active after confirmation. |
+| Primary actor | Visitor or signed-in user. |
+| Requirement IDs | F-002 |
+| Preconditions | The post is publicly available. Sign-in is not required. |
+| Main flow | The user selects a post. The system displays the post type, category, item title and description, date or approximate time of the event, status, location on a map, and a photograph if one has been added. The hidden item detail is not publicly displayed. |
+| Alternative flows | If the post has been removed, the system informs the user that it is unavailable. If the map cannot be loaded, the remaining information is displayed with a message stating that the map is unavailable. |
+| Result | The user has viewed the public information about the item. |
 
-If the approved task instead uses OAuth-only sign-in, replace this example with the relevant sign-in behavior; do not add local-password registration solely to match the example.
-
-**UC-002: Submit disaster report.** The same fields accommodate a longer flow when location selection, validation, and storage can fail.
+### UC-003: Sign in
 
 | Field | Description |
 | --- | --- |
-| Primary actor | Citizen |
-| Requirement ID(s) | F-004 |
-| Preconditions, if any | The report form is available. If the approved task requires sign-in, the citizen has signed in. |
-| Main flow | 1. The citizen opens the report form; the application shows fields for disaster type, severity, description, and location.<br>2. The citizen enters the details and selects a location on the map or by another supported method.<br>3. The citizen submits the form; the application checks the required fields and the location.<br>4. The application records the report and displays confirmation with a reference to it. |
-| Alternative or failure flows, if any | **1a — Sign-in fails:** If sign-in is required and the identity provider does not complete it, the report remains unsubmitted and the application explains how to retry.<br>**2a — Location permission denied:** If geolocation is offered but denied, the citizen selects the location manually if that option exists; the flow continues at step 3.<br>**3a — Invalid or missing location:** The application explains the problem, preserves entered information where possible, and does not record the report; the citizen corrects it and retries step 3.<br>**3b — Storage fails:** The application reports failure and does not falsely confirm submission. |
-| Result | The application records the report and confirms its submission. |
+| Primary actor | Visitor or administrator who is not signed in. |
+| Secondary actor | External identity provider. |
+| Requirement IDs | F-003 |
+| Preconditions | The user has an account with the selected identity provider. |
+| Main flow | 1. The user selects the sign-in option.<br>2. The system redirects them to an external identity provider to sign in using OAuth 2.0.<br>3. The user completes the sign-in process with the provider.<br>4. The system validates the provider's response and establishes a user session. |
+| Alternative flows | If the user cancels or sign-in fails, they remain signed out and can use public functionality. |
+| Result | The user is signed in and can access actions according to their assigned role. |
 
-**Choosing the level of detail:** Both examples use the same fields. UC-001 is brief because its principal exception is clear; UC-002 needs numbered steps and alternatives because they change the outcome and can guide tests. Remove sign-in or geolocation branches that do not exist in the team's application. Notifying rescue teams, initiating a rescue operation, or delivering responders' updates introduces **separate capabilities with external consequences**; document them only if the approved task and implementation support them. Password recovery applies to local-password accounts, not automatically to an OAuth-only task. Use the requirement IDs and behavior of your own application when adapting these examples.
+### UC-004: Publish a lost or found item post
 
-</details>
+| Field | Description |
+| --- | --- |
+| Primary actor | Signed-in user. |
+| Secondary actor | External map service. |
+| Requirement IDs | F-004, F-005 |
+| Preconditions | The user is signed in. |
+| Main flow | 1. The user opens the form for a new post.<br>2. They enter the post type, category, item title and description, and the date or approximate time of the event.<br>3. They specify the location using GPS or by selecting it on a map.<br>4. They optionally add a photograph and a hidden detail for ownership verification.<br>5. They confirm publication.<br>6. The system validates the information, saves the post, and displays confirmation. |
+| Alternative flows | **GPS is unavailable or permission is denied:** The user selects the location on a map.<br>**Information is incomplete or invalid:** The system requests corrections before saving.<br>**Saving fails:** The system displays an error and does not confirm publication. |
+| Result | The post is available for browsing, and the hidden detail is not publicly displayed. |
+
+### UC-005: Edit own post
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Post author. |
+| Secondary actor | External map service when changing the location. |
+| Requirement IDs | F-005, F-006 |
+| Preconditions | The user is signed in and is the author of an existing post. |
+| Main flow | The user selects the option to edit their post, changes the information, and confirms saving. The system checks permissions and validates the information, then saves the changes. |
+| Alternative flows | If the information is invalid, the system requests corrections. If the user is not the post author, the system rejects the edit. |
+| Result | The post is updated, and the hidden detail remains excluded from public view. |
+
+### UC-006: Remove own post
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Post author. |
+| Requirement IDs | F-007 |
+| Preconditions | The user is signed in and is the author of an existing post. |
+| Main flow | The user selects the option to remove their post and confirms the decision. The system checks permissions and removes the post from public view. |
+| Alternative flows | If the user cancels, the post remains available. If they are not the post author, the system rejects the removal. |
+| Result | The post is no longer publicly available. |
+
+### UC-007: Request the return of an item
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Signed-in user who believes they own the item. |
+| Requirement IDs | F-008 |
+| Preconditions | The user is signed in, and the found item post is available for submitting a request. |
+| Main flow | 1. The user opens the post and selects the option to submit a return request.<br>2. They provide information supporting their ownership claim, including item characteristics that are not publicly displayed.<br>3. They submit the request.<br>4. The system saves the request and makes it available to the post author.<br>5. The user is shown confirmation and a request status indicating that a decision is pending. |
+| Alternative flows | **Required information is missing:** The system requests the missing information.<br>**The post is no longer available for a return request:** The system does not save the request and informs the user.<br>**Submission fails:** The system does not confirm submission and displays an error. |
+| Result | The request has been sent to the post author. Its contents are not publicly available. |
+
+### UC-008: Accept or reject a return request
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Post author. |
+| Requirement IDs | F-009 |
+| Preconditions | The author is signed in, and a request for their post is awaiting a decision. |
+| Main flow | 1. The author opens the return request.<br>2. They review the provided information and compare it with the item's characteristics, including the hidden detail if one has been recorded.<br>3. They assess the request and accept or reject it.<br>4. The system saves the decision and displays the updated status to the author and the requester. |
+| Alternative flows | **Insufficient information:** The author can request additional information through a private message and make a decision later.<br>**Unauthorized processing attempt:** The system rejects the change if the user is not the post author.<br>**Saving fails:** The system does not confirm the status change and displays an error. |
+| Result | The request is accepted or rejected. Acceptance does not mean that the physical handover of the item has already been completed. |
+
+### UC-009: Track request status
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Requester or author of the associated post. |
+| Requirement IDs | F-010 |
+| Preconditions | The user is signed in. |
+| Main flow | The user opens the overview of sent or received requests. The system displays requests in which the user participates and their current statuses. |
+| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. |
+| Result | The user is informed about the status of their sent or received requests. |
+
+### UC-010: Exchange private messages
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Requester or author of the associated post. |
+| Requirement IDs | F-011 |
+| Preconditions | The user is signed in, and a return request has already been submitted. Acceptance of the request is not required for communication. |
+| Main flow | The user opens the conversation associated with the request, reviews messages, and sends a new message. The system saves it and makes it available to the other participant to help verify ownership or arrange collection. |
+| Alternative flows | The system denies access to a user who is not a participant in the conversation. If sending fails, the message is not shown as successfully sent. |
+| Result | Participants can exchange information privately without publicly sharing contact details. |
+
+### UC-011: View possible matches
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Signed-in user. |
+| Requirement IDs | F-012 |
+| Preconditions | The user is signed in and has a post for which matches are being sought. |
+| Main flow | The user opens the possible matches for their post. The system displays suggestions based on category, description, time, and location. The user can open the details of a suggested post. |
+| Alternative flows | If there are no possible matches, the system displays an appropriate message. |
+| Result | The user has reviewed the suggestions. A match does not confirm ownership. |
+
+### UC-012: Enable notifications and view match notifications
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Signed-in user who has published a lost item post. |
+| Requirement IDs | F-013 |
+| Preconditions | The user is signed in and has a lost item post. |
+| Main flow | The user enables notifications about possible matches. When a new post matches their post according to the matching criteria, the system displays an in-app notification. The user opens the notification and the associated post. |
+| Alternative flows | If notifications are not enabled or there are no new matches, the system does not create a new notification. If the associated post is no longer available, the system informs the user. |
+| Result | Notifications about new possible matches are available to the user who has enabled them. |
+
+### UC-013: Report a problematic post
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Signed-in user. |
+| Requirement IDs | F-014 |
+| Preconditions | The user is signed in. The post is available. |
+| Main flow | The user selects the option to report a post, provides a reason, and submits the report. The system saves it and makes it available to the administrator. |
+| Alternative flows | If no reason is provided, the system requests one. If the post has been removed in the meantime, the system informs the user. |
+| Result | The report is available to the administrator. Submitting the report does not automatically remove the post. |
+
+### UC-014: Review reports and remove inappropriate content
+
+| Field | Description |
+| --- | --- |
+| Primary actor | Administrator. |
+| Requirement IDs | F-015 |
+| Preconditions | The administrator is signed in and has administrator privileges. |
+| Main flow | The administrator opens a report and reviews the reason and the associated post. If they determine that the content is inappropriate, they select and confirm removal. The system removes the post from public view. |
+| Alternative flows | If the report is unjustified, the post remains available. If there are no reports or the post has already been removed, the system displays an appropriate message. The system denies access to users without administrator privileges. |
+| Result | The report has been reviewed, and inappropriate content has been removed if the administrator determined that removal was justified. |
 
 ---
 
 ## 3.3 Use Case Consistency Check
 
-**Objective:** Check that use cases, actors, and requirements agree with one another and with the application the team demonstrates.
+The following questions help the team check consistency between the use cases, requirements, and application.
 
 | Check | Question for the team |
 | --- | --- |
-| Requirement | Does each important use case link to an existing requirement? |
-| Actor | Does the actor here match an identified role and its permitted interaction? |
-| Application | Can the team demonstrate the described main result and important alternative, or is the description marked as a current design? |
-
----
-
-Maintain the requirement-to-use-case-to-test mapping **once, in the [requirement traceability table](./2.-Requirements)**. Do not maintain a second project mapping or an implementation-status column here. If an important requirement has no interaction with a human actor, explain where it is addressed instead of inventing an actor.
-
-<details>
-<summary><strong>Checking requirement coverage</strong></summary>
-
-**Example — a use-case coverage table to examine:**
-
-| Use Case Number | Use Case Name | Functional Requirements Covered |
-| --- | --- | --- |
-| UC-001 | Register account | F-001: Account registration by email |
-| UC-002 | Disaster Reporting | F-022: Disaster event reporting and validation |
-| UC-003 | Emergency Alert System | F-045: Sending alerts to users and teams |
-| UC-004 | Rescue Coordination | F-067: Coordinating with emergency services |
-
----
-
-**Coverage issues to resolve:** 
-
-- **Wrong requirement ID:** this table links UC-002 to F-022, but the UC-002 description in 3.2 cites F-004, the report-submission requirement in 2.1.
-- **Requirements that do not exist:** F-022, F-045, and F-067 are not defined in the example requirements in 2.1.
-- **Use cases without descriptions:** UC-003 and UC-004 have no description in 3.2. UC-004 (coordinating with emergency services) is also a capability with external consequences, which the scope allows only if the approved task includes it.
-- **Actor mismatch:** the actor example in 2.3 has the Disaster Manager submitting reports (F-004), while UC-002 has a Citizen submitting them.
-
-
-</details>
+| Requirement links | Does each use case from UC-001 to UC-014 reference the appropriate requirement IDs from the second document? |
+| Public access | Can visitors browse, search, and filter posts and view their details without signing in, as described in UC-001 and UC-002? |
+| User permissions | Do UC-005 and UC-006 allow only the post author to edit and remove the post, and does UC-008 allow only the author of the associated post to process a request? |
+| Ownership verification | Does the hidden detail remain private in UC-002, and is it used to assess ownership in the process described in UC-007 and UC-008? |
+| Private communication | Is the conversation in UC-010 available only to the participants after a request has been submitted, without requiring prior acceptance? |
+| Reporting and moderation | Is reporting posts in UC-013 available only to signed-in users, and is moderation in UC-014 available only to the administrator? |
+| Alternative flows | Does UC-004 allow manual location selection when GPS is unavailable and prevent incomplete information from being saved? |
+| Application verification | Can the team demonstrate the described main and alternative flows, or are they still marked as planned behavior? |

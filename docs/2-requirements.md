@@ -1,112 +1,113 @@
 # 2. Requirement Analysis
 
-Zahtjevi aplikacije **Lost & Found** temelje se na [projektnom zadatku](./assets/Lost_and_Found_Projektni_zadatak_261012_155026.pdf) (odjeljci 1–3), [opsegu projekta](./1-Project-Scope.md) i [slučajevima uporabe](./3-use-cases.md). Svaki ima oznaku, prioritet i kriterij prihvaćanja. Značajne promjene bilježe se u odjeljku 2.5.
+The requirements for the **Lost & Found** application are based on the [project assignment](./assets/Lost_and_Found_Projektni_zadatak_261012_155026.pdf) (Sections 1–3), the [project scope](./1-Project-Scope.md), and the [use cases](./3-use-cases.md). Each requirement has an identifier, a priority, and an acceptance criterion. Significant changes are recorded in Section 2.5.
 
-**High** označava osnovne funkcionalnosti i zaštitu podataka, a **Medium** podudaranja i obavijesti. Svi zahtjevi ostaju u opsegu, neovisno o prioritetu.
+**High** indicates core functionality and data protection, while **Medium** indicates matching and notifications. All requirements remain within scope, regardless of their priority.
 
 ## 2.1 Functional Requirements
 
 | ID | Description | Priority | Source | Acceptance criteria |
 | --- | --- | --- | --- | --- |
-| F-001 | Sustav omogućuje pregled i pretraživanje objava bez prijave te filtriranje prema vrsti, kategoriji, lokaciji i vremenu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Korisnik odabire ponuđene ključne riječi za predmet koji traži; ako odgovarajuće nema, unosi vlastiti tekst pod „ostalo”. Kombinirani kriteriji vraćaju samo odgovarajuće objave; ako ih nema, prikazuje se obavijest i omogućuje promjena kriterija. |
-| F-002 | Sustav prikazuje javne podatke objave i lokaciju na karti. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Dostupni su vrsta, kategorija, naziv, opis, datum ili približno vrijeme, status povrata, lokacija i fotografija ako postoji. Vrsta objave je „izgubljeno” ili „pronađeno”; status „na čekanju” znači da je predmet pronađen, ali nije uručen, a „predano” da ga je pronalazitelj označio predanim. |
-| F-003 | Sustav omogućuje prijavu preko vanjskog pružatelja identiteta putem OAuth 2.0. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Uspješna provjera odgovora pružatelja uspostavlja sesiju i dopušta radnje prema ulozi. Odustajanje ili neuspjeh ne daje pristup zaštićenim radnjama; javni pregled ostaje dostupan. |
-| F-004 | Prijavljeni korisnik može objaviti izgubljeni ili pronađeni predmet. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Spremaju se vrsta, kategorija, naziv, opis, datum ili približno vrijeme te lokacija; fotografija i skriveni detalj su neobvezni. Pri opisu predmeta korisnik odabire ponuđene ključne riječi, a ako odgovarajuće nema, upisuje vlastiti tekst pod „ostalo”; odabir i unos spremaju se uz objavu. Nepotpuni ili neispravni obvezni podaci traže ispravak i ne stvaraju objavu. |
-| F-005 | Korisnik može odrediti lokaciju GPS-om ili ručnim odabirom na karti. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Odabrana lokacija sprema se uz objavu i prikazuje u detaljima; odbijeno dopuštenje ili nedostupan GPS ne sprječava ručni odabir. |
-| F-006 | Autor može urediti vlastitu objavu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Valjane izmjene autora vidljive su nakon ponovnog otvaranja; nevaljane izmjene i pokušaji drugog korisnika odbijaju se bez promjene podataka. Skriveni detalj ostaje nejavan. |
-| F-007 | Autor može ukloniti vlastitu objavu iz javnog prikaza. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Potvrđeno uklanjanje čini objavu javno nedostupnom; odustajanje je ne mijenja. Drugi korisnik ne može ukloniti objavu ovom radnjom. |
-| F-008 | Prijavljeni korisnik može poslati zahtjev za povrat dostupnog pronađenog predmeta uz obrazloženje vlasništva. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Valjan zahtjev dostupan je autoru i podnositelju sa statusom čekanja odluke; nije javan. Nedostatak obveznih informacija ili nedostupna objava sprječava spremanje. Podnositelj može povući svoj zahtjev; povlačenje se prikazuje obama sudionicima. |
-| F-009 | Autor povezane objave može pregledati informacije iz zahtjeva, usporediti obilježja sa skrivenim detaljem ako postoji te prihvatiti ili odbiti zahtjev. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Samo autor donosi i može promijeniti odluku; aktualni status vide oba sudionika. Prihvaćanje ne označava automatski izvršenu fizičku predaju; pronalazitelj zasebno označava predmet predanim. |
-| F-010 | Sudionici mogu pregledati svoje poslane i primljene zahtjeve te njihove statuse. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Pregled sadrži samo zahtjeve u kojima korisnik sudjeluje i aktualne statuse; prazan pregled ima odgovarajuću obavijest. Izravan pristup tuđem zahtjevu odbija se. |
-| F-011 | Autor objave i podnositelj poslanog zahtjeva mogu razmjenjivati privatne poruke radi provjere vlasništva i dogovora predaje. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Poruka je nakon spremanja dostupna drugom sudioniku; razgovor je dostupan i prije prihvaćanja zahtjeva. Treća osoba ne može čitati ni slati poruke u tom razgovoru. |
-| F-012 | Sustav predlaže moguća podudaranja izgubljenih i pronađenih predmeta prema kategoriji, opisu, vremenu i lokaciji. | Medium | Projektni zadatak, odjeljak 2. | Korisnik može pregledati predložene objave i otvoriti njihove detalje. Ako nema mogućih podudaranja, sustav prikazuje odgovarajuću obavijest. Prijedlog podudaranja nije potvrda vlasništva. Pravila usporedbe potrebno je razraditi tijekom projektiranja. |
-| F-013 | Korisnik može uključiti obavijesti u aplikaciji o mogućim podudaranjima svojih izgubljenih predmeta. | Medium | Projektni zadatak, odjeljak 2. | Kada je uključio obavijesti, korisnik dobiva obavijest u aplikaciji o novoj objavi koja prema kategoriji, opisu, vremenu ili lokaciji odgovara njegovoj objavi izgubljenog predmeta. Bez uključivanja ili novog odgovarajućeg podudaranja ne stvara se obavijest. |
-| F-014 | Prijavljeni korisnik može prijaviti sumnjivu, netočnu ili neprimjerenu objavu uz navođenje razloga. | High | Projektni zadatak, odjeljak 2; dogovor tima 28. listopada 2026. | Prijava s razlogom postaje dostupna administratoru; prazan razlog traži dopunu. Neprijavljenom korisniku slanje prijave nije dopušteno. Sama prijava ne uklanja objavu. |
-| F-015 | Administrator može pregledati prijave i ukloniti neprimjerenu objavu. | High | Projektni zadatak, odjeljak 2; razrada u 2.5. | Administrator vidi razlog i povezanu objavu; potvrđeno uklanjanje čini je javno nedostupnom. Neopravdana prijava ne zahtijeva uklanjanje. Korisnik bez administratorske uloge ne može pristupiti moderiranju. |
+| F-001 | The system allows users to browse and search posts without signing in and to filter them by type, category, location, and time. | High | Project assignment, Section 2; elaboration in Section 2.5. | The user selects suggested keywords for the item they are looking for; if no suitable keyword is available, they enter their own text under “Other”. Combined criteria return only matching posts; if there are none, the system displays a message and allows the user to change the criteria. |
+| F-002 | The system displays the public information of a post and its location on a map. | High | Project assignment, Section 2; elaboration in Section 2.5. | The type, category, title, description, date or approximate time, return status, location, and photograph, if available, are accessible. The post type is “lost” or “found”; the “pending” status means that the item has been found but has not been handed over, while “handed over” means that the finder has marked it as handed over. |
+| F-003 | The system allows users to sign in through an external identity provider using OAuth 2.0. | High | Project assignment, Section 2; elaboration in Section 2.5. | Successful validation of the provider's response establishes a session and enables actions according to the user's role. Cancellation or failure does not grant access to protected actions; public browsing remains available. |
+| F-004 | A signed-in user can publish a lost or found item post. | High | Project assignment, Section 2; elaboration in Section 2.5. | The type, category, title, description, date or approximate time, and location are saved; a photograph and a hidden detail are optional. When describing the item, the user selects suggested keywords or enters their own text under “Other” if no suitable keyword is available; the selection and entered text are saved with the post. Incomplete or invalid required information must be corrected and does not result in a new post. |
+| F-005 | The user can specify the location using GPS or by selecting it manually on a map. | High | Project assignment, Section 2; elaboration in Section 2.5. | The selected location is saved with the post and displayed in its details; denied permission or unavailable GPS does not prevent manual selection. |
+| F-006 | The author can edit their own post. | High | Project assignment, Section 2; elaboration in Section 2.5. | Valid changes made by the author are visible when the post is reopened; invalid changes and attempts by another user are rejected without changing the data. The hidden detail remains private. |
+| F-007 | The author can remove their own post from public view. | High | Project assignment, Section 2; elaboration in Section 2.5. | Confirmed removal makes the post publicly inaccessible; cancellation leaves it unchanged. Another user cannot remove the post through this action. |
+| F-008 | A signed-in user can submit a return request for an available found item, providing information to support their ownership claim. | High | Project assignment, Section 2; elaboration in Section 2.5. | A valid request is accessible to the author and the requester with a status indicating that a decision is pending; it is not public. Missing required information or an unavailable post prevents the request from being saved. The requester can withdraw their request; the withdrawal is visible to both participants. |
+| F-009 | The author of the associated post can review the information in a request, compare the item's characteristics with the hidden detail if one exists, and accept or reject the request. | High | Project assignment, Section 2; elaboration in Section 2.5. | Only the author can make and change the decision; both participants can see the current status. Acceptance does not automatically indicate that the physical handover has been completed; the finder separately marks the item as handed over. |
+| F-010 | Participants can view their sent and received requests and their statuses. | High | Project assignment, Section 2; elaboration in Section 2.5. | The overview contains only requests in which the user participates and their current statuses; an empty overview displays an appropriate message. Direct access to another user's request is denied. |
+| F-011 | The post author and the requester who has submitted a request can exchange private messages to verify ownership and arrange the handover. | High | Project assignment, Section 2; elaboration in Section 2.5. | Once saved, a message is available to the other participant; the conversation is available even before the request is accepted. A third party cannot read or send messages in that conversation. |
+| F-012 | The system suggests possible matches between lost and found items based on category, description, time, and location. | Medium | Project assignment, Section 2. | The user can browse suggested posts and open their details. If there are no possible matches, the system displays an appropriate message. A suggested match does not confirm ownership. Comparison rules must be elaborated during design. |
+| F-013 | The user can enable in-app notifications about possible matches for their lost items. | Medium | Project assignment, Section 2. | When notifications are enabled, the user receives an in-app notification about a new post that matches their lost item post based on category, description, time, or location. No notification is created if notifications are not enabled or there is no new corresponding match. |
+| F-014 | A signed-in user can report a suspicious, inaccurate, or inappropriate post and provide a reason. | High | Project assignment, Section 2; team agreement of 28 October 2026. | A report containing a reason becomes available to the administrator; an empty reason requires completion. A user who is not signed in cannot submit a report. Submitting a report does not itself remove the post. |
+| F-015 | The administrator can review reports and remove inappropriate posts. | High | Project assignment, Section 2; elaboration in Section 2.5. | The administrator can see the reason and the associated post; confirmed removal makes the post publicly inaccessible. An unjustified report does not require removal. A user without the administrator role cannot access moderation. |
 
 ## 2.2 Non-Functional Requirements
 
-Navedene provjere predstavljaju očekivane kriterije kvalitete. Rezultati provjera bilježe se u poglavlju o testiranju.
+The checks below represent the expected quality criteria. Verification results are recorded in the testing chapter.
 
 | ID | Description | Priority | Source |
 | --- | --- | --- | --- |
-| NF-001 | Skriveni detalji predmeta, sadržaj zahtjeva i privatne poruke ne smiju biti dostupni neovlaštenim korisnicima ni kroz sučelje ni izravnim zahtjevom poslužitelju. Provjera: usporediti pristup autora, sudionika, trećeg korisnika i neprijavljenog posjetitelja. | High | Projektni zadatak odjeljci 1–2; Opseg, odjeljak 1.1 i odjeljak 1.3; UC-002, UC-007–UC-010. |
-| NF-002 | Poslužitelj mora provjeriti identitet i ovlasti pri svakoj zaštićenoj radnji. Provjera: bez sesije, s nevaljanom sesijom i kao drugi korisnik pokušati uređivanje, uklanjanje, obradu zahtjeva i moderiranje; pristup se odbija bez promjene podataka. | High | UC-003, UC-005, UC-006, UC-008, UC-014; razrada ograničenja pristupa. |
-| NF-003 | Osnovni pregled, pretraživanje, objava i slanje zahtjeva moraju biti uporabivi u mobilnom pregledniku. Provjera: na mobilnom prikazu svi potrebni unosi i radnje dostupni su bez vodoravnog pomicanja stranice. | High | Projektni zadatak, odjeljak 3; Opseg, odjeljak 1.3. |
-| NF-004 | Odbijanje dopuštenja za GPS ne smije onemogućiti objavu: korisnik može ručno odabrati lokaciju. Ako se karta u detaljima ne učita, ostali javni podaci ostaju vidljivi uz obavijest o nedostupnoj karti. | High | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-002, UC-004. |
-| NF-005 | Neuspjelo spremanje objave, zahtjeva, odluke ili poruke mora dati vidljivu pogrešku bez lažne potvrde uspjeha. Provjera: izazvati neuspjeh spremanja u testnom okruženju za svaku navedenu radnju i provjeriti poruku te pohranjeno stanje. | High | Alternativni tijekovi UC-004, UC-007, UC-008, UC-010. |
+| NF-001 | Hidden item details, request contents, and private messages must not be accessible to unauthorized users through either the interface or direct requests to the server. Verification: compare access as the author, a participant, a third-party user, and a visitor who is not signed in. | High | Project assignment, Sections 1–2; Scope, Sections 1.1 and 1.3; UC-002, UC-007–UC-010. |
+| NF-002 | The server must verify identity and permissions for every protected action. Verification: attempt editing, removal, request processing, and moderation without a session, with an invalid session, and as another user; access is denied without changing the data. | High | UC-003, UC-005, UC-006, UC-008, UC-014; elaboration of access restrictions. |
+| NF-003 | Basic browsing, searching, posting, and request submission must be usable in a mobile browser. Verification: all required inputs and actions are accessible in the mobile view without horizontal page scrolling. | High | Project assignment, Section 3; Scope, Section 1.3. |
+| NF-004 | Denying GPS permission must not prevent posting: the user can select a location manually. If the map in the post details fails to load, the other public information remains visible, accompanied by a message stating that the map is unavailable. | High | Project assignment, Section 2; Scope, Section 1.3; UC-002, UC-004. |
+| NF-005 | Failure to save a post, request, decision, or message must produce a visible error without falsely confirming success. Verification: cause a save failure in a test environment for each listed action and check both the message and the stored state. | High | Alternative flows of UC-004, UC-007, UC-008, UC-010. |
 
-Numerički ciljevi odziva, broja istodobnih korisnika i dostupnosti nisu utvrđeni u postojećim izvorima; ne preuzimaju se vrijednosti iz nastavnih primjera.
+Numerical targets for response time, concurrent users, and availability have not been established in the existing sources; values from teaching examples are not adopted.
 
 ## 2.3 Stakeholders and Actors
 
 | Role or actor ID | Relation to the system | Relevant requirements |
 | --- | --- | --- |
-| A-01 Posjetitelj | Neprijavljeni korisnik pregledava javne objave i pokreće prijavu. | F-001–F-003 |
-| A-02 Prijavljeni korisnik | Student ili zaposlenik; ovisno o radnji nastupa kao autor objave, pronalazitelj ili podnositelj zahtjeva. Autor i podnositelj nisu zasebne trajne uloge računa. | F-001–F-014; NF-001–NF-005. |
-| A-03 Administrator | Prijavljuje se, pregledava prijave i uklanja neprimjeren sadržaj. Administratorska uloga sama po sebi ne daje pristup privatnim razgovorima. | F-003, F-015; NF-001, NF-002. |
-| A-04 Vanjski pružatelj identiteta | Vanjski sustav sudjeluje u prijavi korisnika. | F-003; NF-002. |
-| A-05 Usluga karata | Vanjski sustav omogućuje prikaz i odabir lokacije. GPS ovisi i o pregledniku odnosno uređaju. | F-002, F-005; NF-004. |
-| S-01 Projektni tim | Dionik odgovoran za razvoj i usklađivanje zahtjeva; nema posebnu aplikacijsku ulogu. | Svi zahtjevi. |
-| S-02 Nastavno osoblje kolegija | Dionik koji prati i vrednuje projekt; nema posebnu aplikacijsku ulogu. | Opseg projekta i provjerljivost zahtjeva. |
+| A-01 Visitor | A user who is not signed in browses public posts and initiates sign-in. | F-001–F-003 |
+| A-02 Signed-in user | A student or staff member; depending on the action, they act as the post author, finder, or requester. Author and requester are not separate permanent account roles. | F-001–F-014; NF-001–NF-005. |
+| A-03 Administrator | Signs in, reviews reports, and removes inappropriate content. The administrator role does not itself grant access to private conversations. | F-003, F-015; NF-001, NF-002. |
+| A-04 External identity provider | An external system participates in user sign-in. | F-003; NF-002. |
+| A-05 Map service | An external system enables location display and selection. GPS also depends on the browser or device. | F-002, F-005; NF-004. |
+| S-01 Project team | A stakeholder responsible for development and requirements alignment; has no special application role. | All requirements. |
+| S-02 Course teaching staff | A stakeholder that monitors and evaluates the project; has no special application role. | Project scope and requirement verifiability. |
 
-Izvori: Opseg, odjeljak 1.2 i dijagram te opisi slučajeva uporabe.
+Sources: Scope, Section 1.2, and the use case diagram and descriptions.
 
 ## 2.4 Constraints and Assumptions
 
 | ID | Constraint or assumption | Source | Consequence or way to verify |
 | --- | --- | --- | --- |
-| C-01 | Prijava se ostvaruje preko vanjskog pružatelja identiteta putem OAuth 2.0. | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-003. | Tim odabire pružatelja tijekom projektiranja; provjeriti uspješnu, otkazanu i neuspjelu prijavu. |
-| C-02 | Lokacija ovisi o vanjskoj usluzi karata; GPS ovisi o uređaju i dopuštenju korisnika. | Projektni zadatak odjeljci 2–3; Opseg, odjeljak 1.3. | Osigurati ručni odabir lokacije i provjeriti uskraćeno GPS dopuštenje te nedostupnost karte prema NF-004. |
-| C-03 | Predaja, dostava i fizičko čuvanje predmeta izvan su sustava. | Projektni zadatak, odjeljak 2; Opseg, odjeljak 1.3; UC-008, UC-010. | Sustav omogućuje dogovor; prihvaćen zahtjev nije dokaz izvršene predaje. |
-| C-04 | Sustav pomaže u procjeni vlasništva, ali ga ne jamči. | Opseg odjeljak 1.1 i odjeljak 1.3; UC-011. | Odluku o zahtjevu donosi autor objave; prijedlog podudaranja nije potvrda vlasništva. |
-| C-05 | Razvija se web-aplikacija prilagođena mobilnim uređajima, bez zasebne mobilne aplikacije. | Projektni zadatak, odjeljak 3; Opseg, odjeljak 1.3. | Provjeriti mobilni prikaz prema NF-003. |
-| C-06 | Prijavljivanje problematičnih objava dostupno je samo prijavljenim korisnicima. | Dogovor tima, 28. listopada 2026. | Provjeriti da prijavljeni korisnik može poslati prijavu, a neprijavljeni ne može. |
-| AS-03 | Odabrane vanjske usluge bit će dostupne u razvojnom i demonstracijskom okruženju. | Vanjske ovisnosti iz opsega odjeljak 1.3. | Provjeriti konfiguraciju, uvjete korištenja i dostupnost pri integraciji; trenutačni izvori ne određuju pružatelje ni jamstva dostupnosti. |
+| C-01 | Sign-in is provided through an external identity provider using OAuth 2.0. | Project assignment, Section 2; Scope, Section 1.3; UC-003. | The team selects the provider during design; verify successful, cancelled, and failed sign-in. |
+| C-02 | Location functionality depends on an external map service; GPS depends on the device and the user's permission. | Project assignment, Sections 2–3; Scope, Section 1.3. | Provide manual location selection and verify denied GPS permission and map unavailability according to NF-004. |
+| C-03 | Item handover, delivery, and physical storage are outside the system. | Project assignment, Section 2; Scope, Section 1.3; UC-008, UC-010. | The system enables coordination; an accepted request is not proof that the handover has been completed. |
+| C-04 | The system helps assess ownership but does not guarantee it. | Scope, Sections 1.1 and 1.3; UC-011. | The post author decides on the request; a suggested match does not confirm ownership. |
+| C-05 | The project develops a web application adapted for mobile devices, without a separate mobile application. | Project assignment, Section 3; Scope, Section 1.3. | Verify the mobile view according to NF-003. |
+| C-06 | Reporting problematic posts is available only to signed-in users. | Team agreement, 28 October 2026. | Verify that a signed-in user can submit a report and a user who is not signed in cannot. |
+| AS-03 | The selected external services will be available in the development and demonstration environments. | External dependencies from Scope, Section 1.3. | Verify configuration, terms of use, and availability during integration; the current sources do not specify providers or availability guarantees. |
 
 ## 2.5 Significant Requirement Changes
 
-U nastavku su zabilježene značajne dopune zahtjeva tijekom njihove razrade.
+Significant additions made during requirements elaboration are recorded below.
 
 | Date | Requirement ID | Change and reason | Agreed with / evidence |
 | --- | --- | --- | --- |
-| 2026-10-28 | F-014, C-06 | Određeno je da samo prijavljeni korisnici mogu prijavljivati problematične objave. | Dogovor projektnog tima. |
+| 2026-10-28 | F-014, C-06 | It was established that only signed-in users can report problematic posts. | Project team agreement. |
 
-Ključne riječi i unos „ostalo” koriste se pri objavi i traženju predmeta. Tim periodično pregledava unose „ostalo” radi poboljšanja filtara; automatsko dodavanje riječi nije zahtjev. Pravila za višestruke zahtjeve i zahtjeve za vlastitu objavu još nisu definirana.
+Keywords and the “Other” input are used when posting and searching for items. The team periodically reviews “Other” entries to improve the filters; automatically adding keywords is not a requirement. Rules for multiple requests and requests for one's own post have not yet been defined.
 
 ## 2.6 Requirement Traceability
 
-Slučajevi uporabe povezani su u nastavku. Sve navedene provjere su **planirane, nisu izvršene**. Projektne testove i ručne postupke treba dokumentirati u [odjeljku 5.2](./5-Testing.md#52-test-cases), a rezultate u odjeljku 5.3. Nastavni primjeri u tom poglavlju nisu projektni testovi.
+The associated use cases are listed below. All listed checks are **planned and have not been performed**. Project tests and manual procedures should be documented in [Section 5.2](./5-Testing.md#52-test-cases), and results in Section 5.3. Teaching examples in that chapter are not project tests.
 
 | Requirement ID | Use case or design location | Test or verification location |
 | --- | --- | --- |
-| F-001 | UC-001 — [opis](./3-use-cases.md#uc-001-pregledati-pretražiti-i-filtrirati-objave). | Pregled bez prijave, pretraživanje, kombiniranje filtara prema vrsti, kategoriji, lokaciji i vremenu te prikaz praznog rezultata. |
-| F-002 | UC-002 — [opis](./3-use-cases.md#uc-002-pregledati-detalje-objave). | Prikaz javnih detalja, statusa, lokacije i fotografije ako postoji; skriveni detalj nije javan; uklonjena objava nije dostupna. |
-| F-003 | UC-003 — [opis](./3-use-cases.md#uc-003-prijaviti-se). | Uspješna, otkazana i neuspjela prijava putem OAuth 2.0; dostupnost radnji prema korisničkoj ulozi. |
-| F-004 | UC-004 — [opis](./3-use-cases.md#uc-004-objaviti-izgubljeni-ili-pronađeni-predmet). | Valjana objava izgubljenog i pronađenog predmeta; nedostatak obveznih podataka; objava s fotografijom i skrivenim detaljem te bez njih. |
-| F-005 | UC-004, UC-005 — [opisi](./3-use-cases.md). | Određivanje lokacije GPS-om i ručnim odabirom na karti; provjera spremljene lokacije nakon objave ili izmjene. |
-| F-006 | UC-005 — [opis](./3-use-cases.md#uc-005-urediti-vlastitu-objavu). | Uređivanje kao autor; odbijanje uređivanja drugog korisnika; odbijanje nevaljanih podataka bez promjene postojeće objave. |
-| F-007 | UC-006 — [opis](./3-use-cases.md#uc-006-ukloniti-vlastitu-objavu). | Potvrđeno i otkazano uklanjanje; odbijanje uklanjanja drugog korisnika; nedostupnost uklonjene objave u javnom prikazu. |
-| F-008 | UC-007 — [opis](./3-use-cases.md#uc-007-zatražiti-povrat-predmeta). | Slanje valjanog zahtjeva; odbijanje nepotpunog zahtjeva i zahtjeva za nedostupnu objavu; privatnost sadržaja zahtjeva. |
-| F-009 | UC-008 — [opis](./3-use-cases.md#uc-008-prihvatiti-ili-odbiti-zahtjev-za-povrat). | Prihvaćanje i odbijanje zahtjeva; pregled informacija za procjenu vlasništva; prikaz odluke obama sudionicima; odbijanje neovlaštenog pokušaja obrade. |
-| F-010 | UC-009 — [opis](./3-use-cases.md#uc-009-pratiti-status-zahtjeva). | Pregled poslanih i primljenih zahtjeva i njihovih statusa; prazan popis; odbijanje pristupa tuđem zahtjevu. |
-| F-011 | UC-010 — [opis](./3-use-cases.md#uc-010-razmjenjivati-privatne-poruke). | Razmjena poruka nakon slanja zahtjeva, uključujući prije prihvaćanja; dostupnost spremljene poruke drugom sudioniku; zabrana pristupa trećoj osobi. |
-| F-012 | UC-011 — [opis](./3-use-cases.md#uc-011-pregledati-moguća-podudaranja). | Prikaz mogućih podudaranja i otvaranje njihovih detalja; obavijest kada nema podudaranja. Konkretne testne primjere dopuniti nakon razrade pravila usporedbe. |
-| F-013 | UC-012 — [opis](./3-use-cases.md#uc-012-uključiti-obavijesti-i-pregledati-obavijesti-o-podudaranjima). | Uključivanje obavijesti; prikaz obavijesti o novom mogućem podudaranju; izostanak nove obavijesti kada obavijesti nisu uključene ili nema odgovarajućeg podudaranja. |
-| F-014 | UC-013 — [opis](./3-use-cases.md#uc-013-prijaviti-problematičnu-objavu). | Slanje prijave kao prijavljeni korisnik; odbijanje slanja bez prijave; obvezan razlog; izostanak automatskog uklanjanja prijavljene objave. |
-| F-015 | UC-014 — [opis](./3-use-cases.md#uc-014-pregledati-prijave-i-ukloniti-neprimjeren-sadržaj). | Pregled prijava i uklanjanje sadržaja kao administrator; postupanje s opravdanom i neopravdanom prijavom; odbijanje pristupa korisniku bez administratorskih ovlasti. |
-| NF-001 | UC-002, UC-007–UC-010 — [opisi](./3-use-cases.md). | Provjeriti pristup skrivenim detaljima, zahtjevima i privatnim porukama kao autor, sudionik, treći korisnik i neprijavljeni posjetitelj. Provjeriti sučelje i izravne zahtjeve poslužitelju. |
-| NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014 — [opisi](./3-use-cases.md). | Pokušati zaštićene radnje bez sesije, s nevaljanom sesijom i kao korisnik bez potrebnih ovlasti; potvrditi odbijanje i izostanak promjene podataka. |
-| NF-003 | Projektni zadatak, odjeljak 3; UC-001, UC-004, UC-007. | Provjeriti pregled, pretraživanje, objavljivanje i slanje zahtjeva u mobilnom pregledniku. Zabilježiti uređaj i širinu prikaza te provjeriti dostupnost potrebnih unosa i radnji bez vodoravnog pomicanja stranice. |
-| NF-004 | UC-002, UC-004 — [opisi](./3-use-cases.md). | Odbiti dopuštenje za GPS i ručno odabrati lokaciju. Zasebno onemogućiti učitavanje karte u detaljima i provjeriti dostupnost ostalih javnih podataka uz obavijest o pogrešci. |
-| NF-005 | UC-004, UC-007, UC-008, UC-010 — [opisi](./3-use-cases.md). | U testnom okruženju izazvati neuspjeh spremanja objave, zahtjeva, odluke i poruke. Provjeriti prikaz pogreške, pohranjeno stanje i izostanak lažne potvrde uspjeha. |
+| F-001 | UC-001 — [description](./3-use-cases.md#uc-001-pregledati-pretražiti-i-filtrirati-objave). | Browsing without signing in, searching, combining filters by type, category, location, and time, and displaying an empty result. |
+| F-002 | UC-002 — [description](./3-use-cases.md#uc-002-pregledati-detalje-objave). | Display of public details, status, location, and a photograph if available; the hidden detail is not public; a removed post is unavailable. |
+| F-003 | UC-003 — [description](./3-use-cases.md#uc-003-prijaviti-se). | Successful, cancelled, and failed sign-in through OAuth 2.0; availability of actions according to the user's role. |
+| F-004 | UC-004 — [description](./3-use-cases.md#uc-004-objaviti-izgubljeni-ili-pronađeni-predmet). | Valid lost and found item posts; missing required information; posting with and without a photograph and a hidden detail. |
+| F-005 | UC-004, UC-005 — [descriptions](./3-use-cases.md). | Specifying a location using GPS and manual selection on a map; checking the saved location after posting or editing. |
+| F-006 | UC-005 — [description](./3-use-cases.md#uc-005-urediti-vlastitu-objavu). | Editing as the author; rejecting another user's attempt to edit; rejecting invalid data without changing the existing post. |
+| F-007 | UC-006 — [description](./3-use-cases.md#uc-006-ukloniti-vlastitu-objavu). | Confirmed and cancelled removal; rejecting another user's attempt to remove the post; unavailability of the removed post in public view. |
+| F-008 | UC-007 — [description](./3-use-cases.md#uc-007-zatražiti-povrat-predmeta). | Submitting a valid request; rejecting an incomplete request and a request for an unavailable post; privacy of request contents. |
+| F-009 | UC-008 — [description](./3-use-cases.md#uc-008-prihvatiti-ili-odbiti-zahtjev-za-povrat). | Accepting and rejecting requests; reviewing information used to assess ownership; displaying the decision to both participants; rejecting unauthorized attempts to process a request. |
+| F-010 | UC-009 — [description](./3-use-cases.md#uc-009-pratiti-status-zahtjeva). | Viewing sent and received requests and their statuses; an empty list; denying access to another user's request. |
+| F-011 | UC-010 — [description](./3-use-cases.md#uc-010-razmjenjivati-privatne-poruke). | Exchanging messages after a request has been submitted, including before acceptance; making a saved message available to the other participant; denying access to a third party. |
+| F-012 | UC-011 — [description](./3-use-cases.md#uc-011-pregledati-moguća-podudaranja). | Displaying possible matches and opening their details; displaying a message when there are no matches. Add specific test cases after the comparison rules have been elaborated. |
+| F-013 | UC-012 — [description](./3-use-cases.md#uc-012-uključiti-obavijesti-i-pregledati-obavijesti-o-podudaranjima). | Enabling notifications; displaying a notification about a new possible match; no new notification when notifications are not enabled or there is no corresponding match. |
+| F-014 | UC-013 — [description](./3-use-cases.md#uc-013-prijaviti-problematičnu-objavu). | Submitting a report as a signed-in user; rejecting submission without signing in; requiring a reason; no automatic removal of the reported post. |
+| F-015 | UC-014 — [description](./3-use-cases.md#uc-014-pregledati-prijave-i-ukloniti-neprimjeren-sadržaj). | Reviewing reports and removing content as an administrator; handling justified and unjustified reports; denying access to a user without administrator privileges. |
+| NF-001 | UC-002, UC-007–UC-010 — [descriptions](./3-use-cases.md). | Verify access to hidden details, requests, and private messages as the author, a participant, a third-party user, and a visitor who is not signed in. Check both the interface and direct requests to the server. |
+| NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014 — [descriptions](./3-use-cases.md). | Attempt protected actions without a session, with an invalid session, and as a user without the required permissions; confirm rejection and the absence of data changes. |
+| NF-003 | Project assignment, Section 3; UC-001, UC-004, UC-007. | Verify browsing, searching, posting, and request submission in a mobile browser. Record the device and viewport width and verify that the required inputs and actions are accessible without horizontal page scrolling. |
+| NF-004 | UC-002, UC-004 — [descriptions](./3-use-cases.md). | Deny GPS permission and select a location manually. Separately prevent the map from loading in the post details and verify that the remaining public information is available with an error message. |
+| NF-005 | UC-004, UC-007, UC-008, UC-010 — [descriptions](./3-use-cases.md). | Cause a save failure in a test environment for a post, request, decision, and message. Verify the error message, stored state, and absence of a false success confirmation. |
+
 ## 2.7 Review of Requirements
 
-Slučajeve uporabe potrebno je održavati usklađenima sa zahtjevima te povezati stvarne projektne testove kada budu izrađeni.
+Use cases must be kept consistent with the requirements, and actual project tests must be linked once they have been created.
 
 | Checkpoint | Feedback or finding | Resulting requirement or scope decision |
 | --- | --- | --- |
-| Prva formalna kontrolna točka | Povratne informacije još nisu dokumentirane. | nakon pregleda povezati stvarne zaključke i eventualne promjene u odjeljku 2.5. |
-| Završna formalna kontrolna točka | Povratne informacije još nisu dokumentirane. | uskladiti zahtjeve s dogovorenim opsegom i dokazima provjere. |
+| First formal checkpoint | Feedback has not yet been documented. | After the review, link the actual conclusions and any changes in Section 2.5. |
+| Final formal checkpoint | Feedback has not yet been documented. | Align the requirements with the agreed scope and verification evidence. |
 
-Termine kontrolnih točaka treba provjeriti prema uputama kolegija. Slučajeve uporabe treba uskladiti s razradom u 2.5, posebno UC-013 koji još zahtijeva prijavu, te povezati stvarne projektne testove.
+Checkpoint dates should be verified against the course instructions. Use cases should be aligned with the elaboration in Section 2.5, particularly UC-013, which still requires sign-in, and actual project tests should be linked.

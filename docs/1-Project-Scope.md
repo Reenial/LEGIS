@@ -18,8 +18,6 @@ An additional problem is *ownership verification*. Publicly disclosing all ident
 | Students / staff who have found an item | Find the item's owner, verify their ownership, and arrange the handover. |
 | Visitors who are not signed in | Access information about lost and found items without having to sign in. |
 | Administrator | Keep content reliable and appropriate and prevent misuse of the system. |
-| Project team | Successfully complete the project assignment and develop teamwork and software development skills. |
-| Course teaching staff | Monitor the project team's work and assess whether the project assignment requirements have been met. |
 
 ## 1.3 Project Boundaries
 

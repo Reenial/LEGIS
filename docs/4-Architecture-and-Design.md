@@ -17,58 +17,32 @@ The expandable Crisis Guard examples illustrate a proposed design. Use your proj
 
 ## 4.1 Solution Strategy
 
-**Objective:** Explain the few architectural choices that most affect the solution and their project-specific reasons.
+Lost & Found ima web-sučelje izrađeno u HTML-u, CSS-u i JavaScriptu, jedan Node.js backend i PostgreSQL bazu. Express.js planiramo dodati za obradu zahtjeva. U nastavku je opis odabranog dizajna, a ne potvrda da su sve funkcionalnosti već implementirane.
 
 | Decision | Alternative considered | Project-specific rationale and trade-off |
 | --- | --- | --- |
-|  |  |  |
-
-Explain the main architectural choices without repeating the technologies list. If an important choice has an ADR, its ID in the table is enough.
-
-<details>
-<summary><strong>Explaining a choice </strong></summary>
-
-**Example — Crisis Guard:**
-
-| Decision | Alternative considered | Project-specific rationale and trade-off |
-| --- | --- | --- |
-| Browser client and one backend API | Several separately deployed backend services | The client displays the map while the backend validates and stores reports. One backend is manageable for this scope; its failure may interrupt report operations. See ADR-01 for the reasoning. |
-| Relational storage for reports | Document-oriented storage | Reports have identifiable links to users and locations. A relational schema makes these relationships explicit but requires migrations when the schema changes. |
-
-**Analysis of the example:** Both decisions state a reason tied to the reporting application and acknowledge a trade-off. The backend choice links to ADR-01 rather than repeating the full comparison. Modules within one deployable backend are not separate microservices. In your own table, include alternatives that the team genuinely considered.
-
-</details>
+| Jedan Node.js backend uz planirani Express.js | Druge mogućnosti nisu dokumentirane. | Tehnologije su nam poznate, a JavaScript koristimo i na frontendu i na backendu. Jedan backend olakšava razvoj, ali njegov kvar utječe na većinu funkcionalnosti. |
+| PostgreSQL relacijska baza | Druge mogućnosti nisu dokumentirane. | PostgreSQL nam je poznat i odgovara povezanim podacima, poput korisnika, objava i zahtjeva. Promjene strukture zahtijevaju prilagodbu baze. |
+| Google prijava | Druge mogućnosti nisu dokumentirane. | Korisnik koristi postojeći račun, a aplikacija ne upravlja njegovom Google lozinkom. Prijava ovisi o vanjskoj usluzi. |
+| Leaflet, OpenStreetMap i Nominatim | Druge mogućnosti nisu dokumentirane. | Leaflet prikazuje OpenStreetMap kartu, a Nominatim pretvara adrese u koordinate. Karta i pretraživanje adresa ovise o dostupnosti tih usluga. |
 
 ## 4.2 Building Blocks and UML Component Diagram
 
-**Objective:** Propose the principal parts of the application, assign their responsibilities, and show their dependencies without diagramming every file or class. Revise this view as the system takes shape.
+Frontend prikazuje podatke i prikuplja korisničke unose. Backend provjerava podatke i ovlasti te komunicira s bazom. Google, OpenStreetMap i Nominatim nalaze se izvan granice naše aplikacije, dok je Leaflet biblioteka unutar frontenda.
 
-**Component diagram:** [Embed a readable UML component diagram.]  
-**PlantUML source:** [Link to the matching versioned `.puml` file.]
+**Component diagram:**
+
+![Lost & Found component diagram](./assets/diagrams/component-diagram.svg)
+
+**PlantUML source:** [Izvor dijagrama](./puml/component-diagram.puml)
 
 | Component | Responsibility | Reason for this boundary |
 | --- | --- | --- |
-|  |  |  |
+| Frontend | Prikazuje objave, kartu, obrasce, poruke i obavijesti. | Odvaja korisničko sučelje od obrade podataka. |
+| Backend | Obrađuje zahtjeve, provjerava ovlasti, računa podudaranja i pristupa vanjskim uslugama. | Pravila aplikacije provjeravaju se na poslužitelju. |
+| PostgreSQL baza | Čuva korisnike, objave, zahtjeve, poruke i ostale povezane podatke. | Omogućuje trajnu pohranu i održava veze među podacima. |
 
-Start by drawing the boundary around the proposed system. Inside it, identify parts with distinct responsibilities; put a planned application database inside this boundary and third-party services outside it. Label important connections with what crosses them. A logical component may be a module within one backend application: a separate box does not imply a separately deployed service. As you implement, update the diagram when responsibilities or connections change. In the final version, readers should be able to relate its parts to the code. The deployment diagram answers where those parts actually run.
-
-<details>
-<summary><strong>System boundary, responsibilities, and external dependencies</strong></summary>
-
-**Example — Crisis Guard:** The proposed architecture supports report submission, a map view, and notifications about confirmed reports.
-
-![Crisis Guard system component diagram](./assets/diagrams/4-1-crisis-guard-system-CMP.svg)  
-[PlantUML source](./puml/4-1-crisis-guard-system-CMP.puml)
-
-| Part | Responsibility | Reason for this boundary |
-| --- | --- | --- |
-| Web client | Shows reports and collects a new report. | User interaction is separated from report rules and persistence. |
-| Report API | Accepts report requests and returns responses. | HTTP-facing responsibilities are separated from report processing. |
-| Report service | Applies report rules and accesses stored reports. | Report validation and storage rules have a clear owner. |
-| Notification worker | Identifies eligible recipients and asks an external provider to send an alert. | Notification work is separate from answering a user's report request. |
-
-**Analysis of the example:** The outer boundary distinguishes the proposed system from the map provider and the notification provider. The inner boundary groups the Report API, Report service, and Notification worker within one backend application; their separate symbols express proposed responsibilities, not independently deployed services. PostgreSQL stores application data, while the map provider supplies map tiles. The arrows summarize dependencies, not the order of a transaction; the sequence diagram covers that order. Omit the Notification worker and Firebase Cloud Messaging if notifications are outside the approved scope. If separating the Report API from the Report service does not help explain the design, show one backend component. Include a sign-in provider only if the approved task calls for it. As implementation progresses, revise any proposed boundary that proves inaccurate; the final diagram must correspond to what the team built. One coherent component view is more useful than several near-identical versions with conflicting connections.
-</details>
+Frontend prima Googleov token i šalje ga backendu na provjeru. Upit za pretvaranje adrese u koordinate također prolazi kroz backend, koji poziva Nominatim. Frontend preko Leafleta učitava kartografsku podlogu OpenStreetMap. Podudaranja se temelje na bodovanju ključnih riječi; konačni prag još nije dogovoren.
 
 ## 4.3 Data and Detailed Design
 
@@ -116,47 +90,40 @@ Start by drawing the boundary around the proposed system. Inside it, identify pa
 
 ## 4.4 Runtime Behavior
 
-**Objective:** Explain one important interaction among running parts and the lifecycle of one meaningful object. Choose cases that expose decisions or failure paths instead of making a diagram for every CRUD action.
-
 ### 4.4.1 Representative UML Sequence Diagram
 
-**Objective:** Show the order of messages for one representative scenario and the responses to a meaningful alternative.
+**Scenario:** Slanje zahtjeva za povrat — UC-007.
 
-**Scenario:** [Name the interaction; add the UC ID if one exists.]  
-**Sequence diagram:** [Embed a readable UML sequence diagram.]  
-**PlantUML source:** [Link to the matching versioned `.puml` file.]
+Korisnik unosi obrazloženje vlasništva i šalje zahtjev. Backend prvo provjerava prijavu i unesene podatke, a zatim dostupnost predmeta i postojeće zahtjeve. Ne dopušta zahtjev za vlastiti predmet ni dodatni zahtjev dok prethodni za isti predmet čeka odluku ili je prihvaćen. Nakon odbijanja ili povlačenja moguć je novi zahtjev.
 
-<details>
-<summary><strong>Location selection, validation, and report submission</strong></summary>
+Valjan zahtjev sprema se sa statusom `pending`. Potvrda se prikazuje tek nakon uspješnog spremanja. Nevaljani podaci, nedostupan predmet ili neuspjela pohrana daju poruku o pogrešci bez potvrde uspjeha. Nakon slanja autor objave i podnositelj mogu razmjenjivati privatne poruke.
 
-**Example — Crisis Guard:** A citizen submits a disaster report after choosing a location manually or requesting the device's position. The interaction also shows what happens when location permission is denied, report data is invalid, or storage fails.
+**Sequence diagram:**
 
-![Crisis Guard report submission sequence diagram](./assets/diagrams/4-4-crisis-guard-report-submission-SD.svg)  
-[PlantUML source](./puml/4-4-crisis-guard-report-submission-SD.puml)
+![Slanje zahtjeva za povrat](./assets/diagrams/return-request-sequence.svg)
 
-**Analysis of the example:** The two location paths and the validation and storage alternatives have different consequences for the user; compare them with the matching use case and its alternative flows. The browser location API is a browser capability; the web client, API, service, and store correspond to the component view. Select branches that help explain your project's scenario, and revise the final diagram to match the implemented interaction.
-
-</details>
+**PlantUML source:** [Izvor sekvencijskog dijagrama](./puml/return-request-sequence.puml)
 
 ### 4.4.2 Representative UML State Diagram
 
-**Objective:** Show the meaningful states of one domain object or an explicitly managed system mode, and the events or conditions that change it.
+**State owner and reason for choosing it:** Zahtjev za povrat. Njegov status pokazuje čeka li odluku, je li prihvaćen, odbijen ili povučen, pa je važan za praćenje povrata.
 
-**State owner and reason for choosing it:** [Name the object or system mode, how its state is recognized, and why the transitions matter.]  
-**State diagram:** [Embed a readable UML state diagram.]  
-**PlantUML source:** [Link to the matching versioned `.puml` file.]
+| Stanje | Značenje |
+| --- | --- |
+| `pending` | Zahtjev čeka odluku autora objave. |
+| `accepted` | Autor je prihvatio zahtjev. |
+| `rejected` | Autor je odbio zahtjev. |
+| `withdrawn` | Podnositelj je trajno povukao zahtjev. |
 
-<details>
-<summary><strong>Operating modes and service availability</strong></summary>
+Autor može prihvatiti ili odbiti zahtjev te promijeniti odluku dok predmet nije predan. Podnositelj može povući zahtjev, uključujući prihvaćen ili odbijen. Povučen zahtjev ne otvara se ponovno, nego se po potrebi šalje novi. Prihvaćanje zahtjeva nije fizička predaja; objava zasebno ima status `pending` ili `handed_over`.
 
-**Example — Crisis Guard:** The crisis coordination mode changes as an disaster is assessed and resolved. At the same time, the user-visible availability of the application may change independently when the map provider or backend becomes unavailable.
+**State diagram:**
 
-![Crisis Guard report state machine diagram](./assets/diagrams/4-5-crisis-guard-report-SM.svg)  
-[PlantUML source](./puml/4-5-crisis-guard-report-SM.puml)
+![Stanja zahtjeva za povrat](./assets/diagrams/return-request-state.svg)
 
-**Analysis of the example:** The two regions describe independent aspects of the modeled system: its crisis coordination mode and observed service availability. They run in parallel; an active crisis may coincide with normal or limited service. The branches after backend recovery account for a map provider that may still be unavailable. State transitions have named triggers or guards rather than being a list of screens. Use this form only if your application actually maintains or reliably derives both kinds of state. A project whose meaningful lifecycle belongs to a report, reservation, or order should model that object instead; diagram complexity is not an assessment criterion. At the final review, check the state model against the behavior the running application supports.
+**PlantUML source:** [Izvor dijagrama stanja](./puml/return-request-state.puml)
 
-</details>
+Statusi i ograničenje jednog aktivnog zahtjeva definirani su u [shemi baze](../database/schema.sql). Provjere ovlasti i dopuštenih prijelaza treba provesti u backendu; sama shema ne provodi sve opisane prijelaze.
 
 ## 4.5 Architecture Decision Records
 

@@ -13,32 +13,32 @@ Lost & Found sastoji se od web-sučelja, Node.js backenda i PostgreSQL baze poda
 
 ## 4.1 Solution Strategy
 
-Lost & Found ima web-sučelje izrađeno u HTML-u, CSS-u i JavaScriptu, jedan Node.js backend i PostgreSQL bazu. Express.js planiramo dodati za obradu zahtjeva. U nastavku je opis odabranog dizajna, a ne potvrda da su sve funkcionalnosti već implementirane.
+Lost & Found has a web interface built with HTML, CSS, and JavaScript, a single Node.js backend, and a PostgreSQL database. We plan to add Express.js for request handling. The following describes the selected design and does not confirm that all functionality has already been implemented.
 
 | Decision | Alternative considered | Project-specific rationale and trade-off |
 | --- | --- | --- |
-| Jedan Node.js backend uz planirani Express.js | Druge mogućnosti nisu dokumentirane. | Tehnologije su nam poznate, a JavaScript koristimo i na frontendu i na backendu. Jedan backend olakšava razvoj, ali njegov kvar utječe na većinu funkcionalnosti. |
-| PostgreSQL relacijska baza | Druge mogućnosti nisu dokumentirane. | PostgreSQL nam je poznat i odgovara povezanim podacima, poput korisnika, objava i zahtjeva. Promjene strukture zahtijevaju prilagodbu baze. |
-| Google prijava | Druge mogućnosti nisu dokumentirane. | Korisnik koristi postojeći račun, a aplikacija ne upravlja njegovom Google lozinkom. Prijava ovisi o vanjskoj usluzi. |
-| Leaflet, OpenStreetMap i Nominatim | Druge mogućnosti nisu dokumentirane. | Leaflet prikazuje OpenStreetMap kartu, a Nominatim pretvara adrese u koordinate. Karta i pretraživanje adresa ovise o dostupnosti tih usluga. |
+| A single Node.js backend with Express.js planned | Other options have not been documented. | We are familiar with these technologies, and we use JavaScript on both the frontend and the backend. A single backend simplifies development, but its failure affects most functionality. |
+| PostgreSQL relational database | Other options have not been documented. | We are familiar with PostgreSQL, and it suits related data such as users, posts, and requests. Structural changes require adjustments to the database. |
+| Google sign-in | Other options have not been documented. | The user uses an existing account, and the application does not manage their Google password. Sign-in depends on an external service. |
+| Leaflet, OpenStreetMap, and Nominatim | Other options have not been documented. | Leaflet displays the OpenStreetMap map, and Nominatim converts addresses into coordinates. The map and address search depend on the availability of these services. |
 
 ## 4.2 Building Blocks and UML Component Diagram
 
-Frontend prikazuje podatke i prikuplja korisničke unose. Backend provjerava podatke i ovlasti te komunicira s bazom. Google, OpenStreetMap i Nominatim nalaze se izvan granice naše aplikacije, dok je Leaflet biblioteka unutar frontenda.
+The frontend displays data and collects user input. The backend validates data and permissions and communicates with the database. Google, OpenStreetMap, and Nominatim are outside the boundary of our application, while Leaflet is a library within the frontend.
 
 **Component diagram:**
 
 ![Lost & Found component diagram](./assets/diagrams/component-diagram.svg)
 
-**PlantUML source:** [Izvor dijagrama](./puml/component-diagram.puml)
+**PlantUML source:** [Diagram source](./puml/component-diagram.puml)
 
 | Component | Responsibility | Reason for this boundary |
 | --- | --- | --- |
-| Frontend | Prikazuje objave, kartu, obrasce, poruke i obavijesti. | Odvaja korisničko sučelje od obrade podataka. |
-| Backend | Obrađuje zahtjeve, provjerava ovlasti, računa podudaranja i pristupa vanjskim uslugama. | Pravila aplikacije provjeravaju se na poslužitelju. |
-| PostgreSQL baza | Čuva korisnike, objave, zahtjeve, poruke i ostale povezane podatke. | Omogućuje trajnu pohranu i održava veze među podacima. |
+| Frontend | Displays posts, the map, forms, messages, and notifications. | Separates the user interface from data processing. |
+| Backend | Handles requests, checks permissions, calculates matches, and accesses external services. | Application rules are checked on the server. |
+| PostgreSQL database | Stores users, posts, requests, messages, and other related data. | Provides persistent storage and maintains relationships between data. |
 
-Frontend prima Googleov token i šalje ga backendu na provjeru. Upit za pretvaranje adrese u koordinate također prolazi kroz backend, koji poziva Nominatim. Frontend preko Leafleta učitava kartografsku podlogu OpenStreetMap. Podudaranja se temelje na bodovanju ključnih riječi; konačni prag još nije dogovoren.
+The frontend receives Google's token and sends it to the backend for verification. The request to convert an address into coordinates also passes through the backend, which calls Nominatim. The frontend loads the OpenStreetMap base map through Leaflet. Matching is based on keyword scoring; the final threshold has not yet been agreed upon.
 
 ## 4.3 Data and Detailed Design
 
@@ -88,38 +88,38 @@ Frontend prima Googleov token i šalje ga backendu na provjeru. Upit za pretvara
 
 ### 4.4.1 Representative UML Sequence Diagram
 
-**Scenario:** Slanje zahtjeva za povrat — UC-007.
+**Scenario:** Submitting a return request — UC-007.
 
-Korisnik unosi obrazloženje vlasništva i šalje zahtjev. Backend prvo provjerava prijavu i unesene podatke, a zatim dostupnost predmeta i postojeće zahtjeve. Ne dopušta zahtjev za vlastiti predmet ni dodatni zahtjev dok prethodni za isti predmet čeka odluku ili je prihvaćen. Nakon odbijanja ili povlačenja moguć je novi zahtjev.
+The user enters information supporting their ownership claim and submits the request. The backend first checks sign-in and the submitted data, then the item's availability and existing requests. It does not allow a request for the user's own item or an additional request while a previous request for the same item is pending or accepted. A new request can be submitted after rejection or withdrawal.
 
-Valjan zahtjev sprema se sa statusom `pending`. Potvrda se prikazuje tek nakon uspješnog spremanja. Nevaljani podaci, nedostupan predmet ili neuspjela pohrana daju poruku o pogrešci bez potvrde uspjeha. Nakon slanja autor objave i podnositelj mogu razmjenjivati privatne poruke.
+A valid request is saved with the status `pending`. Confirmation is displayed only after successful saving. Invalid data, an unavailable item, or a storage failure produces an error message without confirming success. After submission, the post author and the requester can exchange private messages.
 
 **Sequence diagram:**
 
-![Slanje zahtjeva za povrat](./assets/diagrams/return-request-sequence.svg)
+![Submitting a return request](./assets/diagrams/return-request-sequence.svg)
 
-**PlantUML source:** [Izvor sekvencijskog dijagrama](./puml/return-request-sequence.puml)
+**PlantUML source:** [Sequence diagram source](./puml/return-request-sequence.puml)
 
 ### 4.4.2 Representative UML State Diagram
 
-**State owner and reason for choosing it:** Zahtjev za povrat. Njegov status pokazuje čeka li odluku, je li prihvaćen, odbijen ili povučen, pa je važan za praćenje povrata.
+**State owner and reason for choosing it:** A return request. Its status indicates whether it is awaiting a decision, accepted, rejected, or withdrawn, making it important for tracking the return process.
 
-| Stanje | Značenje |
+| State | Meaning |
 | --- | --- |
-| `pending` | Zahtjev čeka odluku autora objave. |
-| `accepted` | Autor je prihvatio zahtjev. |
-| `rejected` | Autor je odbio zahtjev. |
-| `withdrawn` | Podnositelj je trajno povukao zahtjev. |
+| `pending` | The request is awaiting the post author's decision. |
+| `accepted` | The author has accepted the request. |
+| `rejected` | The author has rejected the request. |
+| `withdrawn` | The requester has permanently withdrawn the request. |
 
-Autor može prihvatiti ili odbiti zahtjev te promijeniti odluku dok predmet nije predan. Podnositelj može povući zahtjev, uključujući prihvaćen ili odbijen. Povučen zahtjev ne otvara se ponovno, nego se po potrebi šalje novi. Prihvaćanje zahtjeva nije fizička predaja; objava zasebno ima status `pending` ili `handed_over`.
+The author can accept or reject a request and change the decision before the item has been handed over. The requester can withdraw a request, including an accepted or rejected one. A withdrawn request is not reopened; a new one is submitted if needed. Accepting a request is not the physical handover; the post separately has the status `pending` or `handed_over`.
 
 **State diagram:**
 
-![Stanja zahtjeva za povrat](./assets/diagrams/return-request-state.svg)
+![Return request states](./assets/diagrams/return-request-state.svg)
 
-**PlantUML source:** [Izvor dijagrama stanja](./puml/return-request-state.puml)
+**PlantUML source:** [State diagram source](./puml/return-request-state.puml)
 
-Statusi i ograničenje jednog aktivnog zahtjeva definirani su u [shemi baze](../database/schema.sql). Provjere ovlasti i dopuštenih prijelaza treba provesti u backendu; sama shema ne provodi sve opisane prijelaze.
+The statuses and the restriction of one active request are defined in the [database schema](../database/schema.sql). Permission checks and allowed transitions must be implemented in the backend; the schema alone does not enforce all the described transitions.
 
 ## 4.5 Architecture Decision Records
 

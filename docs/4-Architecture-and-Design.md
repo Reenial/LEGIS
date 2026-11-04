@@ -1,10 +1,6 @@
 # 4. Architecture and Design
 
-**Objective:** Design and explain the application's boundary, main choices, parts, data, and important behavior. Start with an architecture that guides implementation; revise it when design decisions change. At the final review, the descriptions and diagrams should explain the application that was actually built.
-
-The page contains the **UML component, class, sequence, and state diagrams** and the data model. The use case diagram describes user goals; the deployment diagram shows where the finished application actually runs. Keep a readable image and versioned PlantUML source for each UML diagram, as described on [Home](./Home.md).
-
-The expandable Crisis Guard examples illustrate a proposed design. Use your project's own decisions and models in the completed page.
+Lost & Found sastoji se od web-sučelja, Node.js backenda i PostgreSQL baze podataka. Za prijavu koristi Google, za karte Leaflet i OpenStreetMap, a za pretvaranje adresa u koordinate Nominatim. Ovo poglavlje opisuje odabrani dizajn, glavne komponente, podatke i ponašanje sustava.
 
 | View | Main question |
 | --- | --- |

@@ -1,4 +1,5 @@
-version: "3.8"
+# Local full stack: docker compose up --build
+# Frontend: http://localhost  Backend: http://localhost:10000
 services:
   db:
     image: postgres:15-alpine
@@ -9,6 +10,10 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    volumes:
+      # Runs schema.sql then seed.sql on the first start (empty volume only)
+      - ./database:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/postgresql/data
 
   backend:
     build: ./backend
@@ -16,13 +21,24 @@ services:
       - "10000:10000"
     environment:
       PORT: 10000
+      NODE_ENV: development
       DATABASE_URL: postgres://dbuser:password@db:5432/appdb
+      SESSION_SECRET: local-dev-secret
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      FRONTEND_URL: http://localhost
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:10000
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     ports:
       - "80:80"
     depends_on:
       - backend
+
+volumes:
+  db-data:

@@ -1,9 +1,14 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
+# Vite reads VITE_* at build time; Render passes env vars as build args.
+ARG VITE_API_URL
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build --if-present
+RUN npm run build
 
 FROM nginx:alpine AS runner
 COPY --from=builder /app/dist /usr/share/nginx/html

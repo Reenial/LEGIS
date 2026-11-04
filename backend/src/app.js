@@ -1,15 +1,31 @@
-const http = require("http");
-const port = process.env.PORT || 10000;
+// Builds the Express app. server.js starts it; tests import it directly.
+const express = require('express');
+const cors = require('cors');
+const env = require('./config/env');
+const { createSessionMiddleware } = require('./config/session');
+const apiRouter = require('./routes');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
-const server = http.createServer((req, res) => {
-  if (req.url === "/health") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    return res.end(JSON.stringify({ status: "healthy" }));
-  }
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("API running");
-});
+function createApp({ withSessions = true } = {}) {
+  const app = express();
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Server listening on 0.0.0.0:${port}`);
-});
+  // Render runs behind a proxy; needed for secure cookies.
+  app.set('trust proxy', 1);
+
+  app.use(cors({ origin: env.frontendUrl, credentials: true }));
+  app.use(express.json({ limit: '1mb' }));
+
+  // Render health check (render.yaml: healthCheckPath /health)
+  app.get('/health', (req, res) => res.json({ status: 'healthy' }));
+
+  if (withSessions) app.use(createSessionMiddleware());
+
+  app.use('/api', apiRouter);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+}
+
+module.exports = { createApp };

@@ -1,9 +1,27 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "src/app.js",
+  "name": "legis-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lost & Found backend (Node.js + Express + PostgreSQL)",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node src/app.js",
-    "test": "echo \"Backend tests passed\" && exit 0"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "google-auth-library": "^10.0.0",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

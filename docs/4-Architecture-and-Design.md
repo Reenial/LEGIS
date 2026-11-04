@@ -42,47 +42,40 @@ The frontend receives Google's token and sends it to the backend for verificatio
 
 ## 4.3 Data and Detailed Design
 
-**Objective:** Explain the important information the application stores and one representative area of class-level design. The data model and UML class diagram answer different questions; one does not replace the other.
-
 ### 4.3.1 ER Diagram and Data Model
 
-**Objective:** Show the important stored entities, their identifiers and relationships, and enough attributes to explain the application's data. The ER diagram is separate from the representative UML class diagram below.
+Lost & Found stores its data in PostgreSQL. The current schema contains twelve tables and defines their primary keys, foreign keys, uniqueness rules, and validation constraints.
 
-**ER diagram:** [Embed the project's readable diagram.]  
-**Diagram source:** [Link to its versioned source.]  
-**Implementation:** [Indicate where the corresponding data model is defined in the project.]
+**ER diagram:**
 
-<details>
-<summary><strong>One flood report and its related data</strong></summary>
+![Lost & Found ER diagram](./assets/diagrams/lostAndFoundERD.png)
 
-**Example — Crisis Guard:** Ana submits flood report `R-104` using her citizen account. She selects a location on the map and records the severity as high. A citizen may submit several reports; each report belongs to one disaster category, such as *Flood*. The application stores the report and its coordinates. Map tiles come from an external provider and are not entities in the application's data model.
+**Diagram source:** [pgAdmin ERD source](./assets/diagrams/lostAndFoundERD.pgerd)
 
-![Crisis Guard data ER diagram](./assets/diagrams/4-2-crisis-guard-data-ERD.svg)  
-[PlantUML source](./puml/4-2-crisis-guard-data-ERD.puml)
+**Implementation:** [PostgreSQL schema](../database/schema.sql)
 
-**Analysis of the example:** `R-104` has one author and one category; Ana and the *Flood* category can each be linked to more reports. The diagram shows relationships without copying a database's columns or writing a second table description for every entity. If your application also accepts **anonymous** reports, represent that possibility in the relationship to `Citizen`. If categories are fixed values rather than stored records, do not invent a category table. Compare the final ER diagram with the persistence model and explain only differences that matter to understanding the project.
+The diagram represents the stored data and relationships defined in the SQL schema. The main entities are users, item posts, return requests, and messages.
 
-</details>
+Each item post belongs to one author, one category, and one location. A user can publish multiple posts. The `type` attribute distinguishes lost and found posts, while `status` distinguishes items awaiting handover (`pending`) from items marked as handed over (`handed_over`).
+
+A post can receive multiple return requests from different users. Each request belongs to one post and one requester. Messages belong to a request, which provides the context for the private conversation between the requester and the post author. Each message also references its sender. The backend must verify that the sender is a participant in that conversation.
+
+The remaining tables support the following functions:
+
+- `keyword_kinds`, `keywords`, and `item_keywords` store keyword types, predefined values, and the values associated with a post. A post can have one value per keyword type: either a predefined keyword or custom text entered under “Other”.
+- `post_reports` stores reports of problematic posts, the users who submitted them, and moderation information. The reviewer and review time can remain empty until the report is reviewed.
+- `notifications` links a recipient to a possible lost–found item match. A uniqueness constraint prevents duplicate notifications for the same recipient and pair of posts.
+- `session` stores backend session data and expiration times. It has no foreign-key relationship to `users` in the current schema.
+
+Return requests use the statuses `pending`, `accepted`, `rejected`, and `withdrawn`. Unique indexes allow at most one pending or accepted request per user and item, and at most one accepted request per item. Accepting a request does not automatically mark the item as handed over.
+
+Posts can be removed from public view while their records remain stored. The `removed_at` and `removed_by` attributes record removal information. The `items_public` view excludes removed posts and the hidden item detail; the backend must use appropriate queries and authorization checks when serving public data.
+
+The schema also defines automatic `updated_at` triggers for users and posts, a generated text-search field, and the `item_match_scores` view. This view calculates keyword-based matching scores; it does not include location or time scoring. These database mechanisms are defined in the SQL schema rather than represented as separate entities in the ER diagram.
 
 ### 4.3.2 Representative UML Class Diagram
 
-**Objective:** Before implementing a representative part of the system, model the classes or interfaces needed to assign responsibilities, operations, and relationships. Revise the design when those choices change.
-
-**Class diagram:** [Embed a readable UML class diagram for a representative part of the design.]  
-**PlantUML source:** [Link to the matching versioned `.puml` file.]  
-**Code reference at the final review:** [Link to the corresponding implementation.]
-
-<details>
-<summary><strong>Designing report responsibilities and allowed changes</strong></summary>
-
-**Example — Crisis Guard:** A report owns the rules for changing its status. A workflow class coordinates submission and review, while a repository interface describes the persistence operations it needs. The diagram proposes these responsibilities before implementation.
-
-![Crisis Guard domain class diagram](./assets/diagrams/4-3-crisis-guard-domain-CD.svg)  
-[PlantUML source](./puml/4-3-crisis-guard-domain-CD.puml)
-
-**Analysis of the example:** `DisasterReport` owns its allowed state changes, so the workflow cannot silently approve a rejected report. `ReportWorkflow` coordinates an operation without owning the report's transition rules; `ReportRepository` defines the storage operations it needs. The `Location` composition and selected types show relationships useful to the design. The diagram intentionally omits database columns and unrelated classes: the ER model explains stored data, while this diagram assigns program responsibilities and operations. These classes are a design choice, not required layers for every team. Compare the finished implementation with the original design and revise the diagram where decisions changed; generating a diagram from code at the end cannot substitute for this initial modeling.
-
-</details>
+The class-level design will be agreed with the backend team before the selected functionality is implemented. This section will then include the representative UML class diagram, its PlantUML source, and an explanation of the classes' responsibilities and relationships.
 
 ## 4.4 Runtime Behavior
 

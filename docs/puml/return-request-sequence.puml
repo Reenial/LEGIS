@@ -1,0 +1,32 @@
+@startuml
+title Return request - UC-007
+actor User
+participant Frontend
+participant Backend
+database PostgreSQL
+User -> Frontend : Submit ownership explanation
+Frontend -> Backend : Send return request
+Backend -> Backend : Check identity and input
+alt Not signed in or invalid input
+ Backend --> Frontend : Reject request
+ Frontend --> User : Show error
+else Identity and input valid
+ Backend -> PostgreSQL : Read item and existing requests
+ PostgreSQL --> Backend : Item and request data
+ alt Item unavailable, own item or existing active request
+  Backend --> Frontend : Reject request
+  Frontend --> User : Show reason
+ else Request allowed
+  Backend -> PostgreSQL : Save request (pending)
+  alt Save successful
+   PostgreSQL --> Backend : Saved request
+   Backend --> Frontend : Confirm submission
+   Frontend --> User : Show pending status
+  else Save failed
+   PostgreSQL --> Backend : Storage error
+   Backend --> Frontend : Submission failed
+   Frontend --> User : Show error, no success confirmation
+  end
+ end
+end
+@enduml

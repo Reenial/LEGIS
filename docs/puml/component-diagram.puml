@@ -1,0 +1,18 @@
+@startuml
+!pragma layout smetana
+title Lost & Found - Component Diagram
+package "Lost & Found" {
+ component "Frontend\n(HTML, CSS, JavaScript, Leaflet)" as F
+ component "Backend\n(Node.js, planned Express.js)" as B
+ database "PostgreSQL" as D
+ F ..> B : Sends requests and Google token
+ B ..> D : Reads and saves data
+}
+component "Google" as G <<external>>
+component "OpenStreetMap" as O <<external>>
+component "Nominatim" as N <<external>>
+F ..> G : Starts sign-in
+B ..> G : Verifies identity
+F ..> O : Loads map tiles
+B ..> N : Address to coordinates
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+!pragma layout smetana
+title Return request - State Diagram
+[*] --> Pending : Submit request
+Pending --> Accepted : Accept
+Pending --> Rejected : Reject
+Accepted --> Rejected : Change decision
+Rejected --> Accepted : Change decision
+Pending --> Withdrawn : Withdraw
+Accepted --> Withdrawn : Withdraw
+Rejected --> Withdrawn : Withdraw
+Withdrawn --> [*]
+note top of Pending
+ Only the post author accepts, rejects or changes
+ a decision, and only before handover.
+end note
+note bottom of Withdrawn
+ A new submission creates a new request.
+ The withdrawn request cannot be reopened.
+end note
+@enduml

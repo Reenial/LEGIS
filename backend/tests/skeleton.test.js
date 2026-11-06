@@ -24,7 +24,7 @@ test('GET /health returns healthy', async () => {
 });
 
 test('public stub route returns 501 with its use case', async () => {
-  const res = await fetch(`${baseUrl}/api/items`);
+  const res = await fetch(`${baseUrl}/api/categories`);
   assert.equal(res.status, 501);
   const body = await res.json();
   assert.equal(body.useCase, 'UC-001');

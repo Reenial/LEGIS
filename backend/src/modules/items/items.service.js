@@ -1,11 +1,20 @@
 // Lost/found posts. F-001, F-002, F-004 to F-007. UC-001, UC-002, UC-004 to UC-006.
 // Business rules and permission checks live here (NF-002), not in controllers.
 // const HttpError = require('../../utils/HttpError');
-// const itemsRepository = require('./items.repository');
+const itemsRepository = require('./items.repository');
+const { parseItemFilters } = require('./items.filters');
 
-// TODO: Query items_public with filters and full-text search
-async function searchPublicItems(filters) {
-  throw new Error('Not implemented: items.searchPublicItems');
+// UC-001: public post list with search, filters and pagination.
+// `query` is the raw request query string; invalid values throw HttpError 400.
+async function searchPublicItems(query) {
+  const filters = parseItemFilters(query);
+  const { rows, total } = await itemsRepository.search(filters);
+  return {
+    items: rows,
+    total,
+    limit: filters.limit,
+    offset: filters.offset,
+  };
 }
 
 // TODO: Return the user's own posts, including hidden_detail and handed-over posts

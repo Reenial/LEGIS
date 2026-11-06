@@ -1,9 +1,13 @@
 // Lost/found posts. F-001, F-002, F-004 to F-007. UC-001, UC-002, UC-004 to UC-006.
-// Controllers translate HTTP <-> service calls. Every handler is a stub for now.
+// Controllers translate HTTP <-> service calls.
 const notImplemented = require('../../utils/notImplemented');
+const itemsService = require('./items.service');
 
-// GET /api/items
-const listItems = notImplemented('UC-001', 'Browse/search/filter public posts (type, category, keywords, location, time)');
+// GET /api/items (UC-001). Public, no sign-in. Query parameters: see items.filters.js
+// Express 5 forwards rejected promises to errorHandler, so no try/catch is needed.
+async function listItems(req, res) {
+  res.json(await itemsService.searchPublicItems(req.query));
+}
 
 // GET /api/me/items
 const listMyItems = notImplemented('UC-005', 'Signed-in user\'s own posts (entry point for edit, remove and matches)');

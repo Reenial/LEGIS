@@ -2,6 +2,22 @@
 
 BEGIN;
 
+INSERT INTO public.categories (name) VALUES
+
+('Electronics'),
+
+('Documents and cards'),
+
+('Keys'),
+
+('Wallets and bags'),
+
+('Clothing and accessories'),
+
+('Other')
+
+ON CONFLICT (name) DO NOTHING;
+
 INSERT INTO public.keyword_kinds (name, match_points) VALUES
 
 ('item_type', 20),

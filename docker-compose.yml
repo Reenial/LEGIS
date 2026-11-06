@@ -11,8 +11,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      # Runs schema.sql then seed.sql on the first start (empty volume only)
-      - ./database:/docker-entrypoint-initdb.d:ro
+      # Runs in this order on the first start of an empty volume only.
+      # To reload after a schema change: docker compose down -v
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./database/dev/sample-data.sql:/docker-entrypoint-initdb.d/03-sample-data.sql:ro
       - db-data:/var/lib/postgresql/data
 
   backend:

@@ -1,6 +1,6 @@
 # 4. Architecture and Design
 
-Lost & Found sastoji se od web-sučelja, Node.js backenda i PostgreSQL baze podataka. Za prijavu koristi Google, za karte Leaflet i OpenStreetMap, a za pretvaranje adresa u koordinate Nominatim. Ovo poglavlje opisuje odabrani dizajn, glavne komponente, podatke i ponašanje sustava.
+Lost & Found consists of a web interface, a Node.js backend, and a PostgreSQL database. It uses Google for sign-in, Leaflet and OpenStreetMap for maps, and Nominatim to convert addresses into coordinates. This chapter describes the system’s design, its main components, the data it stores, and how it works.
 
 | View | Main question |
 | --- | --- |

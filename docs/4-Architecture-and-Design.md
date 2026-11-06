@@ -17,10 +17,11 @@ Lost & Found has a web interface built with HTML, CSS, and JavaScript, a single 
 
 | Decision | Alternative considered | Project-specific rationale and trade-off |
 | --- | --- | --- |
-| A single Node.js backend with Express.js planned | Other options have not been documented. | We are familiar with these technologies, and we use JavaScript on both the frontend and the backend. A single backend simplifies development, but its failure affects most functionality. |
-| PostgreSQL relational database | Other options have not been documented. | We are familiar with PostgreSQL, and it suits related data such as users, posts, and requests. Structural changes require adjustments to the database. |
-| Google sign-in | Other options have not been documented. | The user uses an existing account, and the application does not manage their Google password. Sign-in depends on an external service. |
-| Leaflet, OpenStreetMap, and Nominatim | Other options have not been documented. | Leaflet displays the OpenStreetMap map, and Nominatim converts addresses into coordinates. The map and address search depend on the availability of these services. |
+| A single Node.js backend with Express.js planned | Java (Spring Boot) | We are familiar with these technologies, and we use JavaScript on both the frontend and the backend. A single backend simplifies development, but its failure affects most functionality. |
+| PostgreSQL relational database | MongoDB | We are familiar with PostgreSQL, and it suits related data such as users, posts, and requests. Structural changes require adjustments to the database. |
+| Google sign-in | Microsoft (Entra ID) | The user uses an existing account, and the application does not manage their Google password. Sign-in depends on an external service. |
+| Leaflet + OpenStreetMap | MapLibre GL + MapTiler | Leaflet displays the OpenStreetMap base map. Map display depends on the availability of the map service. |
+| Nominatim | MapTiler Geocoding | Nominatim converts addresses into coordinates. Address search depends on the availability of the geocoding service. |
 
 ## 4.2 Building Blocks and UML Component Diagram
 

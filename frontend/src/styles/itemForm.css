@@ -1,4 +1,4 @@
-/* Sve je ograničeno na .item-form da ne utječe na ostale stranice */
+/* Everything is scoped to .item-form so it does not affect other pages */
 
 .item-form {
   max-width: 600px;
@@ -28,7 +28,7 @@
   margin-bottom: 6px;
 }
 
-/* Polja, ista kao kolegina tražilica */
+/* Fields, styled like the search box on the home page */
 .item-form input[type='text'],
 .item-form input[type='date'],
 .item-form input[type='time'],
@@ -49,14 +49,14 @@
   resize: vertical;
 }
 
-/* Poništava globalni input { width: 100%; padding: 16px } za radio gumbe */
+/* Undo the global input { width: 100%; padding: 16px } for radio buttons */
 .item-form input[type='radio'] {
   width: auto;
   padding: 0;
   margin: 0;
 }
 
-/* Prekidač izgubljeno / pronađeno */
+/* Lost / found switch */
 .type-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -132,7 +132,7 @@
   object-fit: cover;
 }
 
-/* Greške */
+/* Errors */
 .item-form .error {
   display: block;
   color: #b00020;
@@ -140,8 +140,8 @@
   min-height: 0;
 }
 
-/* Gumbi 
-ovaj je za GPS koji jos nije dodan
+/* Buttons
+This one is for GPS, which has not been added yet
 
 .btn-secondary {
   background: white;

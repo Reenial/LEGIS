@@ -1,12 +1,17 @@
 // Reference data for forms and filters: categories, keyword kinds and keywords. F-001, F-004.
-// Controllers translate HTTP <-> service calls. Every handler is a stub for now.
-const notImplemented = require('../../utils/notImplemented');
+// Controllers translate HTTP <-> service calls.
+// Express 5 forwards rejected promises to errorHandler, so no try/catch is needed.
+const lookupsService = require('./lookups.service');
 
-// GET /api/categories
-const listCategories = notImplemented('UC-001', 'List categories');
+// GET /api/categories (UC-001). Public.
+async function listCategories(req, res) {
+  res.json(await lookupsService.getCategories());
+}
 
-// GET /api/keywords
-const listKeywords = notImplemented('UC-001', 'List keyword kinds with their predefined keywords');
+// GET /api/keywords (UC-001). Public.
+async function listKeywords(req, res) {
+  res.json(await lookupsService.getKeywordsGroupedByKind());
+}
 
 module.exports = {
   listCategories,

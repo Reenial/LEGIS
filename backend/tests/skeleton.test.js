@@ -24,10 +24,10 @@ test('GET /health returns healthy', async () => {
 });
 
 test('public stub route returns 501 with its use case', async () => {
-  const res = await fetch(`${baseUrl}/api/categories`);
+  const res = await fetch(`${baseUrl}/api/geocode?q=FER`);
   assert.equal(res.status, 501);
   const body = await res.json();
-  assert.equal(body.useCase, 'UC-001');
+  assert.equal(body.useCase, 'UC-004');
 });
 
 test('protected route without a session returns 401 (NF-002)', async () => {

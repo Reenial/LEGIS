@@ -2,8 +2,6 @@
 
 **Objective:** Show where the application runs, how its deployed parts communicate, and how a reader can install, configure, deploy, and maintain it. The [README](../README.md) gives the public address and the shortest local Quick Start; this page adds the setup details needed to reproduce the application.
 
-The expandable Crisis Guard material is a **teaching example of a possible deployment**, not a description or a test result from the published student project. Replace its topology, settings, and checks with those of your application. Render is used in the example; document the platform your team actually uses.
-
 ## 6.1 Deployment View
 
 **Objective:** Identify the running environments, deployed software, data store, and relevant external services. Show communication between them in one UML deployment diagram. A component diagram explains logical responsibilities; this diagram explains where the executable parts run.
@@ -13,18 +11,6 @@ The expandable Crisis Guard material is a **teaching example of a possible deplo
 **Public application:** [Link to the live address recorded in the README, or link to its Deployment section.]  
 
 Label the actual hosting nodes and important connections. Include a database or external provider only if the deployed application uses it. A development laptop is not the public server. If you changed the intended architecture during implementation, show the resulting deployment here and update the architecture description accordingly.
-
-<details>
-<summary><strong>Public deployment of a report and notification application</strong></summary>
-
-**Example — Crisis Guard:** The proposed web client is built as a static site. A backend web service processes reports and runs the notification task in the **same deployed backend application**. PostgreSQL stores reports; a map tile provider serves maps to the browser; Firebase Cloud Messaging receives notification requests from the backend. The example assumes notifications belong to this particular project's scope.
-
-![Crisis Guard system deployment diagram](./assets/diagrams/6-1-crisis-guard-DD.svg)  
-[PlantUML source](./puml/6-1-crisis-guard-DD.puml)
-
-**Analysis of the example:** The static site distributes client files, while the browser executes the client code. The backend's API and notification task remain inside one deployed service despite having separate responsibilities in the component diagram. The database connection comes from the backend, not directly from the browser. The map and notification services are outside the team's hosting environment. These boxes represent deployment locations, not a second inventory of backend modules or a promise of separate servers for each class. Omit FCM and its arrow if notifications are not implemented; include a sign-in provider only when that integration is part of the approved project and is actually deployed. A different host changes the deployment labels, not the purpose of the diagram.
-
-</details>
 
 ## 6.2 Installation and Local Configuration
 

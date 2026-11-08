@@ -16,7 +16,7 @@ From the frontend: `items.list(filters)` in `frontend/src/api/endpoints.js`. Emp
 | --- | --- | --- |
 | `q` | `black wallet` | Text search. Matches the start of words in the title and description (`headph` finds "headphones"), keyword names and "Other" text. Max 100 characters. |
 | `type` | `lost` | `lost` or `found` |
-| `categoryId` | `3` | Category id (from `GET /api/categories`, not implemented yet) |
+| `categoryId` | `3` | Category id (from `GET /api/categories`) |
 | `keywordIds` | `6,12` | Keyword ids, comma-separated or repeated. A post must have **all** of them. |
 | `dateFrom`, `dateTo` | `2026-11-01` | Date the item was lost or found, inclusive, `YYYY-MM-DD` |
 | `minLat`, `maxLat`, `minLng`, `maxLng` | `45.79` … | Visible map area. Send all four or none. With Leaflet: `map.getBounds()` → `getSouth()`, `getNorth()`, `getWest()`, `getEast()`. |
@@ -74,6 +74,72 @@ Any invalid parameter. `details` names each one:
   }
 }
 ```
+
+## GET /api/categories — categories (UC-001, F-001)
+
+No sign-in needed. From the frontend: `lookups.categories()`.
+
+```json
+[
+  { "id": 1, "name": "Electronics" },
+  { "id": 3, "name": "Keys" }
+]
+```
+
+## GET /api/keywords — keyword kinds with their keywords (UC-001, UC-004)
+
+No sign-in needed. From the frontend: `lookups.keywords()`. Use these ids for `keywordIds` and when saving a post; never hard-code them, because the ids depend on insert order in the database.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "item_type",
+    "keywords": [
+      { "id": 6, "name": "keys" },
+      { "id": 7, "name": "wallet" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "color",
+    "keywords": [
+      { "id": 12, "name": "red" }
+    ]
+  }
+]
+```
+
+## POST /api/items — publish a post (UC-004) — agreed contract, not built yet
+
+Signed-in users only. JSON body in camelCase, the same names the API returns. The frontend already builds this body in `frontend/src/pages/itemForm.js`.
+
+A photo is uploaded first with `POST /api/uploads/photo` (multipart, field `photo`), which returns `{ "url": "..." }`. That URL goes into `imageUrl`. Without a photo, `imageUrl` is `null`.
+
+```json
+{
+  "type": "lost",
+  "title": "Black wallet",
+  "description": "Leather wallet with a zip.",
+  "categoryId": 4,
+  "dateFoundLost": "2026-11-08",
+  "timeFrom": "08:30",
+  "timeTo": null,
+  "hiddenDetail": "Initials on the inside",
+  "imageUrl": null,
+  "location": { "name": "FER, building D", "latitude": 45.8011, "longitude": 15.9709 },
+  "keywords": [
+    { "kindId": 1, "keywordId": 7, "otherText": null },
+    { "kindId": 2, "keywordId": null, "otherText": "dark navy" }
+  ]
+}
+```
+
+- `timeFrom`, `timeTo`, `hiddenDetail`, `imageUrl` and `location.name` are optional (`null`).
+- One entry in `keywords` per keyword kind: either `keywordId` (from `GET /api/keywords`) or `otherText`, never both.
+- `location.latitude` and `location.longitude` are required by the database. Until the map picker exists the form can send `null`, and the backend must answer `400`.
+- Response `201`: the created post in the same shape as one entry of `GET /api/items`, plus `hiddenDetail`.
+- `PATCH /api/items/:itemId` (UC-005) takes the same fields; only the ones sent are changed.
 
 ## Sample data for local development
 

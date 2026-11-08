@@ -1,26 +1,24 @@
-// Top navigation. Links depend on whether the user is signed in and on their role.
+// Top bar: title, notifications and profile. Links depend on whether the user is signed in and on their role.
 import { getUser, onUserChange } from '../state/session.js';
-
-function links(user) {
-  const items = [['#/', 'Posts']];
-  if (!user) {
-    items.push(['#/sign-in', 'Sign in']);
-    return items;
-  }
-  items.push(['#/items/new', 'New post'], ['#/my-posts', 'My posts'], ['#/claims', 'Requests'], ['#/notifications', 'Notifications']);
-  if (user.role === 'admin') items.push(['#/admin/reports', 'Moderation']);
-  // TODO (UC-003): sign-out button calling auth.signOut()
-  return items;
-}
+import bellIcon from '../assets/icons/bell.png';
+import profileIcon from '../assets/icons/profile.png';
 
 export function renderHeader(container) {
   const draw = (user) => {
+    // Visitors are sent to sign-in; the router would redirect them anyway.
+    const notificationsHref = user ? '#/notifications' : '#/sign-in';
+    const profileHref = user ? '#/my-posts' : '#/sign-in';
     container.innerHTML = `
-      <nav class="nav">
-        <a class="nav__brand" href="#/">Lost &amp; Found</a>
-        ${links(user).map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}
-      </nav>
+      <a class="title" href="#/">Lost &amp; Found</a>
+      ${user?.role === 'admin' ? '<a class="admin-link" href="#/admin/reports">Moderation</a>' : ''}
+      <a class="notification" href="${notificationsHref}" title="Notifications">
+        <img src="${bellIcon}" class="icons" alt="Notifications" />
+      </a>
+      <a class="user" href="${profileHref}" title="${user ? 'My posts' : 'Sign in'}">
+        <img src="${profileIcon}" class="icons" alt="${user ? 'My posts' : 'Sign in'}" />
+      </a>
     `;
+    // TODO (UC-003): sign-out action calling auth.signOut()
   };
   draw(getUser());
   onUserChange(draw);

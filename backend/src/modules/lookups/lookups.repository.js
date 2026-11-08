@@ -1,15 +1,27 @@
 // Database access for lookups. SQL only, no business rules.
 // Schema: database/schema.sql
-// const pool = require('../../db/pool');
+const pool = require('../../db/pool');
 
-// TODO: SELECT from categories
 async function findAllCategories() {
-  throw new Error('Not implemented: lookupsRepository.findAllCategories');
+  const result = await pool.query('SELECT id, name FROM categories ORDER BY id');
+  return result.rows;
 }
 
-// TODO: SELECT from keyword_kinds JOIN keywords
+// One row per keyword kind with its predefined keywords nested, ordered by id.
 async function findAllKeywords() {
-  throw new Error('Not implemented: lookupsRepository.findAllKeywords');
+  const result = await pool.query(`
+    SELECT kk.id,
+           kk.name,
+           COALESCE(
+             json_agg(json_build_object('id', k.id, 'name', k.name) ORDER BY k.id)
+               FILTER (WHERE k.id IS NOT NULL),
+             '[]'::json
+           ) AS keywords
+    FROM keyword_kinds kk
+    LEFT JOIN keywords k ON k.kind_id = kk.id
+    GROUP BY kk.id, kk.name
+    ORDER BY kk.id`);
+  return result.rows;
 }
 
 module.exports = {

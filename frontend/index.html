@@ -1,64 +1,27 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lost &amp; Found</title>
-    <link rel="stylesheet" href="src/styles/main.css" />
     <!-- Google Identity Services, used by the sign-in page (UC-003) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
 
   <body>
-    <header id="app-header">
-      <div class="title">Lost & Found</div>
-      <div class="notification">
-        <img src="src/assets/icons/bell.png" class="icons" />
-      </div>
-      <div class="user">
-        <img src="src/assets/icons/profile.png" class="icons" />
-      </div>
-    </header>
-  
-    <main>
-      <input id="search" type="search" placeholder="Pretraži predmete..." />
+    <!-- Filled by src/components/header.js -->
+    <header id="app-header"></header>
 
-      <!-- nadodane kategorije -->
-      <div class="categories">
-        <h3>Kategorije</h3>
+    <!-- Filled by the router (src/router.js) with the current page from src/pages/ -->
+    <main id="app"></main>
 
-        <div class="category-list">
-          <button class="category">Sve</button>
-          <button class="category">Elektronika</button>
-          <button class="category">Dokumenti</button>
-          <button class="category">Odjeća</button>
-          <button class="category">Ključevi</button>
-          <button class="category">Torbe</button>
-          <button class="category">Ostalo</button>
-        </div>
-      </div>
-
-
-      <div class="actions">
-        <button class="button1">Moje objave</button>
-        <button class="button2">Objavi izgubljeni ili pronađeni predmet</button>
-      </div>
-    </main>
-
-    <nav>
-      <a href="index.html"
-        ><img class="icons" src="src/assets/icons/home.png"
-      /></a>
-      <a href="#search"
-        ><img class="icons" src="src/assets/icons/search.png"
-      /></a>
-      <a href="#chat"><img class="icons" src="src/assets/icons/chat.png" /></a>
-      <a href="#settings"
-        ><img class="icons" src="src/assets/icons/settings.png"
-      /></a>
+    <nav class="bottom-nav">
+      <a href="#/" title="Home"><img class="icons" src="src/assets/icons/home.png" alt="Home" /></a>
+      <a href="#/" data-action="search" title="Search"><img class="icons" src="src/assets/icons/search.png" alt="Search" /></a>
+      <a href="#/claims" title="Requests and messages"><img class="icons" src="src/assets/icons/chat.png" alt="Requests and messages" /></a>
+      <a href="#/notifications" title="Notifications and settings"><img class="icons" src="src/assets/icons/settings.png" alt="Settings" /></a>
     </nav>
 
     <script type="module" src="/src/main.js"></script>
-    <script src="src/test-data.js"></script>
   </body>
 </html>

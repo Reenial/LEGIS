@@ -42,7 +42,7 @@ const PUBLIC_COLUMNS = `
     WHERE ik.item_id = i.id
   ), '[]'::json) AS keywords`;
 
-// "crna nov" -> "crna:* & nov:*" so partial words match. Tokens contain only
+// "black wal" -> "black:* & wal:*" so partial words match. Tokens contain only
 // letters and digits, so the result is always a valid tsquery.
 function toPrefixTsQuery(text) {
   const tokens = text.match(/[\p{L}\p{N}]+/gu) || [];

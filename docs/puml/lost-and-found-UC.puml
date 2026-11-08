@@ -1,7 +1,7 @@
 @startuml
 left to right direction
 
-title Lost & Found – Dijagram slučajeva uporabe
+title Lost & Found - Use Case Diagram
 
 skinparam backgroundColor White
 skinparam shadowing false
@@ -32,33 +32,33 @@ skinparam rectangle {
   FontStyle bold
 }
 
-actor "Posjetitelj" as Visitor
-actor "Prijavljeni\nkorisnik" as User
+actor "Visitor" as Visitor
+actor "Signed-in\nuser" as User
 actor "Administrator" as Admin
 
 rectangle "Lost & Found" {
-  usecase "Pregledati, pretražiti\ni filtrirati objave" as Browse
-  usecase "Pregledati detalje objave" as Details
-  usecase "Prijaviti se" as Login
+  usecase "Browse, search\nand filter posts" as Browse
+  usecase "View post details" as Details
+  usecase "Sign in" as Login
 
-  usecase "Objaviti izgubljeni ili\npronađeni predmet" as Publish
-  usecase "Urediti vlastitu objavu" as Edit
-  usecase "Ukloniti vlastitu objavu" as Remove
+  usecase "Post a lost or\nfound item" as Publish
+  usecase "Edit own post" as Edit
+  usecase "Remove own post" as Remove
 
-  usecase "Zatražiti povrat predmeta" as Request
-  usecase "Prihvatiti ili odbiti\nzahtjev za povrat" as Review
-  usecase "Pratiti status zahtjeva" as Status
-  usecase "Razmjenjivati\nprivatne poruke" as Messages
+  usecase "Request item return" as Request
+  usecase "Accept or reject\na return request" as Review
+  usecase "Track request status" as Status
+  usecase "Exchange\nprivate messages" as Messages
 
-  usecase "Pregledati moguća\npodudaranja" as Matches
-  usecase "Uključiti obavijesti i pregledati\nobavijesti o podudaranjima" as Notifications
+  usecase "View possible\nmatches" as Matches
+  usecase "Enable notifications and view\nmatch notifications" as Notifications
 
-  usecase "Prijaviti\nproblematičnu objavu" as Report
-  usecase "Pregledati prijave i ukloniti\nneprimjeren sadržaj" as Moderate
+  usecase "Report\na problematic post" as Report
+  usecase "Review reports and remove\ninappropriate content" as Moderate
 }
 
-actor "OAuth pružatelj\nidentiteta" as Identity <<external>>
-actor "Usluga karata" as Maps <<external>>
+actor "OAuth identity\nprovider" as Identity <<external>>
+actor "Map service" as Maps <<external>>
 
 User --|> Visitor
 

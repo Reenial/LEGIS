@@ -2,10 +2,27 @@
 // Business rules and permission checks live here (NF-002), not in controllers.
 const HttpError = require('../../utils/HttpError');
 const authRepository = require('./auth.repository');
+const { OAuth2Client } = require('google-auth-library');
+const env = require('../../config/env');
+const googleClient = new OAuth2Client(env.googleClientId);
 
 // TODO: Verify the token with google-auth-library (audience = GOOGLE_CLIENT_ID)
 async function verifyGoogleIdToken(idToken) {
-  throw new Error('Not implemented: auth.verifyGoogleIdToken');
+  try {
+    const ticket= await googleClient.verifyIdToken({
+      idToken: idToken,
+      audience: env.googleClientId,
+    });
+    const payload= ticket.getPayload();
+    return{
+      sub: payload.sub,
+      name: payload.name,
+      email: payload.email
+    };
+  } catch (err) {
+    throw new HttpError(401,"wrong google token");
+  }
+  //throw new Error('Not implemented: auth.verifyGoogleIdToken');
 }
 
 // TODO: Look up users by (identity_provider, provider_user_id); insert on first sign-in

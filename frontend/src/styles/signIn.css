@@ -1,0 +1,46 @@
+/* Sign-in page */
+.sign-in {
+  background: white;
+  border-radius: 15px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.sign-in h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.sign-in__button {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  min-height: 44px;
+}
+
+.sign-in__status {
+  min-height: 1.5em;
+  color: #b00020;
+  font-weight: bold;
+}
+
+.sign-in__back {
+  color: inherit;
+}
+
+/* Sign-out button in the header (small, bottom right, so it doesn't overlap the title) */
+header {
+  position: relative;
+}
+
+.sign-out {
+  position: absolute;
+  right: 5px;
+  bottom: 2px;
+  padding: 2px 8px;
+  background: transparent;
+  color: #222;
+  font-size: 12px;
+  font-weight: normal;
+  text-decoration: underline;
+}

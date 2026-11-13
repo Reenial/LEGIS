@@ -6,7 +6,7 @@ const { createSessionMiddleware } = require('./config/session');
 const apiRouter = require('./routes');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
-function createApp({ withSessions = true } = {}) {
+function createApp({ withSessions = true, sessionStore } = {}) {
   const app = express();
 
   // Render runs behind a proxy; needed for secure cookies.
@@ -18,7 +18,7 @@ function createApp({ withSessions = true } = {}) {
   // Render health check (render.yaml: healthCheckPath /health)
   app.get('/health', (req, res) => res.json({ status: 'healthy' }));
 
-  if (withSessions) app.use(createSessionMiddleware());
+  if (withSessions) app.use(createSessionMiddleware({ store: sessionStore }));
 
   app.use('/api', apiRouter);
 

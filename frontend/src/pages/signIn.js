@@ -1,20 +1,3 @@
-/* Sign in with Google (UC-003).
-import { renderPlaceholder } from '../components/placeholder.js';
-
-export function render(container) {
-  renderPlaceholder(container, {
-    title: 'Sign in',
-    useCases: 'UC-003',
-    todo: [
-      'Render the Google button with google.accounts.id (client ID: import.meta.env.VITE_GOOGLE_CLIENT_ID)',
-      'Send the returned credential to auth.signInWithGoogle(), then setUser() and go to the post list',
-      'On cancel or failure, stay signed out with a message; browsing still works',
-    ],
-  });
-}
-*/
-
-
 // Sign in with Google (UC-003).
 import { auth } from '../api/endpoints.js';
 import { getUser, setUser } from '../state/session.js';
@@ -67,8 +50,7 @@ export async function render(container) {
   async function handleCredential(response) {
     statusEl.textContent = 'Signing in...';
     try {
-      const result = await auth.signInWithGoogle(response.credential);
-      const user = result?.user ?? result; // works whether backend returns { user } or the user itself
+      const user = await auth.signInWithGoogle(response.credential); // { id, name, role }
       setUser(user);
       window.location.hash = '#/';
     } catch (err) {

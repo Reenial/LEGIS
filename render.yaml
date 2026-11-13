@@ -23,7 +23,7 @@ services:
         generateValue: true
       - key: GOOGLE_CLIENT_ID
         sync: false
-      - key: FRONTEND_URL # public URL of web-frontend, e.g. https://web-frontend.onrender.com
+      - key: FRONTEND_URL # public URL of web-frontend, e.g. https://web-frontend.onrender.com (CORS)
         sync: false
 
   - type: web
@@ -33,10 +33,9 @@ services:
     dockerContext: ./frontend
     plan: free
     envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: api-service
-          property: host
+      # Public URL of api-service, e.g. https://api-service.onrender.com
+      # nginx proxies /api there, so the browser only sees this service's origin.
+      - key: API_UPSTREAM
+        sync: false
       - key: VITE_GOOGLE_CLIENT_ID
         sync: false

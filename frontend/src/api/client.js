@@ -1,8 +1,8 @@
 // Thin fetch wrapper. Sends the session cookie with every request.
 
+// Normally empty: requests go to /api on this origin (Vite dev proxy locally, nginx in Docker/Render).
 function resolveBaseUrl(raw) {
   if (!raw) return '';
-  // render.yaml passes the backend host without a scheme
   return /^https?:\/\//.test(raw) ? raw : `https://${raw}`;
 }
 

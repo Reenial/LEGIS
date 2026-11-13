@@ -27,20 +27,3 @@
 .sign-in__back {
   color: inherit;
 }
-
-/* Sign-out button in the header (small, bottom right, so it doesn't overlap the title) */
-header {
-  position: relative;
-}
-
-.sign-out {
-  position: absolute;
-  right: 5px;
-  bottom: 2px;
-  padding: 2px 8px;
-  background: transparent;
-  color: #222;
-  font-size: 12px;
-  font-weight: normal;
-  text-decoration: underline;
-}

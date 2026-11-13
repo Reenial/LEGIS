@@ -1,0 +1,29 @@
+/* Sign-in page */
+.sign-in {
+  background: white;
+  border-radius: 15px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.sign-in h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.sign-in__button {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  min-height: 44px;
+}
+
+.sign-in__status {
+  min-height: 1.5em;
+  color: #b00020;
+  font-weight: bold;
+}
+
+.sign-in__back {
+  color: inherit;
+}

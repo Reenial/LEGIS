@@ -1,6 +1,16 @@
 # Lost & Found API
 
-Base URL: `VITE_API_URL` + `/api` (locally `http://localhost:10000/api`).
+Base URL: `/api` on the frontend's own origin. The Vite dev server (`npm run dev`) and nginx (Docker, Render) proxy it to the backend, so the session cookie is first-party. The backend itself listens on `http://localhost:10000/api` locally.
+
+## Sign-in (UC-003)
+
+| Route | Body | Response |
+| --- | --- | --- |
+| `POST /api/auth/google` | `{ "idToken": "<credential from Google Identity Services>" }` | `200 { id, name, role }` and the `lf.sid` session cookie. `400` without `idToken`, `401` for an invalid token. |
+| `GET /api/auth/me` | | `200 { id, name, role }`, or `401` when not signed in. |
+| `POST /api/auth/logout` | | `204`, or `401` when not signed in. |
+
+The session id is regenerated on every sign-in.
 Errors always have the shape `{ "error": "message", "details": { ... } }`.
 Endpoints not listed here still return `501 Not implemented`.
 

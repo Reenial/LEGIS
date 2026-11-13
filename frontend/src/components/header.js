@@ -1,5 +1,6 @@
 // Top bar: title, notifications and profile. Links depend on whether the user is signed in and on their role.
-import { getUser, onUserChange } from '../state/session.js';
+import { getUser, onUserChange, setUser } from '../state/session.js';
+import { auth } from '../api/endpoints.js';
 import bellIcon from '../assets/icons/bell.png';
 import profileIcon from '../assets/icons/profile.png';
 
@@ -17,8 +18,21 @@ export function renderHeader(container) {
       <a class="user" href="${profileHref}" title="${user ? 'My posts' : 'Sign in'}">
         <img src="${profileIcon}" class="icons" alt="${user ? 'My posts' : 'Sign in'}" />
       </a>
+      ${user ? '<button type="button" class="sign-out" data-action="sign-out">Sign out</button>' : ''}
     `;
-    // TODO (UC-003): sign-out action calling auth.signOut()
+
+    container.querySelector('[data-action="sign-out"]')?.addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+      } catch (err) {
+        // NF-005: do not pretend the session ended if the server did not confirm it
+        alert('Sign-out failed. Please try again.');
+        console.error(err);
+        return;
+      }
+      setUser(null);
+      window.location.hash = '#/';
+    });
   };
   draw(getUser());
   onUserChange(draw);

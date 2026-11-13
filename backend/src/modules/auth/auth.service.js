@@ -1,54 +1,57 @@
 // Sign-in with Google (OAuth 2.0) and server sessions. F-003, UC-003.
 // Business rules and permission checks live here (NF-002), not in controllers.
+const { OAuth2Client } = require('google-auth-library');
 const HttpError = require('../../utils/HttpError');
 const authRepository = require('./auth.repository');
-const { OAuth2Client } = require('google-auth-library');
 const env = require('../../config/env');
+
+const GOOGLE_PROVIDER = 'google';
 const googleClient = new OAuth2Client(env.googleClientId);
 
-// TODO: Verify the token with google-auth-library (audience = GOOGLE_CLIENT_ID)
+// Verifies the ID token from Google Identity Services (signature, expiry, audience)
+// and returns the profile fields we store.
 async function verifyGoogleIdToken(idToken) {
+  if (!env.googleClientId) {
+    throw new HttpError(500, 'Google sign-in is not configured (GOOGLE_CLIENT_ID missing)');
+  }
+
+  let payload;
   try {
-    const ticket= await googleClient.verifyIdToken({
-      idToken: idToken,
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
       audience: env.googleClientId,
     });
-    const payload= ticket.getPayload();
-    return{
-      sub: payload.sub,
-      name: payload.name,
-      email: payload.email
-    };
-  } catch (err) {
-    throw new HttpError(401,"wrong google token");
+    payload = ticket.getPayload();
+  } catch {
+    throw new HttpError(401, 'Invalid Google token');
   }
-  //throw new Error('Not implemented: auth.verifyGoogleIdToken');
+
+  return {
+    sub: payload.sub,
+    // users.name is varchar(100)
+    name: (payload.name || payload.email || 'Google user').slice(0, 100),
+    email: payload.email || null,
+  };
 }
 
-// TODO: Look up users by (identity_provider, provider_user_id); insert on first sign-in
+// Looks the user up by (identity_provider, provider_user_id); creates them on first sign-in.
 async function findOrCreateUser(googleProfile) {
-  const existingUser= await authRepository.findByProviderId('google', googleProfile.sub);
-
-  if(existingUser){
+  const existingUser = await authRepository.findByProviderId(GOOGLE_PROVIDER, googleProfile.sub);
+  if (existingUser) {
     return existingUser;
   }
 
-  const newUser = await authRepository.create({
+  return authRepository.create({
     name: googleProfile.name,
-    email:googleProfile.email,
-    identity_provider: 'google',
+    email: googleProfile.email,
+    identity_provider: GOOGLE_PROVIDER,
     provider_user_id: googleProfile.sub,
   });
-  return newUser;
-  //throw new Error('Not implemented: auth.findOrCreateUser');
 }
 
+// Returns the user or null if they no longer exist.
 async function getUserById(id) {
-  const user = await authRepository.findById(id);
-  if (!user) {
-    throw new HttpError(401, 'need Sign-in');
-  }
-  return user;
+  return authRepository.findById(id);
 }
 
 module.exports = {

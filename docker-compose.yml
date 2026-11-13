@@ -1,5 +1,5 @@
 # Local full stack: docker compose up --build
-# Frontend: http://localhost  Backend: http://localhost:10000
+# Frontend: http://localhost (API at http://localhost/api)  Backend directly: http://localhost:10000
 services:
   db:
     image: postgres:15-alpine
@@ -36,8 +36,10 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: http://localhost:10000
         VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+    environment:
+      # nginx proxies /api to the backend (frontend/nginx.conf.template)
+      API_UPSTREAM: http://backend:10000
     ports:
       - "80:80"
     depends_on:

@@ -15,8 +15,11 @@ const listMyItems = notImplemented('UC-005', 'Signed-in user\'s own posts (entry
 // GET /api/items/:itemId
 const getItem = notImplemented('UC-002', 'Public post details (never hidden_detail)');
 
-// POST /api/items
-const createItem = notImplemented('UC-004', 'Publish a lost or found post with location and keywords');
+// POST /api/items (UC-004). Signed-in users only (requireAuth). Body: see backend/API.md
+async function createItem(req, res) {
+  const item = await itemsService.createItem(req.session.user.id, req.body);
+  res.status(201).json(item);
+}
 
 // PATCH /api/items/:itemId
 const updateItem = notImplemented('UC-005', 'Author edits own post');

@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: api-service
+    name: ferlostandfound-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
@@ -23,17 +23,17 @@ services:
         generateValue: true
       - key: GOOGLE_CLIENT_ID
         sync: false
-      - key: FRONTEND_URL # public URL of web-frontend, e.g. https://web-frontend.onrender.com (CORS)
+      - key: FRONTEND_URL # public URL of the website, e.g. https://ferlostandfound.onrender.com (CORS)
         sync: false
 
   - type: web
-    name: web-frontend
+    name: ferlostandfound
     runtime: docker
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     plan: free
     envVars:
-      # Public URL of api-service, e.g. https://api-service.onrender.com
+      # Public URL of the backend, e.g. https://ferlostandfound-api.onrender.com
       # nginx proxies /api there, so the browser only sees this service's origin.
       - key: API_UPSTREAM
         sync: false

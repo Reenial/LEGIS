@@ -1,5 +1,5 @@
 # Rendered at container start by the nginx image (envsubst on /etc/nginx/templates/*.template).
-# API_UPSTREAM: backend base URL, e.g. https://api-service.onrender.com or http://backend:10000
+# API_UPSTREAM: backend base URL, e.g. https://ferlostandfound-api.onrender.com or http://backend:10000
 # NGINX_LOCAL_RESOLVERS: filled in by the image because the Dockerfile sets NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 server {
     listen 80;

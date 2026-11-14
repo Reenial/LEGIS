@@ -1,11 +1,15 @@
 // Create (UC-004) or edit (UC-005) a post. Same form; edit mode when params.itemId is set.
 
 import '../styles/itemForm.css';
-import { lookups } from '../api/endpoints.js';
+import { lookups, items, uploads } from '../api/endpoints.js';
 import { escapeHtml } from '../utils/escapeHtml.js';
 
 // Set to true once the map works (location becomes required)
 const REQUIRE_LOCATION = false;
+
+// TEMPORARY: until the map fills #latitude / #longitude the backend would reject every post
+// (location is required). Used only in `npm run dev`. Delete when the map works.
+const DEV_FALLBACK_LOCATION = { latitude: 45.8011, longitude: 15.9709 };
 
 // Categories and keywords are loaded from /api/categories and /api/keywords
 // so their ids always match the database (never hard-code them).
@@ -169,6 +173,9 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
   const photoInput = container.querySelector('#photo');
   const photoPreview = container.querySelector('#photo-preview');
   const statusEl = container.querySelector('#form-status');
+  const submitBtn = container.querySelector('.btn-submit');
+  const keywordKeys = Object.keys(KEYWORDS);
+  const formHash = window.location.hash;
 
   /* ---------- Errors ---------- */
   function setError(name, message) {
@@ -181,7 +188,7 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
   }
 
   /* ---------- "Other" reveals a text field ---------- */
-  Object.keys(KEYWORDS).forEach((key) => {
+  keywordKeys.forEach((key) => {
     const select = container.querySelector(`#${key}`);
     const other = container.querySelector(`#${key}_other`);
     select.addEventListener('change', () => {
@@ -227,7 +234,7 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     if (!data.get('description').trim()) errors.description = 'Description is required.';
     if (!data.get('category_id')) errors.category_id = 'Select a category.';
 
-    Object.keys(KEYWORDS).forEach((key) => {
+    keywordKeys.forEach((key) => {
       const value = data.get(key);
       if (!value) errors[key] = 'Select a value.';
       else if (value === 'other' && !data.get(`${key}_other`).trim())
@@ -249,25 +256,67 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     return errors;
   }
 
+  /* ---------- Backend errors ---------- */
+  // Backend field name -> data-error-for name used in this form (null = show in the status line)
+  function errorTarget(field) {
+    const map = {
+      categoryId: 'category_id',
+      dateFoundLost: 'date_found_lost',
+      timeFrom: 'time',
+      timeTo: 'time',
+      hiddenDetail: 'hidden_detail',
+      imageUrl: 'photo',
+      location: 'location',
+      'location.name': 'location',
+      'location.latitude': 'location',
+      'location.longitude': 'location',
+      keywords: null,
+    };
+    if (field in map) return map[field];
+    const kw = field.match(/^keywords\[(\d+)\]$/); // same order as the payload below
+    if (kw) return keywordKeys[Number(kw[1])] ?? null;
+    return field; // type, title, description
+  }
+
+  // Shows field errors from the backend; returns messages that had no field to sit under
+  function showServerErrors(details) {
+    const unplaced = [];
+    Object.entries(details).forEach(([field, message]) => {
+      const target = errorTarget(field);
+      if (target && container.querySelector(`[data-error-for="${target}"]`)) setError(target, message);
+      else unplaced.push(message);
+    });
+    return unplaced;
+  }
+
   /* ---------- Submit ---------- */
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (submitBtn.disabled) return;
     clearErrors();
     statusEl.textContent = '';
     statusEl.className = 'form-status';
+
+    if (isEdit) {
+      statusEl.textContent = 'Editing is not available yet.';
+      return;
+    }
 
     const data = new FormData(form);
     const errors = validate(data);
 
     if (Object.keys(errors).length > 0) {
       Object.entries(errors).forEach(([name, msg]) => setError(name, msg));
-      const firstError = container.querySelector('.error:not(:empty)');
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      container.querySelector('.error:not(:empty)')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
-    const lat = data.get('latitude');
-    const lng = data.get('longitude');
+    let lat = data.get('latitude');
+    let lng = data.get('longitude');
+    if ((!lat || !lng) && import.meta.env.DEV) {
+      lat = DEV_FALLBACK_LOCATION.latitude;
+      lng = DEV_FALLBACK_LOCATION.longitude;
+    }
 
     // Body of POST /api/items (backend/API.md). camelCase, same as API responses.
     const payload = {
@@ -279,7 +328,7 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
       timeFrom: data.get('time_from') || null,
       timeTo: data.get('time_to') || null,
       hiddenDetail: data.get('hidden_detail').trim() || null,
-      imageUrl: null, // set from the upload response, see below
+      imageUrl: null,
       location: {
         name: data.get('location_name').trim() || null,
         latitude: lat ? Number(Number(lat).toFixed(6)) : null,
@@ -297,13 +346,50 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     };
     const photo = photoInput.files[0] || null;
 
-    // TODO: replace with backend calls once POST /api/items exists:
-    //   1. if (photo) payload.imageUrl = (await uploads.photo(photo)).url;  // POST /api/uploads/photo
-    //   2. const item = await items.create(payload);                         // POST /api/items
-    //   3. on failure show the error and keep the input (NF-005: never a false success)
-    console.log('Payload for the backend:', payload, 'Photo:', photo);
+    submitBtn.disabled = true;
+    statusEl.textContent = 'Publishing...';
 
-    statusEl.textContent = 'Post saved (test mode, see the console).';
-    statusEl.classList.add('form-status--ok');
+    try {
+      // Photo upload is not implemented on the backend yet: publish without it
+      let photoSkipped = false;
+      if (photo) {
+        try {
+          payload.imageUrl = (await uploads.photo(photo)).url;
+        } catch {
+          photoSkipped = true;
+        }
+      }
+
+      await items.create(payload);
+
+      statusEl.textContent = photoSkipped
+        ? 'Post published, but without the photo (photo upload is not available yet).'
+        : 'Post published.';
+      statusEl.classList.add('form-status--ok');
+      // Keep the button disabled so the post cannot be published twice
+      setTimeout(() => {
+        if (window.location.hash === formHash) window.location.hash = '#/';
+      }, 1800);
+    } catch (err) {
+      // NF-005: never a false success; keep everything the user typed
+      console.error(err);
+      submitBtn.disabled = false;
+      statusEl.textContent = '';
+
+      if (err.status === 401) {
+        statusEl.textContent = 'Your session has expired. Please sign in again.';
+        return;
+      }
+
+      const details = err.body?.details;
+      if (err.status === 400 && details && typeof details === 'object') {
+        const unplaced = showServerErrors(details);
+        statusEl.textContent = unplaced.length ? unplaced.join(' ') : 'Please fix the highlighted fields.';
+        container.querySelector('.error:not(:empty)')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      statusEl.textContent = 'The post could not be saved. Nothing was published. Please try again.';
+    }
   });
 }

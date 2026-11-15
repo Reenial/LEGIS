@@ -120,6 +120,40 @@ No sign-in needed. From the frontend: `lookups.keywords()`. Use these ids for `k
 ]
 ```
 
+## Address search for the map (UC-004, UC-005, F-005)
+
+Signed-in users only (`401` otherwise). The backend calls [Nominatim](https://nominatim.org/) (OpenStreetMap) and caches answers for a day.
+
+| Route | Response |
+| --- | --- |
+| `GET /api/geocode?q=Unska 3, Zagreb` | `200` list of up to 5 places, best match first; `[]` when nothing is found. `400` when `q` is missing or longer than 200 characters. |
+| `GET /api/geocode/reverse?lat=45.8011&lon=15.9709` | `200 { "name": "...", "label": "..." }`; both `null` when nothing is mapped there. `400` for coordinates out of range. |
+
+```json
+[
+  {
+    "name": "Fakultet elektrotehnike i računarstva",
+    "label": "Fakultet elektrotehnike i računarstva, 3, Unska ulica, Trnje, Zagreb, 10000, Hrvatska",
+    "latitude": 45.8011,
+    "longitude": 15.9709
+  }
+]
+```
+
+- `latitude` and `longitude` go into `location` of `POST /api/items`. `name` fits `location.name` (at most 100 characters); `label` is the full address for showing in a list.
+- Use `reverse` after a GPS fix or a click on the map to fill in the location name.
+- Search is limited to Croatia (`NOMINATIM_COUNTRY_CODES=hr` by default).
+- `503` when Nominatim is down or busy. Keep the map usable: the user can still click a point (NF-004).
+
+From the frontend: `lookups.geocode(q)` in `frontend/src/api/endpoints.js` (reverse: `request('/geocode/reverse', { query: { lat, lon } })`).
+
+**Nominatim usage policy** ([full text](https://operations.osmfoundation.org/policies/nominatim/)), which the whole app must follow:
+
+- **No search-as-you-type.** Search only when the user presses Enter or a Search button, never on every keystroke.
+- At most 1 request per second for the whole app. The backend queues requests about 1.1 s apart and answers `503` when the wait would exceed 5 s.
+- The map must show "© OpenStreetMap contributors" (Leaflet's OSM tile layer attribution does this).
+- Set `NOMINATIM_USER_AGENT` to something that identifies the app, preferably with a contact e-mail.
+
 ## POST /api/items — publish a post (UC-004) — agreed contract, not built yet
 
 Signed-in users only. JSON body in camelCase, the same names the API returns. The frontend already builds this body in `frontend/src/pages/itemForm.js`.

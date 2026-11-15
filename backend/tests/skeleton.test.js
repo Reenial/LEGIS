@@ -24,10 +24,10 @@ test('GET /health returns healthy', async () => {
 });
 
 test('public stub route returns 501 with its use case', async () => {
-  const res = await fetch(`${baseUrl}/api/geocode?q=FER`);
+  const res = await fetch(`${baseUrl}/api/items/1`);
   assert.equal(res.status, 501);
   const body = await res.json();
-  assert.equal(body.useCase, 'UC-004');
+  assert.equal(body.useCase, 'UC-002');
 });
 
 test('protected route without a session returns 401 (NF-002)', async () => {
@@ -43,4 +43,11 @@ test('admin route without a session returns 401', async () => {
 test('unknown route returns 404', async () => {
   const res = await fetch(`${baseUrl}/api/does-not-exist`);
   assert.equal(res.status, 404);
+});
+
+test('address search requires sign-in (F-005)', async () => {
+  for (const path of ['/api/geocode?q=FER', '/api/geocode/reverse?lat=45.8&lon=15.97']) {
+    const res = await fetch(`${baseUrl}${path}`);
+    assert.equal(res.status, 401, path);
+  }
 });

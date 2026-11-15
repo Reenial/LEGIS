@@ -1,11 +1,10 @@
 // Create (UC-004) or edit (UC-005) a post. Same form; edit mode when params.itemId is set.
 
 import '../styles/itemForm.css';
-import { lookups } from '../api/endpoints.js';
+import { lookups, items, uploads } from '../api/endpoints.js';
+import { request } from '../api/client.js';
+import { createLocationPicker } from '../components/mapView.js';
 import { escapeHtml } from '../utils/escapeHtml.js';
-
-// Set to true once the map works (location becomes required)
-const REQUIRE_LOCATION = false;
 
 // Categories and keywords are loaded from /api/categories and /api/keywords
 // so their ids always match the database (never hard-code them).
@@ -131,14 +130,23 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
         </div>
 
         <div class="field">
-          <span class="label">Location ${REQUIRE_LOCATION ? '*' : ''}</span>
-          <input type="text" id="location_name" name="location_name" maxlength="100"
-                 placeholder="Place name, e.g. Building D1" />
+          <span class="label">Location *</span>
 
-          <!-- MAP: built by another team member.
-               When the user picks a point, write the values into
-               #latitude and #longitude (input.value = ...). -->
-          <div id="map" class="map-box">Map coming soon</div>
+          <div class="search-row">
+            <input type="text" id="address_search" maxlength="200"
+                   placeholder="Search an address or place, then press Enter" />
+            <button type="button" id="address_search_btn" class="btn-secondary">Search</button>
+          </div>
+          <ul id="search-results" class="search-results" hidden></ul>
+
+          <button type="button" id="gps-btn" class="btn-secondary">📍 Use my location</button>
+
+          <div id="map" class="map-box"></div>
+          <p class="hint" id="map-hint">Click the map to mark the place.</p>
+
+          <label for="location_name">Place name (optional)</label>
+          <input type="text" id="location_name" name="location_name" maxlength="100"
+                 placeholder="e.g. Building D1" />
           <input type="hidden" id="latitude" name="latitude" />
           <input type="hidden" id="longitude" name="longitude" />
 
@@ -169,6 +177,18 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
   const photoInput = container.querySelector('#photo');
   const photoPreview = container.querySelector('#photo-preview');
   const statusEl = container.querySelector('#form-status');
+  const submitBtn = container.querySelector('.btn-submit');
+  const keywordKeys = Object.keys(KEYWORDS);
+  const formHash = window.location.hash;
+
+  const latInput = container.querySelector('#latitude');
+  const lngInput = container.querySelector('#longitude');
+  const nameInput = container.querySelector('#location_name');
+  const mapHint = container.querySelector('#map-hint');
+  const searchInput = container.querySelector('#address_search');
+  const searchBtn = container.querySelector('#address_search_btn');
+  const resultsEl = container.querySelector('#search-results');
+  const gpsBtn = container.querySelector('#gps-btn');
 
   /* ---------- Errors ---------- */
   function setError(name, message) {
@@ -180,8 +200,147 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     container.querySelectorAll('.error').forEach((el) => (el.textContent = ''));
   }
 
+  /* ---------- Location: map, search, GPS (F-005) ---------- */
+  const MAP_UNAVAILABLE = 'The map is unavailable right now. Check your connection and try again.';
+  const DEFAULT_HINT = 'Click the map to mark the place.';
+  let mapFailed = false;
+  let nameAutofilled = false; // true while the place name was filled in by us, not typed by the user
+  let reverseSeq = 0; // ignore answers of outdated reverse-geocoding requests
+
+  nameInput.addEventListener('input', () => {
+    nameAutofilled = false;
+  });
+
+  function setCoordinates(latitude, longitude) {
+    latInput.value = latitude.toFixed(6);
+    lngInput.value = longitude.toFixed(6);
+    mapHint.textContent = `Selected: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+    setError('location', '');
+  }
+
+  // Fills in the place name after a click or GPS fix, but never overwrites text the user typed.
+  // A failure here is harmless: the user can type the name.
+  async function fillNameFromMap(latitude, longitude) {
+    if (nameInput.value.trim() && !nameAutofilled) return;
+    const seq = ++reverseSeq;
+    try {
+      const place = await request('/geocode/reverse', {
+        query: { lat: latitude.toFixed(5), lon: longitude.toFixed(5) },
+      });
+      if (seq !== reverseSeq) return;
+      if (place?.name && (!nameInput.value.trim() || nameAutofilled)) {
+        nameInput.value = place.name;
+        nameAutofilled = true;
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const picker = createLocationPicker(container.querySelector('#map'), {
+    onChange: ({ latitude, longitude }) => {
+      setCoordinates(latitude, longitude);
+      fillNameFromMap(latitude, longitude);
+    },
+    // NF-004: the rest of the form keeps working when the map tiles do not load
+    onUnavailable: () => {
+      mapFailed = true;
+      mapHint.textContent = MAP_UNAVAILABLE;
+    },
+    onAvailable: () => {
+      if (mapFailed) {
+        mapFailed = false;
+        mapHint.textContent = latInput.value
+          ? `Selected: ${Number(latInput.value).toFixed(5)}, ${Number(lngInput.value).toFixed(5)}`
+          : DEFAULT_HINT;
+      }
+    },
+  });
+
+  // GPS. If permission is denied the user can still click the map (NF-004).
+  gpsBtn.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      mapHint.textContent = 'GPS is not available. Click the map to mark the place.';
+      return;
+    }
+    mapHint.textContent = 'Getting your location...';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        picker.setPosition(latitude, longitude, { zoom: 17 });
+        setCoordinates(latitude, longitude);
+        fillNameFromMap(latitude, longitude);
+      },
+      () => {
+        mapHint.textContent = 'Could not get your location. Click the map to mark the place.';
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  });
+
+  // Address search. Only on Enter or the Search button, never while typing (Nominatim policy).
+  let lastResults = [];
+
+  function showResults(list) {
+    lastResults = list;
+    resultsEl.hidden = false;
+    if (list.length === 0) {
+      resultsEl.innerHTML = '<li class="search-results__empty">No places found. Click the map instead.</li>';
+      return;
+    }
+    resultsEl.innerHTML = list
+      .map(
+        (r, i) =>
+          `<li><button type="button" class="result-btn" data-index="${i}">${escapeHtml(r.label || r.name)}</button></li>`,
+      )
+      .join('');
+  }
+
+  function showSearchMessage(message) {
+    lastResults = [];
+    resultsEl.hidden = false;
+    resultsEl.innerHTML = `<li class="search-results__empty">${escapeHtml(message)}</li>`;
+  }
+
+  async function runSearch() {
+    const q = searchInput.value.trim();
+    if (!q || searchBtn.disabled) return;
+    searchBtn.disabled = true;
+    showSearchMessage('Searching...');
+    try {
+      showResults(await lookups.geocode(q));
+    } catch (err) {
+      console.error(err);
+      if (err.status === 401) showSearchMessage('Sign in to search addresses. You can still click the map.');
+      else showSearchMessage(err.message || 'Address search is unavailable. Click the map instead.');
+    } finally {
+      searchBtn.disabled = false;
+    }
+  }
+
+  searchBtn.addEventListener('click', runSearch);
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault(); // Enter must not submit the whole form
+    runSearch();
+  });
+
+  resultsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.result-btn');
+    if (!btn) return;
+    const place = lastResults[Number(btn.dataset.index)];
+    if (!place) return;
+    picker.setPosition(place.latitude, place.longitude, { zoom: 17 });
+    setCoordinates(place.latitude, place.longitude);
+    if (place.name && (!nameInput.value.trim() || nameAutofilled)) {
+      nameInput.value = place.name;
+      nameAutofilled = true;
+    }
+    resultsEl.hidden = true;
+  });
+
   /* ---------- "Other" reveals a text field ---------- */
-  Object.keys(KEYWORDS).forEach((key) => {
+  keywordKeys.forEach((key) => {
     const select = container.querySelector(`#${key}`);
     const other = container.querySelector(`#${key}_other`);
     select.addEventListener('change', () => {
@@ -227,7 +386,7 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     if (!data.get('description').trim()) errors.description = 'Description is required.';
     if (!data.get('category_id')) errors.category_id = 'Select a category.';
 
-    Object.keys(KEYWORDS).forEach((key) => {
+    keywordKeys.forEach((key) => {
       const value = data.get(key);
       if (!value) errors[key] = 'Select a value.';
       else if (value === 'other' && !data.get(`${key}_other`).trim())
@@ -243,31 +402,66 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     if (to && !from) errors.time = 'Enter the start time ("From") as well.';
     else if (from && to && to < from) errors.time = '"To" cannot be before "From".';
 
-    if (REQUIRE_LOCATION && (!data.get('latitude') || !data.get('longitude')))
-      errors.location = 'Pick the location on the map.';
+    if (!data.get('latitude') || !data.get('longitude'))
+      errors.location = 'Pick the location on the map, search for it, or use your location.';
 
     return errors;
   }
 
+  /* ---------- Backend errors ---------- */
+  // Backend field name -> data-error-for name used in this form (null = show in the status line)
+  function errorTarget(field) {
+    const map = {
+      categoryId: 'category_id',
+      dateFoundLost: 'date_found_lost',
+      timeFrom: 'time',
+      timeTo: 'time',
+      hiddenDetail: 'hidden_detail',
+      imageUrl: 'photo',
+      location: 'location',
+      'location.name': 'location',
+      'location.latitude': 'location',
+      'location.longitude': 'location',
+      keywords: null,
+    };
+    if (field in map) return map[field];
+    const kw = field.match(/^keywords\[(\d+)\]$/); // same order as the payload below
+    if (kw) return keywordKeys[Number(kw[1])] ?? null;
+    return field; // type, title, description
+  }
+
+  // Shows field errors from the backend; returns messages that had no field to sit under
+  function showServerErrors(details) {
+    const unplaced = [];
+    Object.entries(details).forEach(([field, message]) => {
+      const target = errorTarget(field);
+      if (target && container.querySelector(`[data-error-for="${target}"]`)) setError(target, message);
+      else unplaced.push(message);
+    });
+    return unplaced;
+  }
+
   /* ---------- Submit ---------- */
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (submitBtn.disabled) return;
     clearErrors();
     statusEl.textContent = '';
     statusEl.className = 'form-status';
+
+    if (isEdit) {
+      statusEl.textContent = 'Editing is not available yet.';
+      return;
+    }
 
     const data = new FormData(form);
     const errors = validate(data);
 
     if (Object.keys(errors).length > 0) {
       Object.entries(errors).forEach(([name, msg]) => setError(name, msg));
-      const firstError = container.querySelector('.error:not(:empty)');
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      container.querySelector('.error:not(:empty)')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-
-    const lat = data.get('latitude');
-    const lng = data.get('longitude');
 
     // Body of POST /api/items (backend/API.md). camelCase, same as API responses.
     const payload = {
@@ -279,11 +473,11 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
       timeFrom: data.get('time_from') || null,
       timeTo: data.get('time_to') || null,
       hiddenDetail: data.get('hidden_detail').trim() || null,
-      imageUrl: null, // set from the upload response, see below
+      imageUrl: null,
       location: {
         name: data.get('location_name').trim() || null,
-        latitude: lat ? Number(Number(lat).toFixed(6)) : null,
-        longitude: lng ? Number(Number(lng).toFixed(6)) : null,
+        latitude: Number(Number(data.get('latitude')).toFixed(6)),
+        longitude: Number(Number(data.get('longitude')).toFixed(6)),
       },
       keywords: Object.entries(KEYWORDS).map(([key, cfg]) => {
         const value = data.get(key);
@@ -297,13 +491,50 @@ function renderForm(container, params, CATEGORIES, KEYWORDS) {
     };
     const photo = photoInput.files[0] || null;
 
-    // TODO: replace with backend calls once POST /api/items exists:
-    //   1. if (photo) payload.imageUrl = (await uploads.photo(photo)).url;  // POST /api/uploads/photo
-    //   2. const item = await items.create(payload);                         // POST /api/items
-    //   3. on failure show the error and keep the input (NF-005: never a false success)
-    console.log('Payload for the backend:', payload, 'Photo:', photo);
+    submitBtn.disabled = true;
+    statusEl.textContent = 'Publishing...';
 
-    statusEl.textContent = 'Post saved (test mode, see the console).';
-    statusEl.classList.add('form-status--ok');
+    try {
+      // Photo upload is not implemented on the backend yet: publish without it
+      let photoSkipped = false;
+      if (photo) {
+        try {
+          payload.imageUrl = (await uploads.photo(photo)).url;
+        } catch {
+          photoSkipped = true;
+        }
+      }
+
+      await items.create(payload);
+
+      statusEl.textContent = photoSkipped
+        ? 'Post published, but without the photo (photo upload is not available yet).'
+        : 'Post published.';
+      statusEl.classList.add('form-status--ok');
+      // Keep the button disabled so the post cannot be published twice
+      setTimeout(() => {
+        if (window.location.hash === formHash) window.location.hash = '#/';
+      }, 1800);
+    } catch (err) {
+      // NF-005: never a false success; keep everything the user typed
+      console.error(err);
+      submitBtn.disabled = false;
+      statusEl.textContent = '';
+
+      if (err.status === 401) {
+        statusEl.textContent = 'Your session has expired. Please sign in again.';
+        return;
+      }
+
+      const details = err.body?.details;
+      if (err.status === 400 && details && typeof details === 'object') {
+        const unplaced = showServerErrors(details);
+        statusEl.textContent = unplaced.length ? unplaced.join(' ') : 'Please fix the highlighted fields.';
+        container.querySelector('.error:not(:empty)')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      statusEl.textContent = 'The post could not be saved. Nothing was published. Please try again.';
+    }
   });
 }

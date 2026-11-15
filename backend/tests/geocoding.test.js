@@ -135,8 +135,10 @@ test('requests to Nominatim are spaced out, even when they arrive together', asy
   });
   await Promise.all([g.searchAddress('a'), g.searchAddress('b'), g.searchAddress('c')]);
   assert.equal(sentAt.length, 3);
-  assert.ok(sentAt[1] - sentAt[0] >= 49, `gap ${sentAt[1] - sentAt[0]} ms`);
-  assert.ok(sentAt[2] - sentAt[1] >= 49, `gap ${sentAt[2] - sentAt[1]} ms`);
+  // Timers and Date.now() are only accurate to a few ms (and the first send is timestamped a
+  // little after it was scheduled), so a gap of e.g. 48 ms is fine. Without spacing it would be ~0.
+  assert.ok(sentAt[1] - sentAt[0] >= 40, `gap ${sentAt[1] - sentAt[0]} ms`);
+  assert.ok(sentAt[2] - sentAt[1] >= 40, `gap ${sentAt[2] - sentAt[1]} ms`);
 });
 
 test('after a quiet second the next request goes out without waiting', async () => {

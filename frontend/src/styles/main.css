@@ -136,17 +136,19 @@ a.item {
   width: 100%;
 }
 
-.placeholder {
+/* "Not implemented yet..." screen (components/notImplemented.js) and the 404 page */
+.not-implemented,
+.not-found {
   padding: 1rem;
   background: #fff;
   border: 1px dashed #8c959f;
   border-radius: 8px;
 }
 
-.placeholder__uc {
-  margin-top: -0.5rem;
+.not-implemented__text {
+  margin: 0.5rem 0;
   color: #57606a;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
 }
 
 .map {

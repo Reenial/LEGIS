@@ -27,6 +27,7 @@ test('public stub route returns 501 with its use case', async () => {
   const res = await fetch(`${baseUrl}/api/items/1`);
   assert.equal(res.status, 501);
   const body = await res.json();
+  assert.equal(body.error, 'Not implemented yet...');
   assert.equal(body.useCase, 'UC-002');
 });
 

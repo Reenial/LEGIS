@@ -226,3 +226,23 @@ header {
   font-weight: normal;
   text-decoration: underline;
 }
+
+/* Shown while the backend starts after a quiet period (components/wakeNotice.js) */
+.wake-notice {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 24px);
+  max-width: 480px;
+  padding: 12px 16px;
+  border-radius: 15px;
+  background: #fff8d6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.wake-notice[hidden] {
+  display: none;
+}

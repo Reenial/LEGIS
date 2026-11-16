@@ -12,7 +12,7 @@ Base URL: `/api` on the frontend's own origin. The Vite dev server (`npm run dev
 
 The session id is regenerated on every sign-in.
 Errors always have the shape `{ "error": "message", "details": { ... } }`.
-Endpoints not listed here still return `501 Not implemented`.
+Endpoints not listed here still return `501` with `{ "error": "Not implemented yet..." }`; the frontend then shows its "Not implemented yet..." screen.
 
 ## GET /api/items — public post list (UC-001, F-001)
 

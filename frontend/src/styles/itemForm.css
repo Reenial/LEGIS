@@ -41,7 +41,7 @@
   border-radius: 15px;
   font-size: 16px;
   font-family: inherit;
-  background: white;
+  background: #f0f6fc;
   margin-bottom: 8px;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .type-switch input:checked + span {
-  background: blue;
+  background: #1c6dbd;
   color: white;
 }
 
@@ -154,7 +154,7 @@ This one is for GPS, which has not been added yet
 
 .btn-submit {
   width: 100%;
-  background-color: green;
+  background-color: #243b53;
   padding: 18px;
   font-size: 17px;
 }

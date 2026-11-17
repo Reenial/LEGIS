@@ -1,6 +1,7 @@
 /* Sign-in page */
 .sign-in {
-  background: white;
+  background: #f0f6fc;
+  border: 1px solid #d6e3ef;
   border-radius: 15px;
   padding: 24px 20px;
   text-align: center;
@@ -9,6 +10,7 @@
 .sign-in h1 {
   margin: 0 0 10px;
   font-size: 24px;
+  color: #243b53;
 }
 
 .sign-in__button {

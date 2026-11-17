@@ -36,9 +36,9 @@ An additional problem is *ownership verification*. Publicly disclosing all ident
 - A separate mobile application is not planned; the project provides a web application adapted for mobile devices
 
 **External dependencies:**
-
-- An external identity provider enables sign-in through OAuth 2.0
-- An external mapping or geocoding service enables location selection and display
+- Google Identity Services provides sign-in with a Google account; the backend verifies the returned ID token
+- OpenStreetMap supplies the map tiles displayed through the Leaflet frontend library
+- Nominatim provides address search and conversion between addresses and geographical coordinates
 - GPS location detection depends on the device's capabilities and the user's permission, with manual selection on the map available as an alternative
 
 ## 1.4 Existing Approaches and Project Rationale

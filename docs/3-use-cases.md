@@ -35,10 +35,10 @@
 | Field | Description |
 | --- | --- |
 | Primary actor | Visitor or administrator who is not signed in. |
-| Secondary actor | External identity provider. |
+| Secondary actor | Google Identity Services |
 | Requirement IDs | F-003 |
-| Preconditions | The user has an account with the selected identity provider. |
-| Main flow | 1. The user selects the sign-in option.<br>2. The system redirects them to an external identity provider to sign in using OAuth 2.0.<br>3. The user completes the sign-in process with the provider.<br>4. The system validates the provider's response and establishes a user session. |
+| Preconditions | The user has a Google account |
+| Main flow | 1. The user selects the Google sign-in option.<br>2. TThey choose their Google account and complete any required authentication <br>3. The frontend receives a Google ID token and sends it to the backend.<br>4. The backend verifies the token and establishes a user session. |
 | Alternative flows | If the user cancels or sign-in fails, they remain signed out and can use public functionality. |
 | Result | The user is signed in and can access actions according to their assigned role. |
 
@@ -50,7 +50,7 @@
 | Secondary actor | External map service. |
 | Requirement IDs | F-004, F-005 |
 | Preconditions | The user is signed in. |
-| Main flow | 1. The user opens the form for a new post.<br>2. They enter the post type, category, item title and description, and the date or approximate time of the event.<br>3. They specify the location using GPS or by selecting it on a map.<br>4. They optionally add a photograph and a hidden detail for ownership verification.<br>5. They confirm publication.<br>6. The system validates the information, saves the post, and displays confirmation. |
+| Main flow | 1. The user opens the form for a new post.<br>2. They enter the post type, category, item title and description, and the date or approximate time of the event.<br>3. They select suggested keywords or enter their own text under “Other” when no suitable keyword is available.<br>4. They specify the location using GPS or by selecting it on a map.<br>5. They optionally add a photograph and a hidden detail for ownership verification.<br>6. They confirm publication.<br>7. The system validates the information, saves the post, and displays confirmation. |
 | Alternative flows | **GPS is unavailable or permission is denied:** The user selects the location on a map.<br>**Information is incomplete or invalid:** The system requests corrections before saving.<br>**Saving fails:** The system displays an error and does not confirm publication. |
 | Result | The post is available for browsing, and the hidden detail is not publicly displayed. |
 
@@ -83,9 +83,9 @@
 | --- | --- |
 | Primary actor | Signed-in user who believes they own the item. |
 | Requirement IDs | F-008 |
-| Preconditions | The user is signed in, and the found item post is available for submitting a request. |
+| Preconditions | The user is signed in. The post describes a found item that is available for return. The user is not the post author and has no pending or accepted request for the same item. |
 | Main flow | 1. The user opens the post and selects the option to submit a return request.<br>2. They provide information supporting their ownership claim, including item characteristics that are not publicly displayed.<br>3. They submit the request.<br>4. The system saves the request and makes it available to the post author.<br>5. The user is shown confirmation and a request status indicating that a decision is pending. |
-| Alternative flows | **Required information is missing:** The system requests the missing information.<br>**The post is no longer available for a return request:** The system does not save the request and informs the user.<br>**Submission fails:** The system does not confirm submission and displays an error. |
+| Alternative flows | **Required information is missing:** The system requests the missing information.<br>**The item is unavailable, the user is the post author, or the user already has a pending or accepted request for the item:** The system rejects submission and explains the reason.<br> **A previous request was rejected or withdrawn:** The user may submit a new request if the item is still available. <br> **Submission fails:** The system does not confirm submission and displays an error. |
 | Result | The request has been sent to the post author. Its contents are not publicly available. |
 
 ### UC-008: Accept or reject a return request
@@ -94,17 +94,17 @@
 | --- | --- |
 | Primary actor | Post author. |
 | Requirement IDs | F-009 |
-| Preconditions | The author is signed in, and a request for their post is awaiting a decision. |
-| Main flow | 1. The author opens the return request.<br>2. They review the provided information and compare it with the item's characteristics, including the hidden detail if one has been recorded.<br>3. They assess the request and accept or reject it.<br>4. The system saves the decision and displays the updated status to the author and the requester. |
-| Alternative flows | **Insufficient information:** The author can request additional information through a private message and make a decision later.<br>**Unauthorized processing attempt:** The system rejects the change if the user is not the post author.<br>**Saving fails:** The system does not confirm the status change and displays an error. |
+| Preconditions | The user is signed in and is the author of the associated found-item post. The request has not been withdrawn, and the item has not been marked as handed over. |
+| Main flow | 1. The author opens the return request.<br>2. They review the provided information and compare it with the item's characteristics, including the hidden detail if one has been recorded.<br>3. They assess the request and accept or reject it.<br>4. The system checks permissions and request constraints, saves the decision, and displays the updated status to both participants. |
+| Alternative flows | **Insufficient information:** The author can request additional information through a private message and make a decision later.<br> **Change of decision:** Before handover, the author may change an accepted request to rejected or a rejected request to accepted. Acceptance is rejected if another request for the item is already accepted.<br>**Request withdrawn or item already handed over:** The system rejects further decisions on the request.<br>**Record handover:** After the physical handover, the finder separately marks the item as handed over. The system updates the post status to `handed_over`; accepting a request alone does not perform this action.<br> **Unauthorized processing attempt:** The system rejects the change if the user is not the post author.<br>**Saving fails:** The system does not confirm the status change and displays an error. |
 | Result | The request is accepted or rejected. Acceptance does not mean that the physical handover of the item has already been completed. |
 
 ### UC-009: Track request status
-
+HAVE TO UPDATE
 | Field | Description |
 | --- | --- |
 | Primary actor | Requester or author of the associated post. |
-| Requirement IDs | F-010 |
+| Requirement IDs | F-008, F-010 |
 | Preconditions | The user is signed in. |
 | Main flow | The user opens the overview of sent or received requests. The system displays requests in which the user participates and their current statuses. |
 | Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. |

@@ -9,7 +9,7 @@ The requirements for the **Lost & Found** application are based on the [project 
 | ID | Description | Priority | Source | Acceptance criteria |
 | --- | --- | --- | --- | --- |
 | F-001 | The system allows users to browse and search posts without signing in and to filter them by type, category, location, and time. | High | Project assignment, Section 2; elaboration in Section 2.5. | The user selects suggested keywords for the item they are looking for; if no suitable keyword is available, they enter their own text under “Other”. Combined criteria return only matching posts; if there are none, the system displays a message and allows the user to change the criteria. |
-| F-002 | The system displays the public information of a post and its location on a map. | High | Project assignment, Section 2; elaboration in Section 2.5. | The type, category, title, description, date or approximate time, return status, location, and photograph, if available, are accessible. The post type is “lost” or “found”; the “pending” status means that the item has been found but has not been handed over, while “handed over” means that the finder has marked it as handed over. |
+| F-002 | The system displays the public information of a post and its location on a map. | High | Project assignment, Section 2; based on the current data model | The type, category, title, description, date or approximate time, status, location, and photograph, if available, are accessible. The post type is “lost” or “found” and it is separate from its status; the “pending” status means that the post is unresolved (for a lost-item post, the item is still being sought; for a found-item post, the item is awaiting return) , while “handed over” means that it is completely handed over. he hidden item detail is not publicly accessible.|
 | F-003 | The system allows users to sign in through an external identity provider using OAuth 2.0. | High | Project assignment, Section 2; elaboration in Section 2.5. | Successful validation of the provider's response establishes a session and enables actions according to the user's role. Cancellation or failure does not grant access to protected actions; public browsing remains available. |
 | F-004 | A signed-in user can publish a lost or found item post. | High | Project assignment, Section 2; elaboration in Section 2.5. | The type, category, title, description, date or approximate time, and location are saved; a photograph and a hidden detail are optional. When describing the item, the user selects suggested keywords or enters their own text under “Other” if no suitable keyword is available; the selection and entered text are saved with the post. Incomplete or invalid required information must be corrected and does not result in a new post. |
 | F-005 | The user can specify the location using GPS or by selecting it manually on a map. | High | Project assignment, Section 2; elaboration in Section 2.5. | The selected location is saved with the post and displayed in its details; denied permission or unavailable GPS does not prevent manual selection. |
@@ -56,13 +56,13 @@ Sources: Scope, Section 1.2, and the use case diagram and descriptions.
 
 | ID | Constraint or assumption | Source | Consequence or way to verify |
 | --- | --- | --- | --- |
-| C-01 | Sign-in is provided through an external identity provider using OAuth 2.0. | Project assignment, Section 2; Scope, Section 1.3; UC-003. | The team selects the provider during design; verify successful, cancelled, and failed sign-in. |
+| C-01 | Sign-in is provided through an external identity provider using OAuth 2.0. | Project assignment, Section 2; Scope, Section 1.3; UC-003. | The team selected Google as an external identrity provider; verify successful, cancelled, and failed sign-in. |
 | C-02 | Location functionality depends on an external map service; GPS depends on the device and the user's permission. | Project assignment, Sections 2–3; Scope, Section 1.3. | Provide manual location selection and verify denied GPS permission and map unavailability according to NF-004. |
 | C-03 | Item handover, delivery, and physical storage are outside the system. | Project assignment, Section 2; Scope, Section 1.3; UC-008, UC-010. | The system enables coordination; an accepted request is not proof that the handover has been completed. |
 | C-04 | The system helps assess ownership but does not guarantee it. | Scope, Sections 1.1 and 1.3; UC-011. | The post author decides on the request; a suggested match does not confirm ownership. |
 | C-05 | The project develops a web application adapted for mobile devices, without a separate mobile application. | Project assignment, Section 3; Scope, Section 1.3. | Verify the mobile view according to NF-003. |
 | C-06 | Reporting problematic posts is available only to signed-in users. | Team agreement, 28 October 2026. | Verify that a signed-in user can submit a report and a user who is not signed in cannot. |
-| AS-03 | The selected external services will be available in the development and demonstration environments. | External dependencies from Scope, Section 1.3. | Verify configuration, terms of use, and availability during integration; the current sources do not specify providers or availability guarantees. |
+| AS-03 | The selected external services will be available in the development and demonstration environments. | External dependencies from Scope, Section 1.3. | Verify configuration, terms of use, and availability during integration;|
 
 ## 2.5 Significant Requirement Changes
 
@@ -71,20 +71,38 @@ Significant additions made during requirements elaboration are recorded below.
 | Date | Requirement ID | Change and reason | Agreed with / evidence |
 | --- | --- | --- | --- |
 | 2026-10-28 | F-014, C-06 | It was established that only signed-in users can report problematic posts. | Project team agreement. |
+| 2026-11-5 | F-008, F-009 | Return-request rules were elaborated: users cannot request their own item; multiple users may request the same item, but each user may have at most one pending or accepted request for that item, and an item may have at most one accepted request. |
+| Current design in [Section 4.4](./4-Architecture-and-Design.md#44-runtime-behavior) and unique indexes in the [database schema](../database/schema.sql). |
 
-Keywords and the “Other” input are used when posting and searching for items. The team periodically reviews “Other” entries to improve the filters; automatically adding keywords is not a requirement. Rules for multiple requests and requests for one's own post have not yet been defined.
+Keywords and the “Other” input are used when posting and searching for items. The team periodically reviews “Other” entries to improve the filters; automatically adding keywords is not a requirement. 
+
+The current return - request design follows these rules:
+ - A user cannot submit a return request on their own post
+ - Different users may submit requests for the same available found item
+ - A user may have at most one pending or accepted request for the same item
+ - An item may have at most one accepted request
+ - A new request can be submitted after the user's previous request has been rejected or withdrawn, if the item is still available
+ - The requester may withdraw their request. A withdrawn request cannot be reopened
+ - Accepting a request does not mark the item as delivered; the finder records the delivery separately
 
 ## 2.6 Requirement Traceability
 
-The associated use cases are listed below. All listed checks are **planned and have not been performed**. Project tests and manual procedures should be documented in [Section 5.2](./5-Testing.md#52-test-cases), and results in Section 5.3. Teaching examples in that chapter are not project tests.
+Existing automated tests are linked below where available; other checks remain planned. A test-file link does not confirm a successful execution or complete requirement coverage. Actual execution results are recorded in Section 5.3.
+
+Database integration tests need a configured test database with the required schema and data; otherwise, they are skipped. Authentication tests simulate Google's response, so the complete Google sign-in flow must also be checked in the browser.
 
 | Requirement ID | Use case or design location | Test or verification location |
 | --- | --- | --- |
-| F-001 | UC-001 — [description](./3-use-cases.md#uc-001-browse-search-and-filter-posts). | Browsing without signing in, searching, combining filters by type, category, location, and time, and displaying an empty result. |
-| F-002 | UC-002 — [description](./3-use-cases.md#uc-002-view-post-details). | Display of public details, status, location, and a photograph if available; the hidden detail is not public; a removed post is unavailable. |
-| F-003 | UC-003 — [description](./3-use-cases.md#uc-003-sign-in). | Successful, cancelled, and failed sign-in through OAuth 2.0; availability of actions according to the user's role. |
-| F-004 | UC-004 — [description](./3-use-cases.md#uc-004-publish-a-lost-or-found-item-post). | Valid lost and found item posts; missing required information; posting with and without a photograph and a hidden detail. |
-| F-005 | UC-004, UC-005 — [descriptions](./3-use-cases.md). | Specifying a location using GPS and manual selection on a map; checking the saved location after posting or editing. |
+| F-001 | UC-001 — [description](./3-use-cases.md#uc-001-browse-search-and-filter-posts). | Browsing without signing in, searching, combining filters by type, category, location, and time, and displaying an empty result. 
+Existing tests: [filter validation](../backend/tests/items.filters.test.js), [public listing and search](../backend/tests/items.list.test.js), and [category and keyword lookups](../backend/tests/lookups.test.js). Complete browser interaction still requires verification. |
+| F-002 | UC-002 — [description](./3-use-cases.md#uc-002-view-post-details). | Display of public details, status, location, and a photograph if available; the hidden detail is not public; a removed post is unavailable. 
+Partial coverage: [public listing tests](../backend/tests/items.list.test.js) check public fields and exclusion of hidden details and removed posts from the list. They do not verify the post-detail page or map display.|
+| F-003 | UC-003 — [description](./3-use-cases.md#uc-003-sign-in). | Successful, cancelled, and failed sign-in through OAuth 2.0; availability of actions according to the user's role.  
+Existing tests: [authentication and sessions](../backend/tests/auth.test.js). These use a simulated authentication service; actual Google sign-in and cancellation still require verification.|
+| F-004 | UC-004 — [description](./3-use-cases.md#uc-004-publish-a-lost-or-found-item-post). | Valid lost and found item posts; missing required information; posting with and without a photograph and a hidden detail. 
+Existing tests: [post input validation](../backend/tests/items.validation.test.js). Saving and retrieving a new post and uploading photographs require separate verification.|
+| F-005 | UC-004, UC-005 — [descriptions](./3-use-cases.md). | Specifying a location using GPS and manual selection on a map; checking the saved location after posting or editing. 
+Partial coverage: [coordinate validation](../backend/tests/items.validation.test.js) and [geocoding service tests](../backend/tests/geocoding.test.js). Browser GPS, manual map selection and persistence of the selected location still require verification.|
 | F-006 | UC-005 — [description](./3-use-cases.md#uc-005-edit-own-post). | Editing as the author; rejecting another user's attempt to edit; rejecting invalid data without changing the existing post. |
 | F-007 | UC-006 — [description](./3-use-cases.md#uc-006-remove-own-post). | Confirmed and cancelled removal; rejecting another user's attempt to remove the post; unavailability of the removed post in public view. |
 | F-008 | UC-007 — [description](./3-use-cases.md#uc-007-request-the-return-of-an-item). | Submitting a valid request; rejecting an incomplete request and a request for an unavailable post; privacy of request contents. |
@@ -94,9 +112,12 @@ The associated use cases are listed below. All listed checks are **planned and h
 | F-012 | UC-011 — [description](./3-use-cases.md#uc-011-view-possible-matches). | Displaying possible matches and opening their details; displaying a message when there are no matches. Add specific test cases after the comparison rules have been elaborated. |
 | F-013 | UC-012 — [description](./3-use-cases.md#uc-012-enable-notifications-and-view-match-notifications). | Enabling notifications; displaying a notification about a new possible match; no new notification when notifications are not enabled or there is no corresponding match. |
 | F-014 | UC-013 — [description](./3-use-cases.md#uc-013-report-a-problematic-post). | Submitting a report as a signed-in user; rejecting submission without signing in; requiring a reason; no automatic removal of the reported post. |
-| F-015 | UC-014 — [description](./3-use-cases.md#uc-014-review-reports-and-remove-inappropriate-content). | Reviewing reports and removing content as an administrator; handling justified and unjustified reports; denying access to a user without administrator privileges. |
-| NF-001 | UC-002, UC-007–UC-010 — [descriptions](./3-use-cases.md). | Verify access to hidden details, requests, and private messages as the author, a participant, a third-party user, and a visitor who is not signed in. Check both the interface and direct requests to the server. |
-| NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014 — [descriptions](./3-use-cases.md). | Attempt protected actions without a session, with an invalid session, and as a user without the required permissions; confirm rejection and the absence of data changes. |
+| F-015 | UC-014 — [description](./3-use-cases.md#uc-014-review-reports-and-remove-inappropriate-content). | Reviewing reports and removing content as an administrator; handling justified and unjustified reports; denying access to a user without administrator privileges. 
+Partial coverage: [route protection tests](../backend/tests/skeleton.test.js) check rejection of unauthenticated access to the administrator reports route.|
+| NF-001 | UC-002, UC-007–UC-010 — [descriptions](./3-use-cases.md). | Verify access to hidden details, requests, and private messages as the author, a participant, a third-party user, and a visitor who is not signed in. Check both the interface and direct requests to the server. 
+Partial coverage: [public listing tests](../backend/tests/items.list.test.js) check that the post list does not expose hidden details. Access to individual post details, requests and private messages requires additional verification.|
+| NF-002 | UC-003, UC-005, UC-006, UC-008, UC-014 — [descriptions](./3-use-cases.md). | Attempt protected actions without a session, with an invalid session, and as a user without the required permissions; confirm rejection and the absence of data changes.
+Existing tests: [authentication and sessions](../backend/tests/auth.test.js) and [route protection](../backend/tests/skeleton.test.js). These do not establish complete coverage of authorship, participant and administrator permissions. |
 | NF-003 | Project assignment, Section 3; UC-001, UC-004, UC-007. | Verify browsing, searching, posting, and request submission in a mobile browser. Record the device and viewport width and verify that the required inputs and actions are accessible without horizontal page scrolling. |
 | NF-004 | UC-002, UC-004 — [descriptions](./3-use-cases.md). | Deny GPS permission and select a location manually. Separately prevent the map from loading in the post details and verify that the remaining public information is available with an error message. |
 | NF-005 | UC-004, UC-007, UC-008, UC-010 — [descriptions](./3-use-cases.md). | Cause a save failure in a test environment for a post, request, decision, and message. Verify the error message, stored state, and absence of a false success confirmation. |

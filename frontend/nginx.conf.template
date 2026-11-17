@@ -18,7 +18,16 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         # X-Forwarded-Proto from Render's edge (https) passes through unchanged; the backend
         # needs it to set the Secure session cookie, so don't overwrite it with nginx's own http.
-        proxy_read_timeout 120s;             # a sleeping free Render backend can take over a minute to start
+        proxy_read_timeout 120s;
+    }
+
+    # A free Render backend stops after ~15 minutes without traffic, and the requests nginx
+    # forwards do not start it again (Render answers them with 502). The app (api/client.js)
+    # then fetches this path; the browser follows the redirect straight to the backend, which
+    # does start it.
+    location = /wake-api {
+        add_header Cache-Control "no-store" always;
+        return 302 ${API_UPSTREAM}/health;
     }
 
     location / {

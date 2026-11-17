@@ -9,14 +9,20 @@ function resolveBaseUrl(raw) {
 
 const BASE_URL = resolveBaseUrl(import.meta.env.VITE_API_URL);
 
-// Render's free plan stops the backend after about 15 minutes without traffic. While it
-// starts again (up to about a minute) Render answers 502/503 with its own HTML page and the
-// request never reaches the app, so it is safe to repeat it, even a POST. A 503 that the app
-// sends itself (JSON, e.g. busy address search) is a real answer and is not retried.
-// If the start takes longer than nginx waits (nginx.conf.template), nginx answers 504, and a
-// network error can happen too. The backend may still get those requests once it is up, so
-// only GET/HEAD are repeated after them (repeating a POST could create a duplicate post).
+// Render's free plan stops the backend after about 15 minutes without traffic. Requests that
+// nginx forwards to the stopped backend do NOT start it again: Render answers them at once with
+// 502 and its own HTML "loading" page, and the request never reaches the app, so it is safe to
+// repeat it, even a POST. Only a request sent straight from the browser to the backend starts
+// it, so on such an answer wakeBackend() sends one and the request is repeated once it is up.
+// A 503 that the app sends itself (JSON, e.g. busy address search) is a real answer and is not
+// retried. nginx can also answer 504 and a network error can happen; the backend may still get
+// those requests, so only GET/HEAD are repeated after them (a repeated POST could create a
+// duplicate post).
 const RETRY_DELAYS_MS = [2000, 3000, 5000, 5000, 10000, 10000, 10000, 15000]; // 60 s in total
+
+// nginx redirects this path to the backend's own /health URL (nginx.conf.template).
+const WAKE_PATH = '/wake-api';
+const WAKE_TIMEOUT_MS = 90000;
 
 // After this long the "connecting to the server" banner appears (components/wakeNotice.js).
 const SLOW_REQUEST_MS = 4000;
@@ -34,6 +40,23 @@ function isBackendWakingUp(res, idempotent) {
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Starts a stopped backend: the browser follows nginx's redirect straight to the backend, and
+// Render holds that request until the backend is running, so this resolves once it is up.
+// The answer itself is not needed ('no-cors'). Requests waiting at the same time share one wake-up.
+let waking = null;
+
+function wakeBackend() {
+  if (!waking) {
+    const signal = typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(WAKE_TIMEOUT_MS) : undefined;
+    waking = fetch(WAKE_PATH, { mode: 'no-cors', cache: 'no-store', signal })
+      .catch(() => {}) // the retries below still run
+      .finally(() => {
+        waking = null;
+      });
+  }
+  return waking;
+}
 
 export class ApiError extends Error {
   constructor(status, message, body) {
@@ -79,7 +102,7 @@ export async function request(path, { method = 'GET', body, query } = {}) {
     res = await send();
     for (const delay of RETRY_DELAYS_MS) {
       if (!isBackendWakingUp(res, idempotent)) break;
-      await sleep(delay);
+      await Promise.all([wakeBackend(), sleep(delay)]);
       res = await send();
     }
   } finally {

@@ -1,6 +1,6 @@
 # 4. Architecture and Design
 
-Lost & Found consists of a web interface, a Node.js backend, and a PostgreSQL database. It uses Google for sign-in, Leaflet and OpenStreetMap for maps, and Nominatim to convert addresses into coordinates. This chapter describes the system’s design, its main components, the data it stores, and how it works.
+Lost & Found has a web interface, a Node.js backend, and a PostgreSQL database. It uses Google for sign-in, Leaflet and OpenStreetMap for maps, and Nominatim to convert addresses into coordinates. This chapter describes the system’s design, its main components, the data it stores, and how it works.
 
 | View | Main question |
 | --- | --- |
@@ -13,11 +13,11 @@ Lost & Found consists of a web interface, a Node.js backend, and a PostgreSQL da
 
 ## 4.1 Solution Strategy
 
-Lost & Found has a web interface built with HTML, CSS, and JavaScript, a single Node.js backend, and a PostgreSQL database. We plan to add Express.js for request handling. The following describes the selected design and does not confirm that all functionality has already been implemented.
+Lost & Found has a web interface built with HTML, CSS, and JavaScript, a single Node.js backend using Express.js, and a PostgreSQL database. Vite is used for frontend development and production builds. The following describes the selected design and does not confirm that all functionality has already been implemented.
 
 | Decision | Alternative considered | Project-specific rationale and trade-off |
 | --- | --- | --- |
-| A single Node.js backend with Express.js planned | Java (Spring Boot) | We are familiar with these technologies, and we use JavaScript on both the frontend and the backend. A single backend simplifies development, but its failure affects most functionality. |
+| A single Node.js backend with Express.js | Java (Spring Boot) | We are familiar with these technologies, and we use JavaScript on both the frontend and the backend. A single backend simplifies development, but its failure affects most functionality. |
 | PostgreSQL relational database | MongoDB | We are familiar with PostgreSQL, and it suits related data such as users, posts, and requests. Structural changes require adjustments to the database. |
 | Google sign-in | Microsoft (Entra ID) | The user uses an existing account, and the application does not manage their Google password. Sign-in depends on an external service. |
 | Leaflet + OpenStreetMap | MapLibre GL + MapTiler | Leaflet displays the OpenStreetMap base map. Map display depends on the availability of the map service. |
@@ -38,6 +38,12 @@ The frontend displays data and collects user input. The backend validates data a
 | Frontend | Displays posts, the map, forms, messages, and notifications. | Separates the user interface from data processing. |
 | Backend | Handles requests, checks permissions, calculates matches, and accesses external services. | Application rules are checked on the server. |
 | PostgreSQL database | Stores users, posts, requests, messages, and other related data. | Provides persistent storage and maintains relationships between data. |
+
+Vite is used for local frontend development and production builds. The frontend code is organized into pages, reusable components, API access functions, and session state.
+
+The Express backend is organized by functionality, including authentication, items, claims, messages, notifications, and moderation. Within these modules, routes connect API endpoints to controllers, controllers handle HTTP requests and responses, services contain application rules, and repositories access PostgreSQL. Shared middleware handles authentication, administrator access, and errors.
+
+This structure is already present in the repository, but several modules still contain placeholder implementations. Their presence does not mean that all associated functionality is complete.
 
 The frontend receives Google's token and sends it to the backend for verification. The request to convert an address into coordinates also passes through the backend, which calls Nominatim. The frontend loads the OpenStreetMap base map through Leaflet. Matching is based on keyword scoring; the final threshold has not yet been agreed upon.
 
@@ -117,105 +123,47 @@ The statuses and the restriction of one active request are defined in the [datab
 
 ## 4.5 Architecture Decision Records
 
-**Objective:** Preserve the reasons for consequential architectural choices so a future developer can understand what was decided, what alternative was considered, and which trade-off the team accepted.
+The following records summarize the architectural choices described in Section 4.1 and reflected in the repository. The original decision dates were not recorded. The status refers to the selected technology or structure, not completion of every application feature.
 
-**Decision index:** [List important architectural decisions in one place. A short row is sufficient for a straightforward decision.]
-
-| ID | Date | Decision | Alternative considered | Rationale and trade-off | Status |
-| --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
-
-**Detailed ADR, when the decision needs more explanation:**
-
-### ADR-[ID]: [Decision title]
-
-| Field | Record of the decision |
-| --- | --- |
-| Context and goal | [Which architectural problem made this decision necessary?] |
-| Decision criteria | [What actually mattered to the team?] |
-| Alternatives considered | [Realistic options the team weighed, briefly.] |
-| Decision and rationale | [Chosen option, why it won, and what is given up.] |
-| Status | [Proposed, accepted, or superseded; link to the replacement when applicable.] |
-
-Write an ADR only for a choice whose rationale will matter after the implementation changes. A significant change of decision can be recorded as a new ADR that supersedes the old one; routine tool choices do not need detailed records. Changes to agreed scope belong with requirements and their change history; feedback on a task stays with its issue.
-
-<details>
-<summary><strong>Choosing one backend instead of separately deployed services</strong></summary>
-
-**Example — Crisis Guard, ADR-01:**
-
-| ID | Date | Decision | Alternative considered | Rationale and trade-off | Status |
-| --- | --- | --- | --- | --- | --- |
-| ADR-01 | [Date of decision] | One backend API for report handling | Separate deployable report and resource services | Lower deployment and integration effort for the approved scope; a failure of the backend can affect both features. | Accepted |
-
-### ADR-01: One backend API for report handling
-
-| Field | Record of the decision |
-| --- | --- |
-| Context and goal | The team must deliver and publicly deploy reporting and a map-oriented view during one semester. |
-| Decision criteria | The team can build, integrate, deploy, and explain the solution; components still have identifiable responsibilities. |
-| Alternatives considered | **One backend:** modules share a deployable application. **Separate services:** each can run independently, but they require additional integration and deployment work. |
-| Decision and rationale | Choose one backend, with distinguishable report responsibilities inside it. This limits deployment work but accepts that a failure of this backend may affect report operations together. |
-| Status | Accepted. |
-
-**Analysis of the example:** The solution strategy states the current approach; ADR-01 preserves the alternatives and criteria that led to it. The component and deployment diagrams should reflect the chosen approach as it develops. A separate ADR is useful for a consequential decision, not for every tool choice.
-
-</details>
+| ID | Decision | Alternative recorded in Section 4.1 | Rationale and trade-off | Status and evidence |
+| --- | --- | --- | --- | --- |
+| ADR-01 | Use one Node.js backend with Express.js. | Java with Spring Boot. | The team is familiar with JavaScript and uses it on both the frontend and backend. A single backend simplifies development and integration, but a backend failure affects most application operations. | In use: [Express application](../backend/src/app.js) and [backend dependencies](../backend/package.json). |
+| ADR-02 | Use PostgreSQL for persistent storage. | MongoDB. | Users, posts, requests and messages have relationships that can be represented using foreign keys and constraints. Schema changes have to be coordinated with the backend and existing data. | In use: [database schema](../database/schema.sql). |
+| ADR-03 | Use Google account sign-in. | Microsoft Entra ID. | Users sign in with an existing account, and the application does not store their Google passwords. Sign-in depends on Google's availability and correct client configuration. | In use: [authentication service](../backend/src/modules/auth/auth.service.js). |
+| ADR-04 | Use Leaflet with OpenStreetMap tiles. | MapLibre GL with MapTiler. | Leaflet provides the map interface used for location selection. Map display depends on an external tile service and requires attribution. | In use: [map component](../frontend/src/components/mapView.js). |
+| ADR-05 | Use Nominatim for address lookup. | MapTiler Geocoding. | Address lookup is performed through the backend, which handles validation, caching and request scheduling. The external service may be unavailable or busy, so manual map selection remains necessary. | In use: [geocoding service](../backend/src/modules/geocoding/geocoding.service.js). |
 
 ## 4.6 Crosscutting Concepts
 
-**Objective:** Identify an important mechanism or design rule that applies to several parts of the application, describe where it is planned to apply, and update the explanation as the implementation takes shape. Include only concepts that matter to this project.
+The following mechanisms are shared across the application functions.
 
-| Concern | Mechanism and where it applies | Evidence in the final implementation |
+| Concern | Mechanism and current scope | Implementation reference |
 | --- | --- | --- |
-|  |  |  |
-
-<details>
-<summary><strong>Describing a shared rule through its implementation</strong></summary>
-
-**Example — Crisis Guard:**
-
-| Concern | Mechanism and where it applies | Code or configuration reference |
-| --- | --- | --- |
-| System rule: authorization of report moderation | The backend checks the moderator's permissions before approving or rejecting a report; a login button in the client is insufficient protection. | At the final review, show the backend permission check and a test of unauthorized access. |
-| Shared implementation rule: location validation | The report-submission boundary rejects missing or invalid coordinates before saving a report. | At the final review, show the validation rule and a test with invalid coordinates. |
-
-**Analysis of the example:** The first row describes protection across the system boundary; the second describes a rule shared by report-submission paths. Choose concerns that actually affect your project.
-
-Patterns such as Dependency Injection or Repository belong here only when the code uses them and they explain a shared design rule. “The system uses authentication” alone does not tell a reader where the check occurs or what it protects. Security, logging, and error handling need not each receive a subsection by default.
-
-</details>
+| Authentication | The backend verifies Google ID tokens and establishes a server-side session. Protected routes use middleware to reject requests without a signed-in user. | [Authentication service](../backend/src/modules/auth/auth.service.js), [authentication middleware](../backend/src/middleware/requireAuth.js). |
+| Authorization | Administrator middleware checks the session role. Authorship and conversation-participant checks must also be implemented in the relevant operations; authentication alone does not establish permission to access another user's data. | [Administrator middleware](../backend/src/middleware/requireAdmin.js). |
+| Session handling | Sessions are stored in PostgreSQL. The session cookie is HTTP-only, uses `SameSite=Lax`, and is marked secure in production. | [Session configuration](../backend/src/config/session.js). |
+| Input validation | Post validation checks required fields, text lengths, dates, coordinates and keyword input. The service separately checks whether categories and keywords exist and belong to the correct keyword kinds. | [Post validation](../backend/src/modules/items/items.validation.js), [item service](../backend/src/modules/items/items.service.js). |
+| Transactional writes | Creating a post saves its location, item record and keywords within one transaction. A failure before commit causes the transaction helper to attempt rollback rather than commit partial changes. | [Transaction helper](../backend/src/db/transaction.js), [item service](../backend/src/modules/items/items.service.js). |
+| Error handling | `HttpError` carries an HTTP status and optional details. Shared middleware produces JSON error responses and hides internal server-error messages in production. Frontend handling must be verified for each user flow. | [HttpError](../backend/src/utils/HttpError.js), [error handler](../backend/src/middleware/errorHandler.js). |
+| Public and private data | Public listing queries exclude hidden item details and removed posts. Other operations must apply their own access checks before returning private information. | [Database views](../database/schema.sql), [item repository](../backend/src/modules/items/items.repository.js). |
+| External address lookup | The geocoding service validates input, caches results, spaces outgoing requests and applies timeouts. It reports unavailability instead of treating failed address searches as successful results. | [Geocoding service](../backend/src/modules/geocoding/geocoding.service.js). |
 
 ## 4.7 Architectural Risks and Technical Debt
 
-**Objective:** State real technical or domain risks and consciously accepted design compromises, their consequences, and what the team will do about them.
+The following risks and limitations describe the current architecture. Proposed follow-up work is distinguished from mechanisms already present in the code.
 
-**Technical risks and debt**
+### Technical Risks and Compromises
 
-| Risk or compromise | Consequence | Current treatment |
+| Risk or compromise | Consequence | Current treatment and follow-up |
 | --- | --- | --- |
-|  |  |  |
+| Dependence on Google sign-in | New sign-ins may fail if Google is unavailable or the client configuration is incorrect. | The sign-in page displays an error and allows users to continue public browsing. Real sign-in and failure scenarios require browser verification. |
+| Dependence on external map tiles and geocoding | The map or address search may be unavailable independently of the application database. | The map component supports tile-error callbacks. The geocoding service uses caching, request scheduling and timeouts, and its error message directs users to manual map selection when address lookup fails. Map-tile failure and GPS-denial behavior still require browser checks. |
+| A shared backend and database serve the main workflows | Failure of either can interrupt several application functions. | The repository defines a single backend service and database in its deployment configuration. The project does not claim automatic failover or a verified recovery procedure. |
+| Database changes must remain compatible with application code and existing data | A schema update may fail against existing records or leave the backend expecting a different structure. | Use the versioned schema and database setup procedure. Verify changes against a test database containing representative existing data before applying them to the shared environment. |
+| Post retrieval occurs after the creation transaction commits | A post may be saved successfully even if retrieving it for the response subsequently fails. A retry could create a duplicate post. | This remains an open consistency risk. Add a test for this failure point and consider returning the required data from within the transaction or introducing retry-safe creation. |
 
-**Business or domain risks, if significant**
+### Domain Risks
 
-| Risk | Consequence | Current treatment |
+| Risk | Consequence | Current treatment and follow-up |
 | --- | --- | --- |
-|  |  |  |
-
-<details>
-<summary><strong>Identifying a limitation without inventing production infrastructure</strong></summary>
-
-**Example — Crisis Guard, technical risks:**
-
-| Risk or compromise | Consequence | Current treatment |
-| --- | --- | --- |
-| One application instance handles report submissions. | Hosting failure temporarily prevents new reports. | Accepted within the course project; the team does not claim automatic failover. |
-| External map tiles are unavailable. | The map view may fail even when stored reports remain available. | Explain the visible error or fallback that the implemented application actually provides. |
-
-**Example — Crisis Guard, domain risk:** Readers may mistake an unverified citizen report for an official warning. The team can distinguish the report's verification status in the interface and direct readers to official channels.
-
-**Analysis of the example:** The first technical risk accepts a realistic course-scope limitation; the domain risk concerns how a reader interprets a report. Record a limitation and a realistic response that belong to your own project. A missing mandatory feature is unfinished scope, not technical debt.
-
-</details>
-
-**Final consistency check:** Compare the component, data, class, sequence and state views with the implemented code, application behavior, and actual deployment. Update outdated design descriptions and explain any important difference that remains; links to relevant code or tests help when they resolve a concrete question.
+| A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design

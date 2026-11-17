@@ -52,3 +52,15 @@ test('address search requires sign-in (F-005)', async () => {
     assert.equal(res.status, 401, path);
   }
 });
+
+test('GET /wake sends the browser back to the website route it came from', async () => {
+  const res = await fetch(`${baseUrl}/wake?to=${encodeURIComponent('#/items/42')}`, { redirect: 'manual' });
+  assert.equal(res.status, 302);
+  assert.match(res.headers.get('location'), /\/#\/items\/42$/);
+});
+
+test('GET /wake ignores a target outside the website', async () => {
+  const res = await fetch(`${baseUrl}/wake?to=${encodeURIComponent('https://evil.example')}`, { redirect: 'manual' });
+  assert.equal(res.status, 302);
+  assert.doesNotMatch(res.headers.get('location'), /evil/);
+});

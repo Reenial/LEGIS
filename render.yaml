@@ -35,7 +35,7 @@ services:
     envVars:
       # Public URL of the backend, e.g. https://ferlostandfound-api.onrender.com
       # nginx proxies /api there, so the browser only sees this service's origin,
-      # and redirects /wake-api to its /health to start it after it went to sleep.
+      # and redirects /wake-api to its /wake to start it after it went to sleep.
       - key: API_UPSTREAM
         sync: false
       - key: VITE_GOOGLE_CLIENT_ID

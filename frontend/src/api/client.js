@@ -14,15 +14,22 @@ const BASE_URL = resolveBaseUrl(import.meta.env.VITE_API_URL);
 // 502 and its own HTML "loading" page, and the request never reaches the app, so it is safe to
 // repeat it, even a POST. Only a request sent straight from the browser to the backend starts
 // it, so on such an answer wakeBackend() sends one and the request is repeated once it is up.
+// Some phone browsers send that request without starting the backend, so if a GET still gets
+// Render's page afterwards, wakeByOpeningPage() opens the backend as a page instead (Render then
+// shows its loading page until the backend runs, and the backend sends the browser back here).
 // A 503 that the app sends itself (JSON, e.g. busy address search) is a real answer and is not
 // retried. nginx can also answer 504 and a network error can happen; the backend may still get
 // those requests, so only GET/HEAD are repeated after them (a repeated POST could create a
 // duplicate post).
 const RETRY_DELAYS_MS = [2000, 3000, 5000, 5000, 10000, 10000, 10000, 15000]; // 60 s in total
 
-// nginx redirects this path to the backend's own /health URL (nginx.conf.template).
+// nginx redirects this path to the backend's /wake route (nginx.conf.template, backend app.js).
 const WAKE_PATH = '/wake-api';
 const WAKE_TIMEOUT_MS = 90000;
+// Opening the wake page is not repeated within this time, so a backend that is really down
+// can't send the browser back and forth.
+const WAKE_PAGE_PAUSE_MS = 120000;
+const WAKE_PAGE_KEY = 'lf.wakePageOpenedAt';
 
 // After this long the "connecting to the server" banner appears (components/wakeNotice.js).
 const SLOW_REQUEST_MS = 4000;
@@ -37,6 +44,11 @@ function isBackendWakingUp(res, idempotent) {
   if (isJson(res)) return false;
   if (res.status === 502 || res.status === 503) return true;
   return res.status === 504 && idempotent;
+}
+
+// Render's own page for a stopped service (not an answer from the app or nginx).
+function isRenderWakePage(res) {
+  return res !== null && (res.status === 502 || res.status === 503) && !isJson(res);
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -56,6 +68,20 @@ function wakeBackend() {
       });
   }
   return waking;
+}
+
+// Returns false when it is not allowed right now (see WAKE_PAGE_PAUSE_MS).
+function wakeByOpeningPage() {
+  try {
+    const openedAt = Number(sessionStorage.getItem(WAKE_PAGE_KEY)) || 0;
+    if (Date.now() - openedAt < WAKE_PAGE_PAUSE_MS) return false;
+    sessionStorage.setItem(WAKE_PAGE_KEY, String(Date.now()));
+  } catch {
+    return false;
+  }
+  const route = window.location.hash.startsWith('#/') ? window.location.hash : '';
+  window.location.replace(`${WAKE_PATH}?to=${encodeURIComponent(route)}`);
+  return true;
 }
 
 export class ApiError extends Error {
@@ -104,6 +130,8 @@ export async function request(path, { method = 'GET', body, query } = {}) {
       if (!isBackendWakingUp(res, idempotent)) break;
       await Promise.all([wakeBackend(), sleep(delay)]);
       res = await send();
+      // The page is being replaced, so this request never finishes.
+      if (idempotent && isRenderWakePage(res) && wakeByOpeningPage()) return new Promise(() => {});
     }
   } finally {
     clearTimeout(slowTimer);

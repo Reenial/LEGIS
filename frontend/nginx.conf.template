@@ -23,11 +23,11 @@ server {
 
     # A free Render backend stops after ~15 minutes without traffic, and the requests nginx
     # forwards do not start it again (Render answers them with 502). The app (api/client.js)
-    # then fetches this path; the browser follows the redirect straight to the backend, which
-    # does start it.
+    # then fetches or opens this path; the browser follows the redirect straight to the backend
+    # (its /wake route), which does start it.
     location = /wake-api {
         add_header Cache-Control "no-store" always;
-        return 302 ${API_UPSTREAM}/health;
+        return 302 ${API_UPSTREAM}/wake$is_args$args;
     }
 
     location / {

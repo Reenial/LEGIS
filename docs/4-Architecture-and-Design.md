@@ -166,4 +166,4 @@ The following risks and limitations describe the current architecture. Proposed 
 
 | Risk | Consequence | Current treatment and follow-up |
 | --- | --- | --- |
-| A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design
+| A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design uses hidden item details and private messages to help the finder assess ownership before handover. Ownership cannot be guaranteed. |

@@ -23,7 +23,7 @@ The application is available at [ferlostandfound.onrender.com](https://ferlostan
 
 Browsing does not require an account. Creating a post requires Google Sign-In.
 
-After inactivity, the application may take a little longer to load while the backend starts automatically.
+After a period of inactivity, the application may take a little longer to load while the backend starts automatically.
 
 <a id="quick-start"></a>
 ## Quick Start / Installation
@@ -36,7 +36,7 @@ cd LEGIS
 docker compose up --build
 ```
 
-Docker Compose starts the frontend, backend, and PostgreSQL database. On the first start with an empty database volume, it loads the schema and sample data. Open [http://localhost](http://localhost) and check that sample posts appear.
+Docker Compose starts the frontend, backend, and PostgreSQL database. When started for the first time with an empty database volume, it loads the schema and sample data. Open [http://localhost](http://localhost) and check that sample posts appear.
 
 To enable Google Sign-In, create a `.env` file in the repository root before building and set `GOOGLE_CLIENT_ID` to the team's Google OAuth client ID. The client must allow `http://localhost` as an authorized JavaScript origin. Keep this local configuration out of Git.
 
@@ -47,7 +47,7 @@ To stop the application, run `docker compose down`. The team confirmed that loca
 | Technology | Role | Reason or constraint |
 | --- | --- | --- |
 | HTML, CSS, JavaScript, and Vite | Build the browser interface. | The interface uses plain JavaScript, and Vite handles the frontend build. |
-| Node.js and Express | Serve the API. | One backend handles item posts, searches, and return requests. |
+| Node.js and Express | Serve the API. | The backend handles item posts and searches. |
 | PostgreSQL | Stores users, items, and return requests. | It keeps each return request linked to its item and sender. |
 | Google Sign-In | Lets users sign in with a Google account. | It requires an OAuth client configured for the application origin. |
 | Leaflet and OpenStreetMap | Display the map and found item locations. | Map tiles come from an external service. |
@@ -57,7 +57,7 @@ To stop the application, run `docker compose down`. The team confirmed that loca
 
 | Member | Main contribution |
 | --- | --- |
-| Daniel Božulić | Backend, DevOps, and project topic development. |
+| Daniel Božulić | Backend, DevOps, and defining the project topic. |
 | Lea Lendić | Frontend and database design. |
 | Lovre Galov | Backend development and project presentation. |
 | Nika Kožul | Documentation. |
@@ -77,7 +77,7 @@ The repository includes the [Creative Commons Attribution-NonCommercial-ShareAli
 <a id="ai-usage"></a>
 ## AI Usage
 
-ChatGPT, Gemini, and Claude were used responsibly as supporting tools during development, testing, and documentation following FER's [Policy on the Appropriate Use of Artificial Intelligence](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf). The team manually reviewed the results.
+ChatGPT, Gemini, and Claude were used responsibly as supporting tools during development, testing, and documentation, in accordance with FER's [Policy on the Appropriate Use of Artificial Intelligence](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf). The team manually reviewed the results.
 
 <a id="code-of-conduct-and-support"></a>
 ## Code of Conduct and Support

@@ -2,7 +2,7 @@
 
 ## 3.1 Use Case Diagram
 
-![Lost & Found use case diagram](./assets/diagrams/lost-and-found-UC.svg)
+![Lost & Found use case diagram](./assets/diagrams/lostAndFound.svg)
 
 **PlantUML source:** [Diagram source code](./puml/lost-and-found-UC.puml)
 

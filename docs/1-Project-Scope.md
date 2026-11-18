@@ -2,7 +2,7 @@
 
 ## 1.1 Problem and Project Objective
 
-**Lost And Found:** Students and university staff lose and find personal belongings every day, such as student ID cards, keys, wallets, headphones, and clothing. Information about lost and found items is posted in various student groups and on social media, making it difficult to review all relevant posts and connect a found item with its owner.
+**Lost & Found:** Students and university staff lose and find personal belongings every day, such as student ID cards, keys, wallets, headphones, and clothing. Information about lost and found items is posted in various student groups and on social media, making it difficult to review all relevant posts and connect a found item with its owner.
 
 An additional problem is *ownership verification*. Publicly disclosing all identifying characteristics of an item may allow someone who does not own it to request its return. It is therefore necessary to support the verification of certain details without displaying them in the public post.
 

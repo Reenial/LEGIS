@@ -55,9 +55,9 @@ Lost & Found stores its data in PostgreSQL. The current schema contains twelve t
 
 **ER diagram:**
 
-![Lost & Found ER diagram](./assets/diagrams/lostAndFoundERD.png)
+![Lost & Found ER diagram](./assets/erd/lostAndFoundERD.png)
 
-**Diagram source:** [pgAdmin ERD source](./assets/diagrams/lostAndFoundERD.pgerd)
+**Diagram source:** [pgAdmin ERD source](./assets/erd/lostAndFoundERD.pgerd)
 
 **Implementation:** [PostgreSQL schema](../database/schema.sql)
 
@@ -78,11 +78,29 @@ Return requests use the statuses `pending`, `accepted`, `rejected`, and `withdra
 
 Posts can be removed from public view while their records remain stored. The `removed_at` and `removed_by` attributes record removal information. The `items_public` view excludes removed posts and the hidden item detail; the backend must use appropriate queries and authorization checks when serving public data.
 
-The schema also defines automatic `updated_at` triggers for users and posts, a generated text-search field, and the `item_match_scores` view. This view calculates keyword-based matching scores; it does not include location or time scoring. These database mechanisms are defined in the SQL schema rather than represented as separate entities in the ER diagram.
+The schema also defines automatic `updated_at` triggers for users and posts, a generated text-search field, and the `item_match_scores` view. This view calculates keyword-based matching scores: each keyword shared by a lost and a found post adds the points of its keyword kind. Category, location, and time are not compared, as agreed in [Section 2.5](./2-requirements.md#25-significant-requirement-changes). These database mechanisms are defined in the SQL schema rather than represented as separate entities in the ER diagram.
 
 ### 4.3.2 Representative UML Class Diagram
 
-The class-level design will be agreed with the backend team before the selected functionality is implemented. This section will then include the representative UML class diagram, its PlantUML source, and an explanation of the classes' responsibilities and relationships.
+The diagram shows the backend items module, which implements browsing posts (UC-001) and publishing a post (UC-004). The backend is written in JavaScript modules rather than classes, so each module is shown as a class with the `<<module>>` stereotype and its exported functions as operations. `HttpError` is the only actual class.
+
+**Class diagram:**
+
+![Items module class diagram](./assets/diagrams/class-diagram.svg)
+
+**PlantUML source:** [Class diagram source](./puml/class-diagram.puml)
+
+| Module or class | Responsibility |
+| --- | --- |
+| `items.routes` | Connects `GET /api/items` and `POST /api/items` to the controller. Publishing passes through `requireAuth`, which rejects requests without a signed-in user. |
+| `items.controller` | Translates HTTP requests into service calls and returns JSON responses. It contains no application rules. |
+| `items.service` | Contains the application rules. It parses search filters, validates a new post, checks that the category and keywords exist and that every keyword kind has exactly one value, and saves the post inside one transaction. |
+| `items.filters`, `items.validation` | Check query parameters and the new-post body. Every invalid field is collected and reported in one `HttpError` with status 400. |
+| `items.repository` | Contains the SQL queries. Public queries use the `items_public` view, so hidden details and removed posts are never returned. |
+| `transaction` | Runs the location, item, and keyword inserts in one database transaction and rolls back if any step fails (NF-005). |
+| `HttpError` | Extends `Error` with an HTTP status and optional details; the shared error handler turns it into a JSON response. |
+
+Editing, removing, viewing a single post, and listing the user's own posts are already routed in the same module but are not implemented yet; they answer with status 501.
 
 ## 4.4 Runtime Behavior
 
@@ -166,4 +184,4 @@ The following risks and limitations describe the current architecture. Proposed 
 
 | Risk | Consequence | Current treatment and follow-up |
 | --- | --- | --- |
-| A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design
+| A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design uses hidden item details and private messages to help the finder assess ownership before handover. Ownership cannot be guaranteed. |

@@ -154,11 +154,11 @@ From the frontend: `lookups.geocode(q)` in `frontend/src/api/endpoints.js` (reve
 - The map must show "© OpenStreetMap contributors" (Leaflet's OSM tile layer attribution does this).
 - Set `NOMINATIM_USER_AGENT` to something that identifies the app, preferably with a contact e-mail.
 
-## POST /api/items — publish a post (UC-004) — agreed contract, not built yet
+## POST /api/items — publish a post (UC-004)
 
 Signed-in users only. JSON body in camelCase, the same names the API returns. The frontend already builds this body in `frontend/src/pages/itemForm.js`.
 
-A photo is uploaded first with `POST /api/uploads/photo` (multipart, field `photo`), which returns `{ "url": "..." }`. That URL goes into `imageUrl`. Without a photo, `imageUrl` is `null`.
+A photo is uploaded first with `POST /api/uploads/photo` (multipart, field `photo`), which returns `{ "url": "..." }`. That URL goes into `imageUrl`. Without a photo, `imageUrl` is `null`. The upload endpoint is not built yet and currently answers `501`, so posts can only be published without a photo for now.
 
 ```json
 {
@@ -181,9 +181,9 @@ A photo is uploaded first with `POST /api/uploads/photo` (multipart, field `phot
 
 - `timeFrom`, `timeTo`, `hiddenDetail`, `imageUrl` and `location.name` are optional (`null`).
 - One entry in `keywords` per keyword kind: either `keywordId` (from `GET /api/keywords`) or `otherText`, never both.
-- `location.latitude` and `location.longitude` are required by the database. Until the map picker exists the form can send `null`, and the backend must answer `400`.
+- `location.latitude` and `location.longitude` are required. The form fills them from the map, address search or GPS. If they are missing, the backend answers `400`.
 - Response `201`: the created post in the same shape as one entry of `GET /api/items`, plus `hiddenDetail`.
-- `PATCH /api/items/:itemId` (UC-005) takes the same fields; only the ones sent are changed.
+- `PATCH /api/items/:itemId` (UC-005) will take the same fields and change only the ones sent. It is not built yet and currently answers `501`.
 
 ## Sample data for local development
 

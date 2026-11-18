@@ -1,114 +1,57 @@
 # A. Overview of Group Activities
 
-**Objective:** Show how the team organized the project, assigned work, responded to important problems, and contributed to the result. Entries should describe outcomes rather than only saying that a meeting was held or a topic was discussed.
-
 ## A.1 Meeting Log
 
-**Objective:** Keep a brief record of project meetings and weekly coordination: who participated, what was decided, and which action followed. Record a discussion that produced no decision only if it left an important issue open.
+The following entries summarize the project milestones and coordination outcomes reported by the team.
 
-**Team member abbreviations, if used below:** [Unique short code = full name. Define each code once, before its first use. Omit this line if you write full names throughout.]
-
-| Date and participants | Main topic | Decision, action, or open question | Link to task or resulting work, if available |
+| Date and participants | Main topic | Decision, action, or open question | Result |
 | --- | --- | --- | --- |
-|  |  |  |  |
-
-Write one concise row per relevant meeting or weekly coordination entry. An assignment should name its owner; an unresolved point should say who will follow up. A meeting title alone does not show what changed. Do not copy the complete issue list or the transcript of a conversation into this log.
-
-<details>
-<summary><strong>From a meeting topic to an actionable record</strong></summary>
-
-**Example — Crisis Guard:**
-
-**Team member abbreviations:** AK = Ana Kovač; LM = Luka Marić; EP = Ema Petrović; NK = Nika Kralj.
-
-| Date and participants | Main topic | Decision, action, or open question | Link to task or resulting work, if available |
-| --- | --- | --- | --- |
-| 15 November 2025; AK, LM, EP | Location when browser permission is denied | Add manual map-position selection to the report form. AK handles the form; LM checks location validation. | Example issues #21 and #23. |
-| 22 November 2025; AK, EP | Map position and submitted coordinates | Client and backend currently use different location formats. EP will align the request format and show a saved report at the next internal review. | Example issue #25. |
-
-**Outcome and ownership:** “Discussed location handling” would conceal whether anyone committed to a change. These rows identify a decision or an open action, its owner, and the work to inspect. They do not create additional course checkpoints.
-
-</details>
+| 19 October 2026 | Topic approval | The Lost & Found topic was approved. Daniel developed the topic. | [Project scope](1-Project-Scope.md) |
+| 28 October 2026, Iva Puljak and Nika Kožul | Initial documentation | Updated chapters 1, 2, and 3. | [Scope](1-Project-Scope.md), [requirements](2-requirements.md), and [use cases](3-use-cases.md) |
+| 29 October 2026, Lovre Galov | Project presentation | Lovre presented the project. | Project presentation |
+| 30 October 2026, Iva Puljak and Lea Lendić | Database implementation | Prepared the SQL database. | [Database files](../database) |
+| 4 November 2026, Iva Puljak and Nika Kožul | Architecture documentation | Completed chapter 4. | [Architecture and design](4-Architecture-and-Design.md) |
+| 12 November 2026, Lea Lendić, Mihael Jurković, Daniel Božulić, Ivan Jović, and Lovre Galov | Application implementation | Completed frontend and backend development for this stage. | [Frontend](../frontend) and [backend](../backend) |
+| 16 November 2026, Iva Puljak | Frontend update | Added further frontend work. | [Frontend](../frontend) |
+| 17 November 2026, Nika Kožul and Iva Puljak | Documentation update | Nika prepared the README Template and group activity overview. Iva updated the documentation to reflect subsequent implementation work. | [README](../README.md) and project documentation |
 
 ## A.2 Work Plan
 
-**Objective:** Make the team's intended order of work and responsibility visible. Show the project weeks or other short periods used by the team, including preparation for the two formal reviews.
+The team coordinates tasks through WhatsApp and manages changes with Git. The table records completed work and the next planned implementation tasks.
 
-**Current plan:** [Link to the maintained project board, Gantt view, or a brief table below. Choose one main representation and name who keeps it current.]
-
-| Period | Principal planned work | Responsible member(s) | Link to tasks, if used |
+| Period | Principal work | Responsible members | Result |
 | --- | --- | --- | --- |
-|  |  |  |  |
-
-Keep the plan at a useful weekly level when a table is used; revise it when priorities change. If you use member abbreviations, define them in A.1 and use them consistently here; extend a code if two members share the same initials. The plan is not evidence that planned work was completed. Only the 8th and 14th weeks are formal course checkpoints; ordinary meetings and internal plans are not additional hand-ins.
-
-<details>
-<summary><strong>Planning the first public report flow</strong></summary>
-
-**Example — Crisis Guard:** A team can put reporting, map interaction, and deployment tasks on its existing GitHub board. The short member codes in this compact plan are defined in the A.1 example.
-
-| Period | Principal planned work | Responsible member(s) | Link to tasks, if used |
-| --- | --- | --- | --- |
-| Project week 6 | Report form and location validation | AK, LM | Example issues #21 and #23. |
-| Project week 7 | Connect the form to the report API | EP | Example issue #25. |
-
-**Reading the plan:** The short codes save space in the compact plan; their definitions at the start of A.1 apply throughout this example. When work slips, update the actual task and the plan's expectation; do not claim an unfinished feature was completed merely because its week has passed.
-
-</details>
+| 19–29 October 2026 | Topic, initial documentation, and presentation | Daniel Božulić, Iva Puljak, Nika Kožul, Lovre Galov | Approved topic, updated chapters 1–3, and project presentation |
+| 30 October–4 November 2026 | Database and architecture documentation | Lea Lendić, Iva Puljak, Nika Kožul | SQL database and chapter 4 |
+| By 12 November 2026 | Frontend and backend implementation | Lea Lendić, Mihael Jurković, Daniel Božulić, Ivan Jović, Lovre Galov | Frontend and backend completed for this stage |
+| 16 November 2026 | Update the frontend | Iva Puljak | Frontend updates |
+| 17 November 2026 | Update documentation and activity records | Nika Kožul and Iva Puljak | README Template, activity overview, and updated documentation |
+| Next three weeks | Implement return requests and private chats | Frontend — Lea Lendić and Mihael Jurković. Backend — Daniel Božulić, Ivan Jović, and Lovre Galov. | Planned implementation |
 
 ## A.3 Activity Table
 
-**Objective:** Show which members worked on the important project activities and the approximate effort they report. Include design, documentation, integration, testing, and deployment alongside implementation.
+The following approximate totals were confirmed by Nika for the work described in this overview. Each total includes the member's listed activities.
 
-| Activity or deliverable | Member | Reported hours | Representative result or link |
+| Activity or deliverable | Member | Estimated total hours | Representative result |
 | --- | --- | --- | --- |
-|  |  |  |  |
+| Backend, DevOps, and defining the project topic | Daniel Božulić | 45 | [Scope](1-Project-Scope.md), [backend](../backend), and [Render configuration](../render.yaml) |
+| Frontend and database design | Lea Lendić | 35 | [Frontend](../frontend) and [database](../database) |
+| Backend and project presentation | Lovre Galov | 40 | [Backend](../backend) and presentation on 29 October 2026 |
+| Documentation | Nika Kožul | 25 | [Documentation](Home.md) and [README](../README.md) |
+| Database and documentation | Iva Puljak | 35 | [Database](../database), [documentation](Home.md), and [frontend](../frontend) |
+| Frontend development | Mihael Jurković | 30 | [Frontend](../frontend) |
+| Backend development | Ivan Jović | 40 | [Backend](../backend) |
 
-Use project-specific activities rather than a mandatory row for every Wiki chapter or every UML diagram. The team should record hours consistently and avoid double-counting joint work; the representative result explains what the reported effort produced. Hours are self-reported effort, not a measure of quality or a substitute for examining code and artefacts.
-
-<details>
-<summary><strong>Recording feature, integration, and documentation work</strong></summary>
-
-**Example — Crisis Guard:** The table distinguishes implementation, integration, and documentation work and links each activity to a result.
-
-| Activity or deliverable | Member | Reported hours | Representative result or link |
-| --- | --- | --- | --- |
-| Manual map-position input | Ana | 8 | Example issue #21; frontend change. |
-| Report validation and persistence | Luka | 10 | Example issue #23; backend change and test. |
-| Client–API integration and public deployment | Ema | 7 | Example issue #25; deployment revision. |
-| Report-submission use case and permission-denied check | Nika | 5 | Example UC-002 revision and test ST-03. |
-
-**Effort and result:** The final column makes it possible to discuss a contribution without treating a high hour count as proof of delivery. A team can report a genuinely time-consuming unresolved integration problem as work and describe its outcome honestly.
-
-</details>
+The repository includes Docker configuration for the frontend, backend, and database, Render deployment configuration, and GitHub Actions workflows for backend tests and frontend builds. The deployment workflow depends on a configured Render deploy hook. The team confirmed that Google Sign-In, browsing posts, and creating posts work for all members in the [public application](https://ferlostandfound.onrender.com/).
 
 ## A.4 Change Overview Diagram
 
-**Objective:** Show when changes were made in the repository and by whom, while recognizing that commit counts alone do not measure contribution quality.
+See the [GitHub Contributors view](https://github.com/Reenial/LEGIS/graphs/contributors) and [develop branch commit history](https://github.com/Reenial/LEGIS/commits/develop/) for repository changes. This activity overview covers 19 October–17 November 2026.
 
-**Repository activity view:** [Embed or link to the GitHub Contributors view or a generated graph for the project's repository; state the period it covers.]
-
-The graph can show when commits were made and by whom, but it does not reveal all design, testing, integration, review, or documentation work. Explain a notable mismatch with the activity table if one exists; do not infer hours from the graph. Keep the generated view tied to the actual repository rather than drawing a second chart by hand.
+The activity table records documentation, presentations, and shared work alongside code changes.
 
 ## A.5 Key Challenges and Solutions
 
-**Objective:** Describe a significant project problem, how the team responded, and what changed or remains unresolved. Choose concrete challenges rather than general praise of teamwork.
-
 | Challenge | Action taken | Outcome or remaining limit |
 | --- | --- | --- |
-|  |  |  |
-
-<details>
-<summary><strong>Resolving a location-format mismatch</strong></summary>
-
-**Example — Crisis Guard:**
-
-| Challenge | Action taken | Outcome or remaining limit |
-| --- | --- | --- |
-| A selected map position appeared in the client, but a submitted report did not retain its coordinates. | Ana and Ema compared the browser request with the API's expected location fields; Ema aligned the request format and Luka checked backend validation. | A new report can be retrieved with its saved position in this scenario; the team links the corresponding integration change and check. |
-
-**Problem, response, and outcome:** Each part can be checked against the project. A sentence such as “we faced integration difficulties and solved them through teamwork” would not tell a reader what failed or how the solution changed.
-
-</details>
-
-**Final consistency check:** Meetings identify meaningful outcomes and owners; the plan reflects intended work; the effort table and generated repository view refer to the same project; and concrete challenges are connected to actions and their results. The issue board remains the live source for task status.
+| The Render backend became inactive after about 15 minutes without traffic. Requests from the frontend did not reliably restart it, and the initial workaround also had problems on mobile. | Daniel added a browser request to wake the backend and retry the connection. If this does not work for a read request, the browser opens the backend wake page, which redirects the user back to the app. | The team reports that the desktop and mobile issue was fixed. Starting the backend after inactivity can still take some time. |

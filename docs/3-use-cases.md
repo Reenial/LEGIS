@@ -2,7 +2,7 @@
 
 ## 3.1 Use Case Diagram
 
-![Lost & Found use case diagram](./assets/diagrams/lostAndFound.svg)
+![Lost & Found use case diagram](./assets/diagrams/lost-and-found-UC.svg)
 
 **PlantUML source:** [Diagram source code](./puml/lost-and-found-UC.puml)
 
@@ -37,8 +37,8 @@
 | Primary actor | Visitor or administrator who is not signed in. |
 | Secondary actor | Google Identity Services |
 | Requirement IDs | F-003 |
-| Preconditions | The user has a Google account |
-| Main flow | 1. The user selects the Google sign-in option.<br>2. TThey choose their Google account and complete any required authentication <br>3. The frontend receives a Google ID token and sends it to the backend.<br>4. The backend verifies the token and establishes a user session. |
+| Preconditions | The user has a Google account. |
+| Main flow | 1. The user selects the Google sign-in option.<br>2. They choose their Google account and complete any required authentication.<br>3. The frontend receives a Google ID token and sends it to the backend.<br>4. The backend verifies the token and establishes a user session. |
 | Alternative flows | If the user cancels or sign-in fails, they remain signed out and can use public functionality. |
 | Result | The user is signed in and can access actions according to their assigned role. |
 
@@ -100,14 +100,14 @@
 | Result | The request is accepted or rejected. Acceptance does not mean that the physical handover of the item has already been completed. |
 
 ### UC-009: Track request status
-HAVE TO UPDATE
+
 | Field | Description |
 | --- | --- |
 | Primary actor | Requester or author of the associated post. |
 | Requirement IDs | F-008, F-010 |
 | Preconditions | The user is signed in. |
 | Main flow | The user opens the overview of sent or received requests. The system displays requests in which the user participates and their current statuses. |
-| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. |
+| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. Before handover, the requester can withdraw their request. A withdrawn request cannot be reopened, but the user may submit a new one if the item is still available. |
 | Result | The user is informed about the status of their sent or received requests. |
 
 ### UC-010: Exchange private messages
@@ -128,7 +128,7 @@ HAVE TO UPDATE
 | Primary actor | Signed-in user. |
 | Requirement IDs | F-012 |
 | Preconditions | The user is signed in and has a post for which matches are being sought. |
-| Main flow | The user opens the possible matches for their post. The system displays suggestions based on category, description, time, and location. The user can open the details of a suggested post. |
+| Main flow | The user opens the possible matches for their post. The system displays suggested posts of the opposite type that share keywords with the user's post, ordered by matching score. The user can open the details of a suggested post. |
 | Alternative flows | If there are no possible matches, the system displays an appropriate message. |
 | Result | The user has reviewed the suggestions. A match does not confirm ownership. |
 

@@ -37,8 +37,8 @@
 | Primary actor | Visitor or administrator who is not signed in. |
 | Secondary actor | Google Identity Services |
 | Requirement IDs | F-003 |
-| Preconditions | The user has a Google account |
-| Main flow | 1. The user selects the Google sign-in option.<br>2. TThey choose their Google account and complete any required authentication <br>3. The frontend receives a Google ID token and sends it to the backend.<br>4. The backend verifies the token and establishes a user session. |
+| Preconditions | The user has a Google account. |
+| Main flow | 1. The user selects the Google sign-in option.<br>2. They choose their Google account and complete any required authentication.<br>3. The frontend receives a Google ID token and sends it to the backend.<br>4. The backend verifies the token and establishes a user session. |
 | Alternative flows | If the user cancels or sign-in fails, they remain signed out and can use public functionality. |
 | Result | The user is signed in and can access actions according to their assigned role. |
 
@@ -100,14 +100,14 @@
 | Result | The request is accepted or rejected. Acceptance does not mean that the physical handover of the item has already been completed. |
 
 ### UC-009: Track request status
-HAVE TO UPDATE
+
 | Field | Description |
 | --- | --- |
 | Primary actor | Requester or author of the associated post. |
 | Requirement IDs | F-008, F-010 |
 | Preconditions | The user is signed in. |
 | Main flow | The user opens the overview of sent or received requests. The system displays requests in which the user participates and their current statuses. |
-| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. |
+| Alternative flows | If there are no requests, the system displays an appropriate message. Access to other users' requests is not permitted. Before handover, the requester can withdraw their request. A withdrawn request cannot be reopened, but the user may submit a new one if the item is still available. |
 | Result | The user is informed about the status of their sent or received requests. |
 
 ### UC-010: Exchange private messages

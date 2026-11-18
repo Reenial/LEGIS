@@ -34,7 +34,7 @@ The following approximate totals were confirmed by Nika for the work described i
 
 | Activity or deliverable | Member | Estimated total hours | Representative result |
 | --- | --- | --- | --- |
-| Backend, DevOps, and project topic development | Daniel Božulić | 45 | [Scope](1-Project-Scope.md), [backend](../backend), and [Render configuration](../render.yaml) |
+| Backend, DevOps, and defining the project topic | Daniel Božulić | 45 | [Scope](1-Project-Scope.md), [backend](../backend), and [Render configuration](../render.yaml) |
 | Frontend and database design | Lea Lendić | 35 | [Frontend](../frontend) and [database](../database) |
 | Backend and project presentation | Lovre Galov | 40 | [Backend](../backend) and presentation on 29 October 2026 |
 | Documentation | Nika Kožul | 25 | [Documentation](Home.md) and [README](../README.md) |

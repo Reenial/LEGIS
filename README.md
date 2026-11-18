@@ -1,51 +1,89 @@
-# Software Engineering FER-UNIZG Course
+# Lost & Found
 
-Welcome to the central repository for the Software Engineering course at the Faculty of Electrical Engineering and Computing, University of Zagreb.
+Lost & Found helps people find and return lost belongings.
 
-**Important Notice:** This `README.md` is **not** a template for student projects. Use [`README_TEMPLATE.md`](README_TEMPLATE.md) as the starting point for your own project's README. Full project documentation instructions (Scope, Requirements, Use Cases, Architecture, Testing, Deployment, Conclusion, and Group Activities) are in the [`docs/`](docs/Home.md) folder. **Note:** starting this year, project documentation lives in the `docs/` folder rather than the GitHub Wiki pages used in previous years.
+This is a student project by team 8.2 (007) for the [Software Engineering](https://www.fer.unizg.hr/predmet/proinz) course at the Faculty of Electrical Engineering and Computing (FER), University of Zagreb, in the 2026/2027 academic year.
 
-## Purpose
+## App Description
 
-This repository provides the official documentation structure, templates, examples, and guidelines for student projects in the Software Engineering course at FER, University of Zagreb. It serves as a primary resource for tracking the progress and structure of your course assignments, outlining the de facto standards for ensuring clear documentation, organized project management, and transparency within your development process.
+If you lose something, it can be hard to know where to look or who to ask. Lost & Found gives people one place to post found items and search for their belongings.
 
+- Visitors can browse lost and found posts and search by keyword.
+- When creating a post, users mark where the item was lost or found on a map, by address search, or with GPS.
+- Signed-in users can create their own posts.
 
-## Versioning & History
+Post details, editing and removing posts, photo uploads, return requests, private chats, matches, notifications, reporting posts, and moderation are planned for the next stage.
 
-This repository follows Semantic Versioning. The current version is 3.0.
-The template and its supporting documentation structure have been continuously developed and refined since 2015.
+See the [project documentation](docs/Home.md) for the scope, requirements, design, and testing.
 
-## Repository Structure
+<a id="deployment"></a>
+## Deployment
 
-This repository contains documentation templates, examples, and supporting
-materials for Software Engineering course projects.
+The application is available at [ferlostandfound.onrender.com](https://ferlostandfound.onrender.com/). You can try Google Sign-In, browse posts, and create your own post.
 
+Browsing does not require an account. Creating a post requires Google Sign-In.
+
+After inactivity, the application may take a little longer to load while the backend starts automatically.
+
+<a id="quick-start"></a>
+## Quick Start / Installation
+
+Install Docker with Docker Compose and Git. Start Docker, then run the following commands:
+
+```bash
+git clone --branch develop https://github.com/Reenial/LEGIS.git
+cd LEGIS
+docker compose up --build
+```
+
+Docker Compose starts the frontend, backend, and PostgreSQL database. On the first start with an empty database volume, it loads the schema and sample data. Open [http://localhost](http://localhost) and check that sample posts appear.
+
+To enable Google Sign-In, create a `.env` file in the repository root before building and set `GOOGLE_CLIENT_ID` to the team's Google OAuth client ID. The client must allow `http://localhost` as an authorized JavaScript origin. Keep this local configuration out of Git.
+
+To stop the application, run `docker compose down`. The team confirmed that local startup, Google Sign-In, browsing posts, and creating posts work.
+
+## Technologies
+
+| Technology | Role | Reason or constraint |
+| --- | --- | --- |
+| HTML, CSS, JavaScript, and Vite | Build the browser interface. | The interface uses plain JavaScript, and Vite handles the frontend build. |
+| Node.js and Express | Serve the API. | One backend handles item posts, searches, and return requests. |
+| PostgreSQL | Stores users, items, and return requests. | It keeps each return request linked to its item and sender. |
+| Google Sign-In | Lets users sign in with a Google account. | It requires an OAuth client configured for the application origin. |
+| Leaflet and OpenStreetMap | Display the map and found item locations. | Map tiles come from an external service. |
+| Nominatim | Converts addresses to coordinates through the backend. | Address lookup depends on an external service. |
+
+## Team Members
+
+| Member | Main contribution |
+| --- | --- |
+| Daniel Božulić | Backend, DevOps, and project topic development. |
+| Lea Lendić | Frontend and database design. |
+| Lovre Galov | Backend development and project presentation. |
+| Nika Kožul | Documentation. |
+| Iva Puljak | Database and documentation. |
+| Mihael Jurković | Frontend development. |
+| Ivan Jović | Backend development. |
+
+## Contributing
+
+The team coordinates tasks through WhatsApp and uses Git to manage code changes.
+
+<a id="license"></a>
+## License
+
+The repository includes the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license](LICENSE). Third-party libraries and assets retain their own licenses.
 
 <a id="ai-usage"></a>
-## AI Usage [![AI Usage: Disclosed](https://img.shields.io/badge/AI%20Usage-Disclosed-blue.svg)](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf)
+## AI Usage
 
-This project follows FER's [Policy on the Appropriate Use of Artificial Intelligence](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf).
+ChatGPT, Gemini, and Claude were used responsibly as supporting tools during development, testing, and documentation following FER's [Policy on the Appropriate Use of Artificial Intelligence](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf). The team manually reviewed the results.
 
-Transparency & Tools Used: The AI language model Gemini (3.8 Flash) was utilized to assist in the final editing of the repository's documentation and templates (the README.md and the docs/ folder), as well as generating and formatting the project's code documentation.
+<a id="code-of-conduct-and-support"></a>
+## Code of Conduct and Support
 
-Ethics, Security & Review: To ensure accuracy and maintain data security, all AI-assisted documentation was independently reviewed and verified prior to publishing. We ensured the output respects user confidentiality and does not introduce unverified biases.
+See the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Compliance: The use of Gemini aligns with the project's overall ethical standards, and appropriate credit is maintained for its assistance in our documentation workflow.
+---
 
-## Code of Conduct
-As students, you are expected to follow the minimum acceptable behavior defined in the **STUDENT CODE OF CONDUCT** of the Faculty of Electrical Engineering and Computing, University of Zagreb. We also promote to the **IEEE Code of Ethics**, which sets the highest standards of integrity, responsible behavior, and ethical conduct in professional activities. 
-
-**Team Expectations:**
-*   Define clearly how work will be distributed and how the team will communicate[cite: 3].
-*   Apply these standards to resolve disputes efficiently[cite: 3].
-*   It is implicitly assumed that all team members will follow the code of conduct[cite: 3].
-
-## License [![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-
-The documentation and materials in this repository are licensed under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**. You may download, share, and adapt this work as long as you attribute the author, do not use it for commercial purposes, and share your adaptation under the same license.
-Documentation structure adapted from the FER Software Engineering course template by Vlado Sruk, licensed under CC BY-NC-SA 4.0.
-
-Individual student projects created using this template remain the intellectual property of their respective authors and may be distributed under different licenses chosen by the project teams.
-
-## Citation
-
-If you use or adapt this repository, please cite it using [`CITATION.cff`](CITATION.cff) (GitHub's "Cite this repository" button reads this file automatically).
+The documentation structure was adapted from the FER Software Engineering course template by [Vlado Sruk](https://www.fer.unizg.hr/en/vlado.sruk), licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).

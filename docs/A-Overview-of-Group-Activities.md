@@ -13,7 +13,7 @@ The following entries summarize the project milestones and coordination outcomes
 | 4 November 2026, Iva Puljak and Nika Kožul | Architecture documentation | Completed chapter 4. | [Architecture and design](4-Architecture-and-Design.md) |
 | 12 November 2026, Lea Lendić, Mihael Jurković, Daniel Božulić, Ivan Jović, and Lovre Galov | Application implementation | Completed frontend and backend development for this stage. | [Frontend](../frontend) and [backend](../backend) |
 | 16 November 2026, Iva Puljak | Frontend update | Added further frontend work. | [Frontend](../frontend) |
-| 17 November 2026, Nika Kožul and Iva Puljak | Documentation update | Nika prepared the README Template and group activity overview. Iva updated the documentation to reflect subsequent implementation work. | [README Template](../README_TEMPLATE.md) and project documentation |
+| 17 November 2026, Nika Kožul and Iva Puljak | Documentation update | Nika prepared the README Template and group activity overview. Iva updated the documentation to reflect subsequent implementation work. | [README](../README.md) and project documentation |
 
 ## A.2 Work Plan
 
@@ -37,7 +37,7 @@ The following approximate totals were confirmed by Nika for the work described i
 | Backend, DevOps, and project topic development | Daniel Božulić | 45 | [Scope](1-Project-Scope.md), [backend](../backend), and [Render configuration](../render.yaml) |
 | Frontend and database design | Lea Lendić | 35 | [Frontend](../frontend) and [database](../database) |
 | Backend and project presentation | Lovre Galov | 40 | [Backend](../backend) and presentation on 29 October 2026 |
-| Documentation | Nika Kožul | 25 | [Documentation](Home.md) and [README Template](../README_TEMPLATE.md) |
+| Documentation | Nika Kožul | 25 | [Documentation](Home.md) and [README](../README.md) |
 | Database and documentation | Iva Puljak | 35 | [Database](../database), [documentation](Home.md), and [frontend](../frontend) |
 | Frontend development | Mihael Jurković | 30 | [Frontend](../frontend) |
 | Backend development | Ivan Jović | 40 | [Backend](../backend) |

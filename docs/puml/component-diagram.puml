@@ -3,7 +3,7 @@
 title Lost & Found - Component Diagram
 package "Lost & Found" {
  component "Frontend\n(HTML, CSS, JavaScript, Leaflet)" as F
- component "Backend\n(Node.js, planned Express.js)" as B
+ component "Backend\n(Node.js, Express.js)" as B
  database "PostgreSQL" as D
  F ..> B : Sends requests and Google token
  B ..> D : Reads and saves data

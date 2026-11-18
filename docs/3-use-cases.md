@@ -2,7 +2,7 @@
 
 ## 3.1 Use Case Diagram
 
-![Lost & Found use case diagram](./assets/diagrams/lostAndFound.svg)
+![Lost & Found use case diagram](./assets/diagrams/lost-and-found-UC.svg)
 
 **PlantUML source:** [Diagram source code](./puml/lost-and-found-UC.puml)
 
@@ -128,7 +128,7 @@ HAVE TO UPDATE
 | Primary actor | Signed-in user. |
 | Requirement IDs | F-012 |
 | Preconditions | The user is signed in and has a post for which matches are being sought. |
-| Main flow | The user opens the possible matches for their post. The system displays suggestions based on category, description, time, and location. The user can open the details of a suggested post. |
+| Main flow | The user opens the possible matches for their post. The system displays suggested posts of the opposite type that share keywords with the user's post, ordered by matching score. The user can open the details of a suggested post. |
 | Alternative flows | If there are no possible matches, the system displays an appropriate message. |
 | Result | The user has reviewed the suggestions. A match does not confirm ownership. |
 

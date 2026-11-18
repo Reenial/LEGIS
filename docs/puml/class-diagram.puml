@@ -1,7 +1,76 @@
 @startuml
-class User {
-  +Long id
-  +String username
-  +String email
+title Lost & Found - Items module (UC-001, UC-004)
+skinparam classAttributeIconSize 0
+hide empty members
+
+class "items.routes" as Routes <<Express router>> {
+  GET /api/items
+  POST /api/items
 }
+
+class "requireAuth" as RequireAuth <<middleware>> {
+  +requireAuth(req, res, next)
+}
+
+class "items.controller" as Controller <<module>> {
+  +listItems(req, res)
+  +createItem(req, res)
+}
+
+class "items.service" as Service <<module>> {
+  +searchPublicItems(query)
+  +createItem(userId, body)
+  -checkReferences(data, db)
+}
+
+class "items.filters" as Filters <<module>> {
+  +parseItemFilters(query)
+}
+
+class "items.validation" as Validation <<module>> {
+  +parseNewItem(body)
+}
+
+class "items.repository" as Repository <<module>> {
+  +search(filters)
+  +findOwnById(itemId)
+  +categoryExists(categoryId, db)
+  +findAllKeywordKindIds(db)
+  +findKeywordsByIds(keywordIds, db)
+  +insertLocation(client, location)
+  +insert(client, item)
+  +replaceKeywords(client, itemId, keywords)
+}
+
+class "transaction" as Transaction <<module>> {
+  +withTransaction(work)
+}
+
+class "pool" as Pool <<pg.Pool>>
+
+class Error
+class HttpError {
+  +status
+  +details
+  +HttpError(status, message, details)
+}
+
+Routes --> RequireAuth : POST only
+Routes --> Controller
+Controller --> Service
+Service --> Filters
+Service --> Validation
+Service --> Transaction
+Service --> Repository
+Repository --> Pool
+Transaction --> Pool
+Error <|-- HttpError
+Service ..> HttpError : throws 400
+Filters ..> HttpError : throws 400
+Validation ..> HttpError : throws 400
+
+note bottom of Service
+  Edit, remove, post details and own posts
+  are routed but not implemented yet (501).
+end note
 @enduml

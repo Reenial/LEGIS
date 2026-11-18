@@ -77,7 +77,7 @@ The repository includes the [Creative Commons Attribution-NonCommercial-ShareAli
 <a id="ai-usage"></a>
 ## AI Usage
 
-ChatGPT, Gemini, and Claude were used responsibly as supporting tools during development, testing, and documentation. The team manually reviewed the results.
+ChatGPT, Gemini, and Claude were used responsibly as supporting tools during development, testing, and documentation following FER's [Policy on the Appropriate Use of Artificial Intelligence](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf). The team manually reviewed the results.
 
 <a id="code-of-conduct-and-support"></a>
 ## Code of Conduct and Support

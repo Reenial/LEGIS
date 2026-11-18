@@ -56,7 +56,7 @@ Sources: Scope, Section 1.2, and the use case diagram and descriptions.
 
 | ID | Constraint or assumption | Source | Consequence or way to verify |
 | --- | --- | --- | --- |
-| C-01 | Sign-in is provided through an external identity provider using OAuth 2.0. | Project assignment, Section 2; Scope, Section 1.3; UC-003. | The team selected Google as an external identrity provider; verify successful, cancelled, and failed sign-in. |
+| C-01 | Sign-in is provided through an external identity provider using OAuth 2.0. | Project assignment, Section 2; Scope, Section 1.3; UC-003. | The team selected Google as an external identity provider; verify successful, cancelled, and failed sign-in. |
 | C-02 | Location functionality depends on an external map service; GPS depends on the device and the user's permission. | Project assignment, Sections 2–3; Scope, Section 1.3. | Provide manual location selection and verify denied GPS permission and map unavailability according to NF-004. |
 | C-03 | Item handover, delivery, and physical storage are outside the system. | Project assignment, Section 2; Scope, Section 1.3; UC-008, UC-010. | The system enables coordination; an accepted request is not proof that the handover has been completed. |
 | C-04 | The system helps assess ownership but does not guarantee it. | Scope, Sections 1.1 and 1.3; UC-011. | The post author decides on the request; a suggested match does not confirm ownership. |

@@ -185,3 +185,6 @@ The following risks and limitations describe the current architecture. Proposed 
 | Risk | Consequence | Current treatment and follow-up |
 | --- | --- | --- |
 | A requester may incorrectly claim ownership | An item could be handed to the wrong person. | The design uses hidden item details and private messages to help the finder assess ownership before handover. Ownership cannot be guaranteed. |
+| Different items may share the same keywords | Matching may suggest an unrelated item or miss the correct one. | Keyword scores provide suggestions. Users still need to compare item details and verify ownership before handover. Test matching with similar items and incomplete descriptions. |
+| Users may publish false or inappropriate posts | Other users may waste time or receive misleading information. | The planned reporting and moderation functions allow signed-in users to report posts and administrators to remove inappropriate content. |
+| Users may reveal personal information in a description or photograph | Contact details or information on an ID card could become publicly visible. | Hidden item details are excluded from public responses. Add a reminder to avoid publishing personal information and verify that public views do not expose hidden details. |

@@ -64,8 +64,8 @@ Short summary: [README – AI Usage](../README.md#ai-usage). This section record
 | Tool | Version or model | Used by | Main purpose |
 | --- | --- | --- | --- |
 | ChatGPT | Not recorded | Documentation team (Nika Kožul, Iva Puljak); Developers (Daniel Božulić, Lea Lendić, Lovre Galov, Mihael Jurković, Ivan Jović) | Drafting and rewording documentation text, drafting PlantUML diagram sources, explaining errors and helping with debugging |
-| Gemini | Not recorded | Documentation team (Nika Kožul, Iva Puljak); Lovre Galov (presentation) | Drafting and rewording documentation text, drafting PlantUML diagram sources, preparing the project presentation |
-| Claude | Not recorded | Documentation team (Nika Kožul, Iva Puljak); Developers (Daniel Božulić, Lea Lendić, Lovre Galov, Mihael Jurković, Ivan Jović) | Drafting and rewording documentation text, drafting PlantUML diagram sources, explaining errors and helping with debugging |
+| Gemini | Not recorded | Lovre Galov (presentation) | Preparing the project presentation |
+| Claude | Not recorded | Developers (Daniel Božulić, Lea Lendić, Lovre Galov, Mihael Jurković, Ivan Jović) | Explaining errors and helping with debugging |
 
 ### Scope of AI Contribution
 

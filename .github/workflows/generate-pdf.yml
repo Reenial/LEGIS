@@ -18,20 +18,36 @@ on:
 
 jobs:
   build-pdf:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install Tooling
-        run: sudo apt-get update && sudo apt-get install -y pandoc plantuml wkhtmltopdf graphviz
-      - name: Inline PlantUML Compilation
-        run: |
-          mkdir -p docs/assets/diagrams
-          plantuml -tsvg docs/puml/*.puml -o "../assets/diagrams"
+        run: sudo apt-get update && sudo apt-get install -y pandoc weasyprint
       - name: Build PDF Deliverable
         run: |
           mkdir -p docs/deliverables
           FILE_NAME="SE26_${{ github.event.inputs.group_number }}_${{ github.event.inputs.app_acronym }}_${{ github.event.inputs.version }}.pdf"
-          cat docs/Home.md docs/1*.md docs/2*.md docs/3*.md docs/4*.md docs/5*.md \
-              docs/6*.md docs/7*.md docs/8*.md docs/9*.md docs/A*.md docs/B*.md > docs/full-report.md
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import re
+          root = Path("docs")
+          files = [root / "Home.md"] + sorted(root.glob("[1-9]*.md")) + sorted(root.glob("[AB]-*.md"))
+          parts = []
+          for f in files:
+              text = f.read_text().replace("<details>", "<details open>")
+              if f.name.startswith(("5-", "6-", "7-")):
+                  text = "> This chapter contains unfinished course template material.\n\n" + text
+              text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: m[0] if (root / m[2]).exists() or m[2].startswith("http") else "[Diagram placeholder: " + m[1] + "]", text)
+              parts.append('<div class="chapter">\n\n' + text + '\n\n</div>')
+          (root / "full-report.md").write_text("\n\n".join(parts))
+          (root / "pdf.css").write_text("@page {size:A4 landscape; margin:15mm; @bottom-center {content:counter(page)}} body{font:10pt sans-serif;line-height:1.4} .chapter{break-before:page} h1,h2,h3{break-after:avoid} table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:9pt} th,td{border:1px solid #bbc;padding:6px;vertical-align:top;overflow-wrap:anywhere} th{background:#eef} tr{break-inside:avoid} img{max-width:100%;max-height:155mm;object-fit:contain} pre{white-space:pre-wrap;font-size:8pt} a{color:#205c83}")
+          PYCODE
           cd docs
-          pandoc full-report.md --from gfm --toc --toc-depth=3 --pdf-engine=wkhtmltopdf -o "deliverables/$FILE_NAME"
+          pandoc full-report.md --from gfm --to html5 --standalone --toc --toc-depth=2 --metadata title="Lost & Found - Project Documentation" --css=pdf.css -o full-report.html
+          weasyprint full-report.html "deliverables/$FILE_NAME"
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-documentation
+          path: docs/deliverables/SE26_${{ github.event.inputs.group_number }}_${{ github.event.inputs.app_acronym }}_${{ github.event.inputs.version }}.pdf
+          if-no-files-found: error

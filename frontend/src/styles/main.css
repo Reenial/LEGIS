@@ -47,7 +47,8 @@ header {
   padding-top: 5px;
 }
 
-.user {
+.user,
+.user-link {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -270,7 +271,6 @@ header {
 
 .sign-out {
   margin-top: 2px;
-  bottom: 2px;
   padding: 2px 8px;
   background: transparent;
   color: #222;

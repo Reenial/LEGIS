@@ -1,6 +1,7 @@
 // Top bar: title, notifications and profile. Links depend on whether the user is signed in and on their role.
 import { getUser, onUserChange, setUser } from '../state/session.js';
 import { auth } from '../api/endpoints.js';
+import { escapeHtml } from '../utils/escapeHtml.js';
 import bellIcon from '../assets/icons/bell.png';
 import profileIcon from '../assets/icons/profile.png';
 
@@ -16,11 +17,13 @@ export function renderHeader(container) {
       <a class="notification" href="${notificationsHref}" title="Notifications">
         <img src="${bellIcon}" class="icons" alt="Notifications" />
       </a>
-      <a class="user" href="${profileHref}" title="${user ? 'My posts' : 'Sign in'}">
-        <img src="${profileIcon}" class="icons" alt="${user ? 'My posts' : 'Sign in'}" />
-        ${user ? `<span class="user-name">${user.name.split(' ')[0]}</span>` : ''}
+      <div class="user">
+        <a class="user-link" href="${profileHref}" title="${user ? 'My posts' : 'Sign in'}">
+          <img src="${profileIcon}" class="icons" alt="${user ? 'My posts' : 'Sign in'}" />
+          ${user ? `<span class="user-name">${escapeHtml(user.name.split(' ')[0])}</span>` : ''}
+        </a>
         ${user ? '<button type="button" class="sign-out" data-action="sign-out">Sign out</button>' : ''}
-      </a>
+      </div>
       </div>
     `;
 

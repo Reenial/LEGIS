@@ -63,7 +63,8 @@ Lost & Found stores its data in PostgreSQL. The current schema contains twelve t
 
 The diagram represents the stored data and relationships defined in the SQL schema. The main entities are users, item posts, return requests, and messages.
 
-Each item post belongs to one author, one category, and one location. A user can publish multiple posts. The `type` attribute distinguishes lost and found posts, while `status` distinguishes items awaiting handover (`pending`) from items marked as handed over (`handed_over`).
+Each item post belongs to one author, one category, and one location. A user can publish multiple posts. The `type` attribute distinguishes lost and found posts. 
+The `pending` status means that the case is unresolved: for a lost item, the author is still looking for it; for a found item, its return has not yet been completed. The `handed_over` status indicates that the item has been handed over.
 
 A post can receive multiple return requests from different users. Each request belongs to one post and one requester. Messages belong to a request, which provides the context for the private conversation between the requester and the post author. Each message also references its sender. The backend must verify that the sender is a participant in that conversation.
 
@@ -103,6 +104,9 @@ The diagram shows the backend items module, which implements browsing posts (UC-
 Editing, removing, viewing a single post, and listing the user's own posts are already routed in the same module but are not implemented yet; they answer with status 501.
 
 ## 4.4 Runtime Behavior
+The following diagrams describe the planned return-request workflow.
+The database already defines request statuses and uniqueness constraints, but the backend operations for submitting and processing requests and exchanging messages are not yet implemented. 
+The diagrams describe the intended behavior and must be checked against the implementation as development continues.
 
 ### 4.4.1 Representative UML Sequence Diagram
 
@@ -165,6 +169,7 @@ The following mechanisms are shared across the application functions.
 | Error handling | `HttpError` carries an HTTP status and optional details. Shared middleware produces JSON error responses and hides internal server-error messages in production. Frontend handling must be verified for each user flow. | [HttpError](../backend/src/utils/HttpError.js), [error handler](../backend/src/middleware/errorHandler.js). |
 | Public and private data | Public listing queries exclude hidden item details and removed posts. Other operations must apply their own access checks before returning private information. | [Database views](../database/schema.sql), [item repository](../backend/src/modules/items/items.repository.js). |
 | External address lookup | The geocoding service validates input, caches results, spaces outgoing requests and applies timeouts. It reports unavailability instead of treating failed address searches as successful results. | [Geocoding service](../backend/src/modules/geocoding/geocoding.service.js). |
+| Backend startup and reconnection | During slow requests, the frontend displays a connection notice. For selected connection failures, it attempts to wake the backend and retries the request. If necessary, a read request triggers navigation to the backend wake page, which redirects the user back to the application. Retries are limited; successful reconnection is not guaranteed. | [Frontend API client](../frontend/src/api/client.js), [backend wake route](../backend/src/app.js). |
 
 ## 4.7 Architectural Risks and Technical Debt
 

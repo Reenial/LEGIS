@@ -3,7 +3,7 @@
 **Course:** [Software Engineering](https://www.fer.unizg.hr/predmet/proinz), Faculty of Electrical Engineering and Computing, University of Zagreb  
 **Academic year:** 2026/2027  
 **Team:** 8.2 — 007  
-**Instructor:** Vlado Sruk  
+**Instructor:** prof. dr. sc. Vlado Sruk  
 **Assistant:** univ. mag. ing. comp. Marin Matjanec  
 **Demonstrator:** Kristijan Gas
 

@@ -170,6 +170,7 @@
 ## 3.3 Use Case Consistency Check
 
 The following questions help the team check consistency between the use cases, requirements, and application.
+The use cases describe the intended application behavior, not a confirmation that every flow is implemented. Post details, editing and removal, return requests, private messages, matching, notifications, and moderation are currently planned or partially implemented
 
 | Check | Question for the team |
 | --- | --- |

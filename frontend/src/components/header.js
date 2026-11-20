@@ -12,13 +12,16 @@ export function renderHeader(container) {
     container.innerHTML = `
       <a class="title" href="#/">Lost &amp; Found</a>
       ${user?.role === 'admin' ? '<a class="admin-link" href="#/admin/reports">Moderation</a>' : ''}
+      <div class="header-actions">
       <a class="notification" href="${notificationsHref}" title="Notifications">
         <img src="${bellIcon}" class="icons" alt="Notifications" />
       </a>
       <a class="user" href="${profileHref}" title="${user ? 'My posts' : 'Sign in'}">
         <img src="${profileIcon}" class="icons" alt="${user ? 'My posts' : 'Sign in'}" />
+        ${user ? `<span class="user-name">${user.name.split(' ')[0]}</span>` : ''}
+        ${user ? '<button type="button" class="sign-out" data-action="sign-out">Sign out</button>' : ''}
       </a>
-      ${user ? '<button type="button" class="sign-out" data-action="sign-out">Sign out</button>' : ''}
+      </div>
     `;
 
     container.querySelector('[data-action="sign-out"]')?.addEventListener('click', async () => {
